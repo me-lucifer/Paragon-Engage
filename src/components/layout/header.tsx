@@ -11,15 +11,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Bell,
   Search,
@@ -28,7 +22,6 @@ import {
   LogOut,
   ChevronsUpDown,
   File,
-  ChevronRight,
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useRole } from '@/hooks/use-role';
@@ -84,7 +77,7 @@ export function Header() {
                 placeholder="Search companies, contacts, campaigns…"
                 className="pl-10 h-10 w-full md:w-[300px] lg:w-[400px]"
                 onFocus={() => setOpen(true)}
-                onBlur={() => setOpen(false)}
+                onBlur={() => setTimeout(() => setOpen(false), 150)}
               />
             </div>
             {open && (
@@ -152,14 +145,18 @@ export function Header() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </DropdownMenuItem>
+              <Link href="/settings">
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+              </Link>
+              <Link href="/settings">
+                <DropdownMenuItem>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <LogOut className="mr-2 h-4 w-4" />
@@ -168,7 +165,7 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button>
+          <Button variant="accent">
             New Campaign
           </Button>
         </div>

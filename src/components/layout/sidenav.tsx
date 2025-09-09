@@ -35,11 +35,11 @@ import {
   GitBranch,
   ChevronDown,
 } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useRole } from '@/hooks/use-role';
 import { cn } from '@/lib/utils';
 import { Separator } from '../ui/separator';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '../ui/tooltip';
 
 export const allNavGroups = [
   {
@@ -131,8 +131,8 @@ export function SideNav() {
         console.error("Failed to write to localStorage", error);
     }
   };
-
-  const navGroups = React.useMemo(() => {
+  
+  const navGroups = useMemo(() => {
     return allNavGroups
       .filter(group => group.roles.includes(role))
       .map(group => ({
@@ -144,18 +144,20 @@ export function SideNav() {
 
   return (
     <div className="flex h-full flex-col">
-       <div className={cn("p-4 flex items-center justify-center", sidebarState === 'expanded' && 'justify-start')}>
-        <Link href="/dashboard" className={cn("flex items-center gap-3", sidebarState === 'collapsed' && 'justify-center')}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
-                    PE
-                </div>
-            </TooltipTrigger>
-             <TooltipContent side="right" align="center" hidden={sidebarState !== "collapsed" || isMobile}>
-                Paragon Engage
-            </TooltipContent>
-          </Tooltip>
+       <div className={cn("p-4 flex items-center", sidebarState === 'expanded' ? 'justify-start' : 'justify-center')}>
+        <Link href="/dashboard" className="flex items-center gap-3">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
+                      PE
+                  </div>
+              </TooltipTrigger>
+              <TooltipContent side="right" align="center" hidden={sidebarState !== "collapsed" || isMobile}>
+                  Paragon Engage
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           {sidebarState === 'expanded' && (
             <>
                 <span className="text-lg font-semibold text-sidebar-primary-foreground">
@@ -188,7 +190,7 @@ export function SideNav() {
                     <Link href={item.href}>
                         <SidebarMenuButton
                         className={cn(
-                            "w-full justify-start gap-2 rounded-md p-3 h-auto hover:bg-[#F0FAFE]",
+                            "w-full justify-start gap-2 rounded-md p-3 h-auto hover:bg-sidebar-accent",
                              pathname === item.href && "sidebar-menu-button-active"
                         )}
                         tooltip={{ children: item.label }}
