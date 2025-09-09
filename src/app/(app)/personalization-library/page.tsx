@@ -55,17 +55,11 @@ const personalizationData = {
       icon: <Library className="h-5 w-5" />,
       templates: [
         {
-          id: 'hf-am-intro-v1',
-          name: 'HF-AM Intro v1',
+          id: 'hf-am-intro',
+          name: 'HF-AM Intro (A/B Test)',
           variants: [
             { id: 'v1', subject: 'Quick idea for {{company}}\'s {{strategy}} pipeline', content: `Hi {{first_name}},\n\nWe mapped your peer set in {{industry}} and identified pockets where managers with {{aum_band}} AUM are seeing faster intros. Based on {{fit_reason}}, we can surface curated targets and run compliant, personalized outreach that hands your team only warm replies.\n\nIf helpful, I can show the workflow using {{recent_news}} as the trigger.\n\nOpen to a 12-minute walk-through next week?` },
-          ],
-        },
-        {
-          id: 'hf-am-intro-v2',
-          name: 'HF-AM Intro v2 (short)',
-          variants: [
-            { id: 'v1', subject: 'Warm replies without more headcount', content: `Hi {{first_name}},\n\nWe score and contact prospects on your behalf, then route only positive replies to {{company}}. No spray and pray. Tunable scoring, rotating inboxes, and audit trails.\n\nWorth a quick look?` },
+            { id: 'v2', subject: 'Warm replies without more headcount', content: `Hi {{first_name}},\n\nWe score and contact prospects on your behalf, then route only positive replies to {{company}}. No spray and pray. Tunable scoring, rotating inboxes, and audit trails.\n\nWorth a quick look?` },
           ],
         },
         {
@@ -111,17 +105,11 @@ const personalizationData = {
       icon: <Library className="h-5 w-5" />,
       templates: [
         {
-          id: 'boards-ir-intro-v1',
-          name: 'Boards/IR Intro v1',
+          id: 'boards-ir-intro',
+          name: 'Boards/IR Intro (A/B Test)',
           variants: [
             { id: 'v1', subject: 'Cleaner inbound for the next earnings cycle', content: `Hi {{first_name}},\n\nWe map your investor universe, suppress in-conversation contacts, and run compliant, personalized outreach for roadshows and investor days. Outcome: fewer cold touches, more warm replies routed to IR.\n\nShow you a 10-minute demo with {{ticker}} examples?` },
-          ],
-        },
-        {
-          id: 'boards-ir-intro-v2',
-          name: 'Boards/IR Intro v2 (event-driven)',
-          variants: [
-            { id: 'v1', subject: 'Post-{{recent_news}} interest capture', content: `Hi {{first_name}}, after {{recent_news}}, we can segment and contact likely interested funds with contextual snippets, then hand only engaged replies to IR. Want to see the workflow?` },
+            { id: 'v2', subject: 'Post-{{recent_news}} interest capture', content: `Hi {{first_name}}, after {{recent_news}}, we can segment and contact likely interested funds with contextual snippets, then hand only engaged replies to IR. Want to see the workflow?` },
           ],
         },
         {
@@ -167,17 +155,11 @@ const personalizationData = {
       icon: <Library className="h-5 w-5" />,
       templates: [
         {
-          id: 'pe-intro-v1',
-          name: 'PE Intro v1',
+          id: 'pe-intro',
+          name: 'PE Intro (A/B Test)',
           variants: [
             { id: 'v1', subject: 'More qualified founder replies for add-ons', content: `Hi {{first_name}},\n\nFor {{company}}’s platform in {{industry}}, we map operators below a set FTE, score for fit, and run outreach that surfaces owners willing to discuss a sale. You get reply-ready leads, not lists.\n\nOpen to a 12-minute look?` },
-          ],
-        },
-        {
-          id: 'pe-intro-v2',
-          name: 'PE Intro v2 (education affinity)',
-          variants: [
-            { id: 'v1', subject: 'Fast path to founder conversations', content: `Hi {{first_name}}, noticed the {{education_affinity}} overlap. We’ve been helping funds queue add-on dialogs by filtering for founder age proxies, ownership concentration, and niche match. See a sample?` },
+            { id: 'v2', subject: 'Fast path to founder conversations', content: `Hi {{first_name}}, noticed the {{education_affinity}} overlap. We’ve been helping funds queue add-on dialogs by filtering for founder age proxies, ownership concentration, and niche match. See a sample?` },
           ],
         },
         {
@@ -369,27 +351,28 @@ export default function PersonalizationLibraryPage() {
                         <CardHeader className="flex-row items-center justify-between">
                              <div>
                                 <CardTitle>{template.name}</CardTitle>
-                                {template.variants[0].subject && <CardDescription className="pt-1">{template.variants[0].subject}</CardDescription>}
+                                {template.variants.length > 1 && <CardDescription className="pt-1">A/B test active. 50% split.</CardDescription>}
                              </div>
                              {template.variants.length > 1 &&
                                 <TabsList>
                                     {template.variants.map(variant => (
                                         <TabsTrigger key={variant.id} value={variant.id}>
-                                            {variant.id.toUpperCase()}
+                                            Variant {variant.id.toUpperCase()}
                                         </TabsTrigger>
                                     ))}
                                 </TabsList>
                              }
                         </CardHeader>
-                        <CardContent>
-                            {template.variants.map(variant => (
-                                <TabsContent key={variant.id} value={variant.id}>
+                        {template.variants.map(variant => (
+                            <TabsContent key={variant.id} value={variant.id}>
+                                {variant.subject && <CardDescription className="px-6 pb-4 font-semibold">Subject: {variant.subject}</CardDescription> }
+                                <CardContent>
                                     <div className="prose prose-sm max-w-none rounded-md border bg-muted p-4 text-sm whitespace-pre-wrap font-mono">
                                         {variant.content}
                                     </div>
-                                </TabsContent>
-                            ))}
-                        </CardContent>
+                                </CardContent>
+                            </TabsContent>
+                        ))}
                         <CardFooter className="justify-end gap-2">
                             <Button variant="ghost" size="sm"><PenSquare className="mr-2 h-4 w-4" /> Edit</Button>
                             <Button variant="ghost" size="sm"><Copy className="mr-2 h-4 w-4" /> Clone</Button>

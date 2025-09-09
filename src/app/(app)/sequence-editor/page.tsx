@@ -6,7 +6,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from '@/components/ui/card';
 import {
   Select,
@@ -18,7 +17,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import {
   Mail,
@@ -27,8 +25,6 @@ import {
   AlertTriangle,
   PlayCircle,
   Eye,
-  MessageCircle,
-  CheckCircle,
   XCircle,
   Clock,
   PlusCircle,
@@ -36,10 +32,7 @@ import {
   Settings2,
   ThumbsUp,
   ThumbsDown,
-  Inbox,
-  Ban,
   MoveRight,
-  ShieldAlert,
   CalendarCheck,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -50,6 +43,18 @@ const sequenceSteps = [
     title: 'Step 1: Cold Intro Email',
     icon: <Mail className="h-5 w-5 text-primary" />,
     details: 'Template: "PE Intro v1"',
+  },
+  {
+    type: 'wait',
+    title: 'Wait 2 Business Days',
+    icon: <Timer className="h-5 w-5 text-gray-500" />,
+    details: 'Excludes weekends',
+  },
+  {
+    type: 'email',
+    title: 'Step 2: Follow-up Email',
+    icon: <Mail className="h-5 w-5 text-primary" />,
+    details: 'Template: "PE Follow-up v1"',
   },
   {
     type: 'branch',
@@ -74,25 +79,6 @@ const sequenceSteps = [
           },
         ],
       },
-    ],
-  },
-  {
-    type: 'wait',
-    title: 'Wait 2 Business Days',
-    icon: <Timer className="h-5 w-5 text-gray-500" />,
-    details: 'Excludes weekends',
-  },
-  {
-    type: 'email',
-    title: 'Step 2: Follow-up Email',
-    icon: <Mail className="h-5 w-5 text-primary" />,
-    details: 'Template: "PE Follow-up v1"',
-  },
-  {
-    type: 'branch',
-    title: 'Branch: On Objection',
-    icon: <GitBranch className="h-5 w-5 text-purple-500" />,
-    branches: [
       {
         status: 'Objection Detected ("have team", "covered")',
         icon: <ThumbsDown className="h-4 w-4 text-yellow-500" />,
@@ -189,7 +175,7 @@ export default function SequenceEditorPage() {
                             {step.branches && (
                                 <div className="space-y-2 mt-2">
                                     {step.branches.map((branch, bIndex) => (
-                                        <div key={bIndex} className="pl-4 border-l-2 border-dashed border-gray-300">
+                                        <div key={bIndex} className="pl-4 border-l-2 border-dashed border-gray-300 dark:border-gray-700">
                                             <Badge variant="outline" className="flex items-center gap-1.5 w-fit">
                                                 {branch.icon}
                                                 {branch.status}
@@ -203,34 +189,7 @@ export default function SequenceEditorPage() {
                                                         </div>
                                                         <div className="flex-grow">
                                                             <h4 className="font-semibold">{nestedStep.title}</h4>
-                                                            <p className="text-sm text-muted-foreground">{nestedStep.details}</p>
-                                                            {nestedStep.branches && (
-                                                                <div className="space-y-2 mt-2">
-                                                                {nestedStep.branches.map((subBranch, sbIndex) =>(
-                                                                    <div key={sbIndex} className="pl-4 border-l-2 border-dashed border-gray-300">
-                                                                        <Badge variant="outline" className="flex items-center gap-1.5 w-fit">
-                                                                            {subBranch.icon}
-                                                                            {subBranch.status}
-                                                                        </Badge>
-                                                                         {subBranch.nested && (
-                                                                            <div className="mt-2 space-y-2">
-                                                                                {subBranch.nested.map((deepStep, dIndex) => (
-                                                                                    <div key={dIndex} className="flex items-start gap-4 group">
-                                                                                        <div className="flex-none h-10 w-10 bg-muted/50 rounded-full flex items-center justify-center">
-                                                                                            {deepStep.icon}
-                                                                                        </div>
-                                                                                        <div className="flex-grow">
-                                                                                            <h4 className="font-semibold">{deepStep.title}</h4>
-                                                                                            <p className="text-sm text-muted-foreground">{deepStep.details}</p>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                ))}
-                                                                            </div>
-                                                                        )}
-                                                                    </div>
-                                                                ))}
-                                                                </div>
-                                                            )}
+                                                            {nestedStep.details && <p className="text-sm text-muted-foreground">{nestedStep.details}</p>}
                                                         </div>
                                                      </div>
                                                 ))}
@@ -298,12 +257,17 @@ export default function SequenceEditorPage() {
                     <PlayCircle className="mr-2 h-4 w-4" /> Run Preview
                 </Button>
                  <Separator />
-                <div className="space-y-2">
+                <div className="space-y-3">
                      <div className="flex items-center gap-2 text-sm">
                         <AlertTriangle className="h-5 w-5 text-yellow-500" />
                         <span className="font-medium">Spam Word Linter</span>
                     </div>
                     <p className="text-xs text-muted-foreground">"free", "guarantee", "risk-free"</p>
+                     <div className="flex items-center gap-2 text-sm">
+                        <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                        <span className="font-medium">Long Subject Line</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Subject line exceeds 55 characters.</p>
                 </div>
              </CardContent>
           </Card>
