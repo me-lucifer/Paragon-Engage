@@ -49,7 +49,7 @@ export default function EnrichmentPage() {
             Define rules and test your data enrichment profiles.
           </p>
         </div>
-        <Button className="bg-primary text-primary-foreground">
+        <Button>
           <FileDown className="mr-2 h-4 w-4" /> Save as Enrichment Profile v1
         </Button>
       </div>
@@ -125,7 +125,7 @@ export default function EnrichmentPage() {
                     placeholder="example.com&#10;spacex.com&#10;openai.com"
                     rows={5}
                     />
-                    <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+                    <Button className="w-full">
                         Run Enrichment <ChevronRight className="ml-2 h-4 w-4" />
                     </Button>
                 </CardContent>

@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { PlusCircle, Plug, Rss, Briefcase, Globe, Mail, MessageSquare, Bot } from 'lucide-react';
+import { PlusCircle, Plug, Rss, Briefcase, Globe, Mail, Bot, Inbox } from 'lucide-react';
 import Image from 'next/image';
 
 const dataSources = [
@@ -50,7 +50,7 @@ export default function DataSourcesPage() {
         </div>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
+            <Button>
               <PlusCircle className="mr-2 h-4 w-4" /> Add Custom Source
             </Button>
           </DialogTrigger>
@@ -109,7 +109,7 @@ export default function DataSourcesPage() {
               <DialogClose asChild>
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
-              <Button type="submit" className="bg-primary text-primary-foreground">Save Source</Button>
+              <Button type="submit">Save Source</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -149,25 +149,4 @@ export default function DataSourcesPage() {
       </div>
     </div>
   );
-}
-
-// Temporary Inbox Icon as it is not available in lucide-react yet
-function Inbox(props: any) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <rect width="16" height="16" x="4" y="4" rx="2" />
-            <path d="m4 13 5.7 2.9a1 1 0 0 0 1.1 0L16 13" />
-        </svg>
-    )
 }

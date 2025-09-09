@@ -97,7 +97,7 @@ export default function SequenceEditorPage() {
             <Button variant="outline">
                 <Eye className="mr-2 h-4 w-4" /> Preview
             </Button>
-            <Button className="bg-primary text-primary-foreground">
+            <Button>
                 Save Sequence
             </Button>
         </div>
@@ -184,7 +184,7 @@ export default function SequenceEditorPage() {
                     <Label htmlFor="test-contact">Test Contact</Label>
                     <Input id="test-contact" placeholder="Enter test email address..." />
                 </div>
-                <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+                <Button>
                     <PlayCircle className="mr-2 h-4 w-4" /> Run Preview
                 </Button>
                  <Separator />

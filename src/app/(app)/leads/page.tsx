@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -23,7 +23,7 @@ const leads = [
   { name: 'Jane Smith', company: 'Innovate LLC', thread: 'Quick question', intent: 'Neutral', nextAction: 'Send Info', owner: 'J. Doe' },
   { name: 'Samuel Brown', company: 'Data Corp', thread: 'Not interested', intent: 'Negative', nextAction: 'Archive', owner: 'System' },
   { name: 'Lisa Green', company: 'Solutions Co.', thread: 'Thanks for the info', intent: 'Positive', nextAction: 'Follow-up in 1w', owner: 'A. Bhandari' },
-  { name: 'Mike Johnson', company: 'NextGen', thread: 'Can you call me?', intent: 'Positive', nextAction_item: 'Schedule Meeting', owner: 'J. Doe' },
+  { name: 'Mike Johnson', company: 'NextGen', thread: 'Can you call me?', intent: 'Positive', nextAction: 'Schedule Meeting', owner: 'J. Doe' },
   { name: 'Sarah Wilson', company: 'Synergy Ltd.', thread: 'Unsubscribe', intent: 'Negative', nextAction: 'DNC', owner: 'System' },
 ];
 
@@ -39,7 +39,7 @@ export default function LeadsPage() {
                 Review, qualify, and take action on incoming leads.
             </p>
         </div>
-        <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
+        <Button>
           <PlusCircle className="mr-2 h-4 w-4" /> Add Lead Manually
         </Button>
       </div>
@@ -73,8 +73,12 @@ export default function LeadsPage() {
                   <TableCell>{lead.company}</TableCell>
                   <TableCell className="text-muted-foreground">{lead.thread}</TableCell>
                   <TableCell>
-                    <Badge variant={lead.intent === 'Positive' ? 'default' : lead.intent === 'Negative' ? 'destructive' : 'secondary'}
-                     className={lead.intent === 'Positive' ? 'bg-green-100 text-green-800' : ''}
+                    <Badge 
+                        variant={lead.intent === 'Positive' ? 'default' : lead.intent === 'Negative' ? 'destructive' : 'secondary'}
+                        className={
+                            lead.intent === 'Positive' ? 'bg-green-100 text-green-800' :
+                            lead.intent === 'Negative' ? 'bg-red-100 text-red-800' : ''
+                        }
                     >
                         {lead.intent}
                     </Badge>

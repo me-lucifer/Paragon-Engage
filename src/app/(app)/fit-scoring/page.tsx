@@ -18,7 +18,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { HelpCircle, FilePlus, Copy, PlayCircle, Star, Target, Building, Users, Globe, Smile, TrendingUp, Cpu, GrowthChart, BrainCircuit, Calendar, FileText } from 'lucide-react';
+import { HelpCircle, FilePlus, Copy, PlayCircle, Star, Target, Building, Users, Globe, Smile, TrendingUp, Cpu, BrainCircuit, Calendar, FileText } from 'lucide-react';
 import ExplainScoreDialog from '@/components/explain-score-dialog';
 
 const scoringCriteria = [
@@ -89,7 +89,7 @@ export default function FitScoringPage() {
              <Button variant="outline">
               <FilePlus className="mr-2" /> Clone Profile
             </Button>
-            <Button className="bg-primary text-primary-foreground">
+            <Button>
               <Copy className="mr-2" /> Save Profile
             </Button>
           </CardContent>
@@ -105,7 +105,7 @@ export default function FitScoringPage() {
                             Top 50 matching companies based on the current rubric.
                         </CardDescription>
                     </div>
-                    <Button variant="secondary" className="bg-accent text-accent-foreground hover:bg-accent/90">
+                    <Button variant="secondary">
                         <PlayCircle className="mr-2" /> Test on Sample
                     </Button>
                 </CardHeader>

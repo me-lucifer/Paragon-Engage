@@ -58,7 +58,7 @@ export default function InboxManagerPage() {
             Connect and manage your sending inboxes.
           </p>
         </div>
-        <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
+        <Button>
           <PlusCircle className="mr-2 h-4 w-4" /> Add Inbox
         </Button>
       </div>

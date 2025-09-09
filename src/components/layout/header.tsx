@@ -103,7 +103,7 @@ export function Header() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
+          <Button>
             New Campaign
           </Button>
         </div>

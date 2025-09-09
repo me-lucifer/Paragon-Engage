@@ -68,7 +68,7 @@ import {
               Design, launch, and manage your outreach campaigns.
             </p>
           </div>
-          <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
+          <Button>
             <PlusCircle className="mr-2 h-4 w-4" /> New Campaign
           </Button>
         </div>

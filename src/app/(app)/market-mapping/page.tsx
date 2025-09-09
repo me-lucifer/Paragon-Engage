@@ -126,7 +126,7 @@ export default function MarketMappingPage() {
         </div>
         <Sheet>
           <SheetTrigger asChild>
-            <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
+            <Button>
               <PlusCircle className="mr-2 h-4 w-4" /> Map New Industry
             </Button>
           </SheetTrigger>
@@ -203,7 +203,7 @@ export default function MarketMappingPage() {
                 <SheetClose asChild>
                     <Button variant="outline">Cancel</Button>
                 </SheetClose>
-                <Button className="bg-primary text-primary-foreground">
+                <Button>
                     Start Mapping <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </SheetFooter>
