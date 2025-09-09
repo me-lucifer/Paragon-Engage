@@ -23,9 +23,10 @@ import {
   ChevronsUpDown,
 } from 'lucide-react';
 import React from 'react';
+import { useRole } from '@/hooks/use-role';
 
 export function Header() {
-  const [role, setRole] = React.useState('operator');
+  const { role, setRole } = useRole();
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-card px-4 md:px-6">
       <SidebarTrigger className="md:hidden" />
@@ -54,7 +55,7 @@ export function Header() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-40" align="end">
               <DropdownMenuLabel>Switch role</DropdownMenuLabel>
-              <DropdownMenuRadioGroup value={role} onValueChange={setRole}>
+              <DropdownMenuRadioGroup value={role} onValueChange={(value) => setRole(value as 'operator' | 'analyst' | 'admin')}>
                 <DropdownMenuRadioItem value="operator">
                   Operator
                 </DropdownMenuRadioItem>
