@@ -26,6 +26,26 @@ const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "3rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
+const LG_BREAKPOINT = 1280;
+
+function useMediaQuery(query: string) {
+  const [value, setValue] = React.useState(false);
+
+  React.useEffect(() => {
+    function onChange(event: MediaQueryListEvent) {
+      setValue(event.matches);
+    }
+
+    const result = window.matchMedia(query);
+    result.addEventListener("change", onChange);
+    setValue(result.matches);
+
+    return () => result.removeEventListener("change", onChange);
+  }, [query]);
+
+  return value;
+}
+
 type SidebarContext = {
   state: "expanded" | "collapsed"
   open: boolean
@@ -69,6 +89,7 @@ const SidebarProvider = React.forwardRef<
   ) => {
     const isMobile = useIsMobile()
     const [openMobile, setOpenMobile] = React.useState(false)
+    const isLg = useMediaQuery(`(min-width: ${LG_BREAKPOINT}px)`);
 
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
@@ -88,6 +109,10 @@ const SidebarProvider = React.forwardRef<
       },
       [setOpenProp, open]
     )
+
+    React.useEffect(() => {
+        setOpen(isLg);
+    }, [isLg, setOpen]);
 
     // Helper to toggle the sidebar.
     const toggleSidebar = React.useCallback(() => {
@@ -217,7 +242,7 @@ const Sidebar = React.forwardRef<
         ref={ref}
         className="group peer hidden md:block text-sidebar-foreground"
         data-state={state}
-        data-collapsible={state === "collapsed" ? collapsible : ""}
+        data-collapsible={state === "collapsed" ? "icon" : ""}
         data-variant={variant}
         data-side={side}
       >
