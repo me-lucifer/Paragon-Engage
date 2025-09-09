@@ -41,6 +41,7 @@ const personalizationData = {
     { token: '{{mutual_topic}}', description: 'A topic of mutual interest' },
     { token: '{{aum_band}}', description: 'Assets Under Management band' },
     { token: '{{strategy}}', description: 'Company\'s investment strategy' },
+    { token: '{{ticker}}', description: 'Company\'s stock ticker' },
   ],
   segments: [
     {
@@ -98,6 +99,62 @@ const personalizationData = {
           ],
         },
       ]
+    },
+    {
+      id: 'boards-ir',
+      name: 'Corporate Boards & IR',
+      icon: <Library className="h-5 w-5" />,
+      templates: [
+        {
+          id: 'boards-ir-intro-v1',
+          name: 'Boards/IR Intro v1',
+          variants: [
+            { id: 'v1', subject: 'Cleaner inbound for the next earnings cycle', content: `Hi {{first_name}},\n\nWe map your investor universe, suppress in-conversation contacts, and run compliant, personalized outreach for roadshows and investor days. Outcome: fewer cold touches, more warm replies routed to IR.\n\nShow you a 10-minute demo with {{ticker}} examples?` },
+          ],
+        },
+        {
+          id: 'boards-ir-intro-v2',
+          name: 'Boards/IR Intro v2 (event-driven)',
+          variants: [
+            { id: 'v1', subject: 'Post-{{recent_news}} interest capture', content: `Hi {{first_name}}, after {{recent_news}}, we can segment and contact likely interested funds with contextual snippets, then hand only engaged replies to IR. Want to see the workflow?` },
+          ],
+        },
+        {
+          id: 'boards-ir-follow-up',
+          name: 'Boards/IR Follow-up v1',
+          variants: [
+            { id: 'v1', subject: 'Re: IR warm replies for {{company}}', content: `Quick check. We can start with a small, pre-earnings segment and report on opens, replies, and positive intent. Short call?` },
+          ],
+        },
+        {
+          id: 'boards-ir-bump',
+          name: 'Boards/IR Bump v1',
+          variants: [
+            { id: 'v1', subject: 'Keeping this brief', content: `Sharing a one-pager on compliance guardrails and unsubscribe handling. If useful, reply “send”.` },
+          ],
+        },
+        {
+          id: 'boards-ir-breakup',
+          name: 'Boards/IR Breakup v1',
+          variants: [
+            { id: 'v1', subject: 'Park for now?', content: `No problem. I’ll archive this thread. To revisit before the next roadshow, reply “restart”.` },
+          ],
+        },
+        {
+          id: 'boards-ir-objection',
+          name: 'Boards/IR Objection: compliance concerns',
+          variants: [
+            { id: 'v1', subject: 'IR compliance guardrails', content: `We enforce DNC lists, unsubscribe propagation, and audit logs. Senders use authenticated domains with throttles and time-window controls. Happy to walk through the checklist.` },
+          ],
+        },
+        {
+          id: 'boards-ir-positive-reply',
+          name: 'Boards/IR Positive-reply handoff',
+          variants: [
+            { id: 'v1', subject: 'Thanks — IR demo', content: `Appreciate the interest. I’ll share a read-only dashboard link and proposed pilot scope. Anyone from the IR team to include?` },
+          ],
+        },
+      ],
     },
     {
       id: 'accounting',
