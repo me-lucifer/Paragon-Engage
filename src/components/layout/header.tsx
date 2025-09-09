@@ -73,10 +73,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-card px-4 md:px-6">
       <SidebarTrigger className="md:hidden" />
-      <div className="hidden items-center gap-2 md:flex">
-        <h1 className="text-lg font-bold text-primary">Paragon Engage</h1>
-      </div>
-
+      
       <div className="flex w-full items-center gap-4 md:gap-2 lg:gap-4">
         <div className="relative flex-1">
            <Command className="overflow-visible bg-transparent">

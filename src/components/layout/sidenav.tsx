@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/collapsible';
 import {
   SidebarContent,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -38,6 +37,7 @@ import {
 import React, { useState, useEffect } from 'react';
 import { useRole } from '@/hooks/use-role';
 import { cn } from '@/lib/utils';
+import { Separator } from '../ui/separator';
 
 export const allNavGroups = [
   {
@@ -62,7 +62,7 @@ export const allNavGroups = [
     roles: ['operator', 'admin'],
     items: [
       { href: '/segments', icon: Users, label: 'Segments', roles: ['operator', 'admin'] },
-      { href: '/personalization-library', icon: Library, label: 'Personalization Library', roles: ['admin'] },
+      { href: '/personalization-library', icon: Library, label: 'Personalization Library', roles: ['operator', 'admin'] },
       { href: '/campaign-studio', icon: PenSquare, label: 'Campaign Studio', roles: ['operator', 'admin'] },
       { href: '/sequence-editor', icon: GitBranch, label: 'Sequences', roles: ['admin'] },
       { href: '/inbox-manager', icon: Inbox, label: 'Inbox Manager', roles: ['admin'] },
@@ -141,13 +141,21 @@ export function SideNav() {
 
   return (
     <div className="flex h-full flex-col">
-      <SidebarHeader className="border-b md:hidden">
-        <div className="flex items-center gap-2 p-2">
-          <Sparkles className="h-8 w-8 text-accent" />
-          <h1 className="text-xl font-semibold">Paragon Engage</h1>
-        </div>
-      </SidebarHeader>
-      <SidebarContent className="p-0">
+       <div className="p-4">
+        <Link href="/dashboard" className="flex items-center gap-3">
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
+            PE
+          </div>
+          <span className="text-lg font-semibold text-sidebar-primary-foreground">
+            Paragon Engage
+          </span>
+           <span className="ml-auto rounded-full border border-accent px-1.5 py-0.5 text-xs text-accent">
+            Prototype
+          </span>
+        </Link>
+      </div>
+      <Separator className="bg-[#E5E7EB]" />
+      <SidebarContent className="p-2">
         {navGroups.map((group, groupIndex) => (
           <Collapsible 
             key={group.title} 
@@ -166,8 +174,8 @@ export function SideNav() {
                     <Link href={item.href}>
                         <SidebarMenuButton
                         className={cn(
-                            "w-full justify-start gap-2 rounded-none p-3 h-auto hover:bg-[#F0FAFE]",
-                             pathname.startsWith(item.href) && "sidebar-menu-button-active"
+                            "w-full justify-start gap-2 rounded-md p-3 h-auto hover:bg-[#F0FAFE]",
+                             pathname === item.href && "sidebar-menu-button-active"
                         )}
                         tooltip={{ children: item.label }}
                         >
