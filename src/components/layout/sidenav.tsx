@@ -16,15 +16,39 @@ import {
   Lightbulb,
   BarChart3,
   Flame,
+  Network,
+  Database,
+  Sparkles,
+  Target,
+  Library,
+  PenSquare,
+  Inbox,
+  MailCheck,
+  Filter,
+  Ban,
+  Share2,
+  History,
+  Settings,
 } from 'lucide-react';
 import React from 'react';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/leads', icon: Users, label: 'Lead Management' },
-  { href: '/engagement', icon: Activity, label: 'Engagement' },
-  { href: '/recommendations', icon: Lightbulb, label: 'Recommendations' },
-  { href: '/reports', icon: BarChart3, label: 'Reporting' },
+  { href: '/market-mapping', icon: Network, label: 'Market Mapping' },
+  { href: '/data-sources', icon: Database, label: 'Data Sources' },
+  { href: '/enrichment', icon: Sparkles, label: 'Enrichment' },
+  { href: '/fit-scoring', icon: Target, label: 'Fit Scoring' },
+  { href: '/segments', icon: Users, label: 'Segments' },
+  { href: '/personalization-library', icon: Library, label: 'Personalization Library' },
+  { href: '/campaign-studio', icon: PenSquare, label: 'Campaign Studio' },
+  { href: '/inbox-manager', icon: Inbox, label: 'Inbox Manager' },
+  { href: '/deliverability', icon: MailCheck, label: 'Deliverability' },
+  { href: '/lead-triage', icon: Filter, label: 'Lead Triage' },
+  { href: '/dnc-suppression', icon: Ban, label: 'DNC / Suppression' },
+  { href: '/referral-hub', icon: Share2, label: 'Referral Hub' },
+  { href: '/reports', icon: BarChart3, label: 'Reports' },
+  { href: '/audit-log', icon: History, label: 'Audit Log' },
+  { href: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 export function SideNav() {
@@ -44,7 +68,7 @@ export function SideNav() {
             <SidebarMenuItem key={item.href}>
               <Link href={item.href}>
                 <SidebarMenuButton
-                  isActive={pathname === item.href}
+                  isActive={pathname.startsWith(item.href)}
                   tooltip={{ children: item.label }}
                 >
                   <item.icon />

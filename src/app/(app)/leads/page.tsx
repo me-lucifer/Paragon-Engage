@@ -32,7 +32,7 @@ export default function LeadsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
-          Lead Management
+          Lead Triage
         </h1>
         <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
           <PlusCircle className="mr-2 h-4 w-4" /> Create Lead
