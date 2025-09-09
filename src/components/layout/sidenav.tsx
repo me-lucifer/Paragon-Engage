@@ -13,6 +13,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import {
   LayoutDashboard,
@@ -38,6 +39,7 @@ import React, { useState, useEffect } from 'react';
 import { useRole } from '@/hooks/use-role';
 import { cn } from '@/lib/utils';
 import { Separator } from '../ui/separator';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 export const allNavGroups = [
   {
@@ -93,6 +95,7 @@ export const allNavGroups = [
 export function SideNav() {
   const pathname = usePathname();
   const { role } = useRole();
+  const { state: sidebarState, isMobile } = useSidebar();
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -141,17 +144,28 @@ export function SideNav() {
 
   return (
     <div className="flex h-full flex-col">
-       <div className="p-4">
-        <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
-            PE
-          </div>
-          <span className="text-lg font-semibold text-sidebar-primary-foreground">
-            Paragon Engage
-          </span>
-           <span className="ml-auto rounded-full border border-accent px-1.5 py-0.5 text-xs text-accent">
-            Prototype
-          </span>
+       <div className={cn("p-4 flex items-center justify-center", sidebarState === 'expanded' && 'justify-start')}>
+        <Link href="/dashboard" className={cn("flex items-center gap-3", sidebarState === 'collapsed' && 'justify-center')}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
+                    PE
+                </div>
+            </TooltipTrigger>
+             <TooltipContent side="right" align="center" hidden={sidebarState !== "collapsed" || isMobile}>
+                Paragon Engage
+            </TooltipContent>
+          </Tooltip>
+          {sidebarState === 'expanded' && (
+            <>
+                <span className="text-lg font-semibold text-sidebar-primary-foreground">
+                    Paragon Engage
+                </span>
+                <span className="ml-auto rounded-full border border-accent px-1.5 py-0.5 text-xs text-accent">
+                    Prototype
+                </span>
+            </>
+          )}
         </Link>
       </div>
       <Separator className="bg-[#E5E7EB]" />
