@@ -109,8 +109,10 @@ export default function EnrichmentPage() {
                     <span>Validation Thresholds</span>
                      <TooltipProvider>
                         <Tooltip>
-                            <TooltipTrigger onClick={(e) => e.stopPropagation()}>
-                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                            <TooltipTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                <div>
+                                    <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help ml-1" />
+                                </div>
                             </TooltipTrigger>
                             <TooltipContent>
                                 <p className="max-w-xs">
