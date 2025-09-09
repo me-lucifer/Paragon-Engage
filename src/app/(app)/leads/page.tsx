@@ -1,3 +1,6 @@
+
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
@@ -17,17 +20,40 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
-const leads = [
-  { name: 'John Doe', company: 'Acme Inc.', thread: 'Re: Following up', intent: 'Positive', nextAction: 'Schedule Meeting', owner: 'A. Bhandari' },
-  { name: 'Jane Smith', company: 'Innovate LLC', thread: 'Quick question', intent: 'Neutral', nextAction: 'Send Info', owner: 'J. Doe' },
-  { name: 'Samuel Brown', company: 'Data Corp', thread: 'Not interested', intent: 'Negative', nextAction: 'Archive', owner: 'System' },
-  { name: 'Lisa Green', company: 'Solutions Co.', thread: 'Thanks for the info', intent: 'Positive', nextAction: 'Follow-up in 1w', owner: 'A. Bhandari' },
-  { name: 'Mike Johnson', company: 'NextGen', thread: 'Can you call me?', intent: 'Positive', nextAction: 'Schedule Meeting', owner: 'J. Doe' },
-  { name: 'Sarah Wilson', company: 'Synergy Ltd.', thread: 'Unsubscribe', intent: 'Negative', nextAction: 'DNC', owner: 'System' },
+const leadsData = [
+  // Positive Intent
+  { name: 'John Smith', company: 'Precision Accounts', thread: 'Re: Your services', intent: 'Positive', nextAction: 'Schedule Meeting', owner: 'A. Bhandari' },
+  { name: 'Maria Garcia', company: 'Veritas Financials', thread: 'Great, thanks!', intent: 'Positive', nextAction: 'Follow-up in 1w', owner: 'J. Doe' },
+  { name: 'Dr. Anna Williams', company: 'Bright Smile Dental', thread: 'Yes, let\'s talk', intent: 'Positive', nextAction: 'Schedule Meeting', owner: 'A. Bhandari' },
+  { name: 'Kevin Brown', company: 'Secure IT Solutions', thread: 'Looks interesting', intent: 'Positive', nextAction: 'Send Info', owner: 'J. Doe' },
+  { name: 'Daniel Rodriguez', company: 'Cloud Cover MSP', thread: 'Can you call me?', intent: 'Positive', nextAction: 'Schedule Meeting', owner: 'A. Bhandari' },
+
+  // Neutral Intent
+  { name: 'David Lee', company: 'Keystone CPA', thread: 'Got it, thanks', intent: 'Neutral', nextAction: 'Send Info', owner: 'System' },
+  { name: 'Dr. Mark Harris', company: 'Prestige Dentistry', thread: 'Acknowledged', intent: 'Neutral', nextAction: 'Archive', owner: 'System' },
+  { name: 'Rachel Green', company: 'Proactive Tech', thread: 'Is this automated?', intent: 'Neutral', nextAction: 'Send Info', owner: 'J. Doe' },
+  { name: 'Lukas Weber', company: 'EuroBalance', thread: 'What are your rates?', intent: 'Neutral', nextAction: 'Send Info', owner: 'System' },
+
+  // Negative Intent
+  { name: 'Emily White', company: 'Summit Tax', thread: 'Not interested', intent: 'Negative', nextAction: 'DNC', owner: 'System' },
+  { name: 'Max Muller', company: 'Berlin IT Services', thread: 'Unsubscribe', intent: 'Negative', nextAction: 'DNC', owner: 'System' },
+  { name: 'Dr. Schmidt', company: 'ZahnKlinik Berlin', thread: 'Remove me', intent: 'Negative', nextAction: 'DNC', owner: 'System' },
 ];
 
+
 export default function LeadsPage() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -52,60 +78,70 @@ export default function LeadsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Contact</TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead>Thread Preview</TableHead>
-                <TableHead>Intent</TableHead>
-                <TableHead>Next Action</TableHead>
-                <TableHead>Owner</TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {leads.map((lead) => (
-                <TableRow key={lead.name}>
-                  <TableCell className="font-medium">{lead.name}</TableCell>
-                  <TableCell>{lead.company}</TableCell>
-                  <TableCell className="text-muted-foreground">{lead.thread}</TableCell>
-                  <TableCell>
-                    <Badge 
-                        variant={lead.intent === 'Positive' ? 'default' : lead.intent === 'Negative' ? 'destructive' : 'secondary'}
-                        className={
-                            lead.intent === 'Positive' ? 'bg-green-100 text-green-800' :
-                            lead.intent === 'Negative' ? 'bg-red-100 text-red-800' : ''
-                        }
-                    >
-                        {lead.intent}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{lead.nextAction}</TableCell>
-                  <TableCell>{lead.owner}</TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Assign</DropdownMenuItem>
-                        <DropdownMenuItem>Snooze</DropdownMenuItem>
-                        <DropdownMenuItem>Archive</DropdownMenuItem>
-                        <DropdownMenuItem>Convert to Meeting</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+           {loading ? (
+            <div className="space-y-4">
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+           ) : (
+            <Table>
+                <TableHeader>
+                <TableRow>
+                    <TableHead>Contact</TableHead>
+                    <TableHead>Company</TableHead>
+                    <TableHead>Thread Preview</TableHead>
+                    <TableHead>Intent</TableHead>
+                    <TableHead>Next Action</TableHead>
+                    <TableHead>Owner</TableHead>
+                    <TableHead>
+                    <span className="sr-only">Actions</span>
+                    </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                </TableHeader>
+                <TableBody>
+                {leadsData.map((lead) => (
+                    <TableRow key={lead.name}>
+                    <TableCell className="font-medium">{lead.name}</TableCell>
+                    <TableCell>{lead.company}</TableCell>
+                    <TableCell className="text-muted-foreground">{lead.thread}</TableCell>
+                    <TableCell>
+                        <Badge 
+                            variant={lead.intent === 'Positive' ? 'default' : lead.intent === 'Negative' ? 'destructive' : 'secondary'}
+                            className={
+                                lead.intent === 'Positive' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' :
+                                lead.intent === 'Negative' ? 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' : ''
+                            }
+                        >
+                            {lead.intent}
+                        </Badge>
+                    </TableCell>
+                    <TableCell>{lead.nextAction}</TableCell>
+                    <TableCell>{lead.owner}</TableCell>
+                    <TableCell>
+                        <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button aria-haspopup="true" size="icon" variant="ghost">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Toggle menu</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem>Assign</DropdownMenuItem>
+                            <DropdownMenuItem>Snooze</DropdownMenuItem>
+                            <DropdownMenuItem>Archive</DropdownMenuItem>
+                            <DropdownMenuItem>Convert to Meeting</DropdownMenuItem>
+                        </DropdownMenuContent>
+                        </DropdownMenu>
+                    </TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+            </Table>
+           )}
         </CardContent>
       </Card>
     </div>

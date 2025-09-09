@@ -22,7 +22,8 @@ import { Switch } from '@/components/ui/switch';
 import { ArrowUp, Briefcase, Target, Heart, MessageCircle, Calendar, Bot, CheckCircle, Mail, PlayCircle } from 'lucide-react';
 import DashboardChart from '@/components/dashboard-chart';
 import { DemoWalkthrough } from '@/components/demo-walkthrough';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const kpiData = [
   { title: 'Mapped Companies', value: '52,840', trend: '+12.5%', icon: <Briefcase className="text-primary" /> },
@@ -43,6 +44,13 @@ const activityData = [
 
 export default function DashboardPage() {
     const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(true);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      const timer = setTimeout(() => setLoading(false), 1500);
+      return () => clearTimeout(timer);
+    }, []);
+
   return (
     <div className="space-y-6">
         <DemoWalkthrough open={isWalkthroughOpen} onOpenChange={setIsWalkthroughOpen} />
@@ -58,21 +66,36 @@ export default function DashboardPage() {
       
       {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        {kpiData.map((kpi) => (
-          <Card key={kpi.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
-              {kpi.icon}
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-primary">{kpi.value}</div>
-              <p className="text-xs text-muted-foreground flex items-center">
-                <ArrowUp className="h-3 w-3 mr-1 text-green-500" />
-                {kpi.trend}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
+        {loading ? (
+          Array.from({ length: 6 }).map((_, index) => (
+            <Card key={index}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-6 w-6 rounded-full" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-7 w-1/3 mb-1" />
+                <Skeleton className="h-3 w-1/2" />
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          kpiData.map((kpi) => (
+            <Card key={kpi.title}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
+                {kpi.icon}
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-primary">{kpi.value}</div>
+                <p className="text-xs text-muted-foreground flex items-center">
+                  <ArrowUp className="h-3 w-3 mr-1 text-green-500" />
+                  {kpi.trend}
+                </p>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -84,7 +107,7 @@ export default function DashboardPage() {
                 <CardTitle>Weekly Outreach</CardTitle>
               </CardHeader>
               <CardContent>
-                <DashboardChart chartType="bar" />
+                {loading ? <Skeleton className="h-[200px] w-full" /> : <DashboardChart chartType="bar" />}
               </CardContent>
             </Card>
             <Card>
@@ -92,7 +115,7 @@ export default function DashboardPage() {
                 <CardTitle>Open vs. Reply Rate</CardTitle>
               </CardHeader>
               <CardContent>
-                <DashboardChart chartType="line" />
+                {loading ? <Skeleton className="h-[200px] w-full" /> : <DashboardChart chartType="line" />}
               </CardContent>
             </Card>
           </div>
@@ -101,7 +124,7 @@ export default function DashboardPage() {
               <CardTitle>Conversion Funnel</CardTitle>
             </CardHeader>
             <CardContent className="flex justify-center">
-              <DashboardChart chartType="funnel" />
+              {loading ? <Skeleton className="h-[250px] w-full max-w-lg" /> : <DashboardChart chartType="funnel" />}
             </CardContent>
           </Card>
         </div>
@@ -129,6 +152,14 @@ export default function DashboardPage() {
                 <CardTitle>Today's Activity</CardTitle>
                 </CardHeader>
                 <CardContent>
+                {loading ? (
+                    <div className="space-y-2">
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+                ) : (
                 <Table>
                     <TableHeader>
                     <TableRow>
@@ -150,7 +181,7 @@ export default function DashboardPage() {
                                 : item.status === 'Positive' ? 'default'
                                 : 'outline'
                             }
-                            className={item.status === 'Positive' ? 'bg-green-100 text-green-800' : ''}
+                            className={item.status === 'Positive' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : ''}
                             >
                             {item.status}
                             </Badge>
@@ -159,6 +190,7 @@ export default function DashboardPage() {
                     ))}
                     </TableBody>
                 </Table>
+                )}
                 </CardContent>
             </Card>
         </div>
