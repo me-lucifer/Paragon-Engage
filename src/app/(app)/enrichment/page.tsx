@@ -1,4 +1,5 @@
 
+'use client';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -26,6 +27,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, ChevronRight, FileDown, HelpCircle, Rocket, ShieldCheck, Target } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useEffect, useState } from 'react';
 
 const enrichmentRules = {
   emailDiscovery: ['Hunter', 'Apollo', 'Clearbit'],
@@ -38,15 +40,24 @@ function getDaysAgo(maxDays: number): string {
     return `${days}d ago`;
 }
 
-const sampleResults = [
-  { name: 'Sarah Chen', email: 's.chen@precision...com', confidence: 95, source: 'Apollo', lastSeen: getDaysAgo(90) },
-  { name: 'David Lee', email: 'david.l@keystone...com', confidence: 88, source: 'Hunter', lastSeen: getDaysAgo(90) },
-  { name: 'Kevin Brown', email: 'kevin@secureit...com', confidence: 99, source: 'Clearbit', lastSeen: getDaysAgo(90) },
-  { name: 'Dr. A. Williams', email: 'dr.williams@bright...com', confidence: 92, source: 'Apollo', lastSeen: getDaysAgo(90) },
-  { name: 'Lukas Weber', email: 'lukas@eurobalance...de', confidence: 78, source: 'Hunter', lastSeen: getDaysAgo(90) },
+const initialSampleResults = [
+  { name: 'Sarah Chen', email: 's.chen@precision...com', confidence: 95, source: 'Apollo', lastSeen: '' },
+  { name: 'David Lee', email: 'david.l@keystone...com', confidence: 88, source: 'Hunter', lastSeen: '' },
+  { name: 'Kevin Brown', email: 'kevin@secureit...com', confidence: 99, source: 'Clearbit', lastSeen: '' },
+  { name: 'Dr. A. Williams', email: 'dr.williams@bright...com', confidence: 92, source: 'Apollo', lastSeen: '' },
+  { name: 'Lukas Weber', email: 'lukas@eurobalance...de', confidence: 78, source: 'Hunter', lastSeen: '' },
 ];
 
 export default function EnrichmentPage() {
+    const [sampleResults, setSampleResults] = useState(initialSampleResults);
+
+    useEffect(() => {
+        setSampleResults(initialSampleResults.map(result => ({
+            ...result,
+            lastSeen: getDaysAgo(90)
+        })));
+    }, []);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
