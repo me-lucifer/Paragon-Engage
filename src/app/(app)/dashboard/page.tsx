@@ -1,4 +1,6 @@
 
+'use client';
+
 import {
   Card,
   CardContent,
@@ -17,8 +19,10 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { ArrowUp, Briefcase, Target, Heart, MessageCircle, Calendar, Bot, CheckCircle, Mail } from 'lucide-react';
+import { ArrowUp, Briefcase, Target, Heart, MessageCircle, Calendar, Bot, CheckCircle, Mail, PlayCircle } from 'lucide-react';
 import DashboardChart from '@/components/dashboard-chart';
+import { DemoWalkthrough } from '@/components/demo-walkthrough';
+import { useState } from 'react';
 
 const kpiData = [
   { title: 'Mapped Companies', value: '52,840', trend: '+12.5%', icon: <Briefcase className="text-primary" /> },
@@ -38,11 +42,19 @@ const activityData = [
 ];
 
 export default function DashboardPage() {
+    const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(true);
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
-        Dashboard
-      </h1>
+        <DemoWalkthrough open={isWalkthroughOpen} onOpenChange={setIsWalkthroughOpen} />
+       <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+                Dashboard
+            </h1>
+            <Button variant="outline" onClick={() => setIsWalkthroughOpen(true)}>
+                <PlayCircle className="mr-2 h-4 w-4" />
+                Start Tour
+            </Button>
+       </div>
       
       {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
