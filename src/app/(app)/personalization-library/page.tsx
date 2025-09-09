@@ -23,6 +23,7 @@ import {
   ClipboardList,
   BookCopy,
   CalendarPlus,
+  Share2,
 } from 'lucide-react';
 import {
   Tabs,
@@ -45,6 +46,7 @@ const personalizationData = {
     { token: '{{strategy}}', description: 'Company\'s investment strategy' },
     { token: '{{ticker}}', description: 'Company\'s stock ticker' },
     { token: '{{calendar_link}}', description: 'Your scheduling link' },
+    { token: '{{referral_link}}', description: 'Your unique referral link' },
   ],
   segments: [
     {
@@ -216,73 +218,32 @@ const personalizationData = {
       ],
     },
     {
-      id: 'accounting',
-      name: 'Accounting (CPAs)',
-      icon: <Library className="h-5 w-5" />,
+      id: 'referral-hub',
+      name: 'Referral Hub Email Snippets',
+      icon: <Share2 className="h-5 w-5" />,
       templates: [
         {
-          id: 'intro',
-          name: 'Cold Intro',
+          id: 'referral-ask-v1',
+          name: 'Referral ask v1',
           variants: [
-            { id: 'v1', content: `Hi {{first_name}},\n\nReaching out because we help accounting firms like {{company}} streamline their client onboarding. Thought you might be interested.\n\nOpen to a brief chat next week?` },
-            { id: 'v2', content: `{{first_name}} - Your firm {{company}} stands out. We have a unique approach to {{fit_reason}} for CPAs.\n\nWorth a look?` },
+            { id: 'v1', subject: 'Quick ask — introduce us?', content: `We just launched a small referral workflow. If you know one team that would benefit, this link credits you for any meeting: {{referral_link}}. We report back on outcomes.` },
           ],
         },
         {
-          id: 'tax-season',
-          name: 'Tax Season Angle',
+          id: 'referral-nudge-v1',
+          name: 'Referral nudge v1',
           variants: [
-            { id: 'v1', content: `Hi {{first_name}},\n\nAs tax season approaches, I imagine efficiency is top of mind at {{company}}. Our platform helps with {{fit_reason}}.\n\nCould this be relevant for you?` },
-            { id: 'v2', content: `{{first_name}}, hope you're surviving the pre-tax season rush. We're helping CPAs like you with {{fit_reason}} to make things easier.\n\nQuick call to discuss?` },
-          ],
-        },
-      ],
-    },
-    {
-      id: 'it-msp',
-      name: 'IT MSPs',
-      icon: <Library className="h-5 w-5" />,
-      templates: [
-        {
-          id: 'security',
-          name: 'Security Angle',
-          variants: [
-            { id: 'v1', content: `Hi {{first_name}},\n\nWith cyber threats on the rise, I thought our work in {{fit_reason}} for MSPs might be relevant to {{company}}.\n\nLet me know if you're open to learning more.` },
-            { id: 'v2', content: `{{first_name}}, respecting your time. The latest on {{mutual_topic}} prompted my outreach.\n\nWe specialize in {{fit_reason}} for MSPs like {{company}}. Is this a priority?` },
+            { id: 'v1', subject: 'Gentle reminder on referral link', content: `Sharing the same link in case it helps: {{referral_link}}. We can also draft a short forwardable note if useful.` },
           ],
         },
         {
-          id: 'efficiency',
-          name: 'Operational Efficiency',
+          id: 'forwardable-note',
+          name: 'Forwardable note',
           variants: [
-            { id: 'v1', content: `Hi {{first_name}},\n\nI know how critical operational efficiency is for MSPs. We help firms like {{company}} improve margins with {{fit_reason}}.\n\nInterested in seeing how?` },
-            { id: 'v2', content: `{{first_name}}, boosting tech productivity and reducing ticket volume is key. We help with {{fit_reason}}.\n\nWorth exploring?` },
+            { id: 'v1', subject: 'Intro suggestion', content: `I thought of you for this. We use a light AI layer to map and contact targets, then route only warm replies. If helpful, they can share a 10-minute demo. Link: {{referral_link}}.` },
           ],
         },
-      ],
-    },
-    {
-      id: 'dental',
-      name: 'Dental Clinics',
-      icon: <Library className="h-5 w-5" />,
-      templates: [
-        {
-          id: 'patient-booking',
-          name: 'Patient Booking',
-          variants: [
-            { id: 'v1', content: `Hi Dr. {{first_name}},\n\nKeeping the schedule full at {{company}} is crucial. Our platform helps dental clinics with {{fit_reason}} to attract more patients.\n\nWould be great to connect.` },
-            { id: 'v2', content: `Dr. {{first_name}}, we're helping practices like yours in the {{industry}} space improve their patient acquisition via {{fit_reason}}.\n\nLet's chat.` },
-          ],
-        },
-        {
-          id: 'clinic-management',
-          name: 'Clinic Management',
-          variants: [
-            { id: 'v1', content: `Hi Dr. {{first_name}},\n\nBetter data, better clinic management. We arm practices like yours at {{company}} with insights for {{fit_reason}}.\n\nCan I show you how it works?` },
-            { id: 'v2', content: `Dr. {{first_name}}, running an effective practice is a competitive advantage. We provide the tools for {{fit_reason}} to make that happen.\n\nOpen to a quick demo?` },
-          ],
-        },
-      ],
+      ]
     },
     {
       id: 'scheduling-handoff',
