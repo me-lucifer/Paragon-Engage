@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -21,7 +21,8 @@ import {
   Library,
   ChevronRight,
   ClipboardList,
-  BookCopy
+  BookCopy,
+  CalendarPlus,
 } from 'lucide-react';
 import {
   Tabs,
@@ -43,6 +44,7 @@ const personalizationData = {
     { token: '{{aum_band}}', description: 'Assets Under Management band' },
     { token: '{{strategy}}', description: 'Company\'s investment strategy' },
     { token: '{{ticker}}', description: 'Company\'s stock ticker' },
+    { token: '{{calendar_link}}', description: 'Your scheduling link' },
   ],
   segments: [
     {
@@ -278,6 +280,20 @@ const personalizationData = {
           variants: [
             { id: 'v1', content: `Hi Dr. {{first_name}},\n\nBetter data, better clinic management. We arm practices like yours at {{company}} with insights for {{fit_reason}}.\n\nCan I show you how it works?` },
             { id: 'v2', content: `Dr. {{first_name}}, running an effective practice is a competitive advantage. We provide the tools for {{fit_reason}} to make that happen.\n\nOpen to a quick demo?` },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'scheduling-handoff',
+      name: 'Scheduling Hand-off',
+      icon: <CalendarPlus className="h-5 w-5" />,
+      templates: [
+        {
+          id: 'calendar-link',
+          name: 'Calendar link',
+          variants: [
+            { id: 'v1', content: 'Here is a short calendar link for a focused 15-minute session: {{calendar_link}}. If easier, reply with two times that work and we will confirm.' },
           ],
         },
       ],

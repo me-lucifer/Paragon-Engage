@@ -40,6 +40,7 @@ import {
   Ban,
   MoveRight,
   ShieldAlert,
+  CalendarCheck,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
@@ -49,6 +50,31 @@ const sequenceSteps = [
     title: 'Step 1: Cold Intro Email',
     icon: <Mail className="h-5 w-5 text-primary" />,
     details: 'Template: "PE Intro v1"',
+  },
+  {
+    type: 'branch',
+    title: 'Branch: On Positive Reply',
+    icon: <GitBranch className="h-5 w-5 text-purple-500" />,
+    branches: [
+      {
+        status: 'Positive Intent Detected',
+        icon: <ThumbsUp className="h-4 w-4 text-green-500" />,
+        nested: [
+          {
+            type: 'email',
+            title: 'Auto-reply with scheduling link',
+            icon: <CalendarCheck className="h-5 w-5 text-primary" />,
+            details: 'Snippet: "Calendar link"',
+          },
+          {
+            type: 'action',
+            title: 'Move to Triage: Convert to Meeting',
+            icon: <MoveRight className="h-5 w-5 text-gray-500" />,
+            details: 'Tag: "PE positive"',
+          },
+        ],
+      },
+    ],
   },
   {
     type: 'wait',
