@@ -157,6 +157,62 @@ const personalizationData = {
       ],
     },
     {
+      id: 'pe-firms',
+      name: 'Private Equity Firms',
+      icon: <Library className="h-5 w-5" />,
+      templates: [
+        {
+          id: 'pe-intro-v1',
+          name: 'PE Intro v1',
+          variants: [
+            { id: 'v1', subject: 'More qualified founder replies for add-ons', content: `Hi {{first_name}},\n\nFor {{company}}’s platform in {{industry}}, we map operators below a set FTE, score for fit, and run outreach that surfaces owners willing to discuss a sale. You get reply-ready leads, not lists.\n\nOpen to a 12-minute look?` },
+          ],
+        },
+        {
+          id: 'pe-intro-v2',
+          name: 'PE Intro v2 (education affinity)',
+          variants: [
+            { id: 'v1', subject: 'Fast path to founder conversations', content: `Hi {{first_name}}, noticed the {{education_affinity}} overlap. We’ve been helping funds queue add-on dialogs by filtering for founder age proxies, ownership concentration, and niche match. See a sample?` },
+          ],
+        },
+        {
+          id: 'pe-follow-up-v1',
+          name: 'PE Follow-up v1',
+          variants: [
+            { id: 'v1', subject: 'Re: add-on pipeline for {{company}}', content: `We can start with one sub-vertical and a conservative scoring profile. Two-week pilot, clear success criteria. Interest?` },
+          ],
+        },
+        {
+          id: 'pe-bump-v1',
+          name: 'PE Bump v1',
+          variants: [
+            { id: 'v1', subject: 'Quick nudge', content: `Happy to send 5 anonymized founder replies from a recent pilot so you can judge tone/quality. Share?` },
+          ],
+        },
+        {
+          id: 'pe-breakup-v1',
+          name: 'PE Breakup v1',
+          variants: [
+            { id: 'v1', subject: 'Close out?', content: `I’ll pause outreach on my side. If priorities shift, reply “go” and I’ll send a scoped pilot plan.` },
+          ],
+        },
+        {
+          id: 'pe-objection-sourcing',
+          name: 'PE Objection: already have sourcing team',
+          variants: [
+            { id: 'v1', subject: 'Augment, not replace', content: `Agreed. We act as an always-on layer that filters and warms up owners, then hands to your team. Your rubric drives the scoring. Explore a low-lift pilot?` },
+          ],
+        },
+        {
+          id: 'pe-positive-reply',
+          name: 'PE Positive-reply handoff',
+          variants: [
+            { id: 'v1', subject: 'Next step on pilot', content: `Thanks. I’ll propose a 2-week pilot brief with volume caps, scoring thresholds, and reporting. Any portfolio ops contact to include?` },
+          ],
+        },
+      ],
+    },
+    {
       id: 'accounting',
       name: 'Accounting (CPAs)',
       icon: <Library className="h-5 w-5" />,
