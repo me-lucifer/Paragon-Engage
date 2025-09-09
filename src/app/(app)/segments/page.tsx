@@ -1,4 +1,5 @@
 
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -10,9 +11,11 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Users, Building, Briefcase } from 'lucide-react';
+import Link from 'next/link';
 
 const segmentsData = [
   {
+    id: 'accounting-cpas',
     name: 'Accounting (CPAs)',
     count: '60,210',
     icon: <Users className="h-8 w-8 text-primary" />,
@@ -23,6 +26,7 @@ const segmentsData = [
     ],
   },
   {
+    id: 'it-msps',
     name: 'IT MSPs',
     count: '45,800',
     icon: <Building className="h-8 w-8 text-primary" />,
@@ -33,6 +37,7 @@ const segmentsData = [
     ],
   },
   {
+    id: 'dental-clinics',
     name: 'Dental Clinics',
     count: '78,150',
     icon: <Briefcase className="h-8 w-8 text-primary" />,
@@ -84,9 +89,11 @@ export default function SegmentsPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button>
-                Send to Campaign Studio <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+               <Link href={`/campaign-studio?fromSegment=${segment.id}`} className="w-full">
+                <Button className="w-full">
+                    Send to Campaign Studio <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </CardFooter>
           </Card>
         ))}
