@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -43,7 +44,7 @@ const navItems = [
   { href: '/campaign-studio', icon: PenSquare, label: 'Campaign Studio' },
   { href: '/inbox-manager', icon: Inbox, label: 'Inbox Manager' },
   { href: '/deliverability', icon: MailCheck, label: 'Deliverability' },
-  { href: '/lead-triage', icon: Filter, label: 'Lead Triage' },
+  { href: '/leads', icon: Filter, label: 'Lead Triage' },
   { href: '/dnc-suppression', icon: Ban, label: 'DNC / Suppression' },
   { href: '/referral-hub', icon: Share2, label: 'Referral Hub' },
   { href: '/reports', icon: BarChart3, label: 'Reports' },
