@@ -1,5 +1,6 @@
 import { Header } from "@/components/layout/header";
 import { SideNav } from "@/components/layout/sidenav";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { SidebarProvider, Sidebar, SidebarInset } from "@/components/ui/sidebar";
 import { RoleProvider } from "@/hooks/use-role";
 
@@ -21,7 +22,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarInset>
           <Header />
           <main className="flex-1 p-4 md:p-6 lg:p-8 bg-background">
-            {children}
+            <Breadcrumbs />
+            <div className="mt-4">{children}</div>
           </main>
           <Footer />
         </SidebarInset>

@@ -39,7 +39,7 @@ import React, { useState, useEffect } from 'react';
 import { useRole } from '@/hooks/use-role';
 import { cn } from '@/lib/utils';
 
-const allNavGroups = [
+export const allNavGroups = [
   {
     title: 'HOME',
     roles: ['operator', 'analyst', 'admin'],
