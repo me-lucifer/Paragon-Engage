@@ -20,7 +20,8 @@ import {
   PlusCircle,
   Library,
   ChevronRight,
-  ClipboardList
+  ClipboardList,
+  BookCopy
 } from 'lucide-react';
 import {
   Tabs,
@@ -281,6 +282,41 @@ const personalizationData = {
         },
       ],
     },
+    {
+      id: 'snippets-library',
+      name: 'Snippets Library',
+      icon: <BookCopy className="h-5 w-5" />,
+      templates: [
+        {
+          id: 'education-hook',
+          name: 'Education hook',
+          variants: [
+            { id: 'v1', content: `Noticed your {{education_affinity}} background. We can weave that into the opener where relevant to increase reply probability.` },
+          ],
+        },
+        {
+          id: 'recent-news-hook',
+          name: 'Recent news hook',
+          variants: [
+            { id: 'v1', content: `Saw {{recent_news}}. We can reference this contextually in the first line and keep the CTA to a single yes/no.` },
+          ],
+        },
+        {
+          id: 'fit-reason-explainer',
+          name: 'Fit reason explainer',
+          variants: [
+            { id: 'v1', content: `We flagged {{company}} due to {{fit_reason}} (FTE band, ownership concentration, niche). That typically correlates with higher reply quality.` },
+          ],
+        },
+        {
+          id: 'compliance-footer',
+          name: 'Compliance footer',
+          variants: [
+            { id: 'v1', content: `You received this because your address is publicly listed for business outreach. Unsubscribe via the link below and we will not contact you again.` },
+          ],
+        },
+      ],
+    },
   ],
 };
 
@@ -306,7 +342,7 @@ export default function PersonalizationLibraryPage() {
         <div className="lg:col-span-3 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Segment Folders</CardTitle>
+              <CardTitle>Content Folders</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {personalizationData.segments.map(segment => (
@@ -316,7 +352,7 @@ export default function PersonalizationLibraryPage() {
                   className="w-full justify-start"
                   onClick={() => setActiveSegment(segment.id)}
                 >
-                  <Folder className="mr-2 h-4 w-4" />
+                  {segment.icon? React.cloneElement(segment.icon, {className: 'mr-2 h-4 w-4'}) : <Folder className="mr-2 h-4 w-4" /> }
                   {segment.name}
                    <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
                 </Button>
@@ -344,7 +380,7 @@ export default function PersonalizationLibraryPage() {
         <div className="lg:col-span-9 space-y-6">
              <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold tracking-tight">
-                    {selectedSegment?.name} Templates
+                    {selectedSegment?.name}
                 </h2>
                 <Button>
                     <PlusCircle className="mr-2 h-4 w-4" /> New Template
@@ -358,13 +394,15 @@ export default function PersonalizationLibraryPage() {
                                 <CardTitle>{template.name}</CardTitle>
                                 {template.variants[0].subject && <CardDescription className="pt-1">{template.variants[0].subject}</CardDescription>}
                              </div>
-                             <TabsList>
-                                {template.variants.map(variant => (
-                                    <TabsTrigger key={variant.id} value={variant.id}>
-                                        {variant.id.toUpperCase()}
-                                    </TabsTrigger>
-                                ))}
-                            </TabsList>
+                             {template.variants.length > 1 &&
+                                <TabsList>
+                                    {template.variants.map(variant => (
+                                        <TabsTrigger key={variant.id} value={variant.id}>
+                                            {variant.id.toUpperCase()}
+                                        </TabsTrigger>
+                                    ))}
+                                </TabsList>
+                             }
                         </CardHeader>
                         <CardContent>
                             {template.variants.map(variant => (
@@ -388,3 +426,5 @@ export default function PersonalizationLibraryPage() {
     </div>
   );
 }
+
+    
