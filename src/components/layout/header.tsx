@@ -34,6 +34,7 @@ import React, { useState } from 'react';
 import { useRole } from '@/hooks/use-role';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const searchResults = [
   { 
@@ -75,40 +76,40 @@ export function Header() {
       <SidebarTrigger className="md:hidden" />
       
       <div className="flex w-full items-center gap-4 md:gap-2 lg:gap-4">
-        <div className="relative flex-1">
-           <Command className="overflow-visible bg-transparent">
-             <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <CommandInput
-                    placeholder="Search companies, contacts, campaigns…"
-                    className="pl-10 h-10"
-                    onFocus={() => setOpen(true)}
-                    onBlur={() => setOpen(false)}
-                />
-             </div>
-             {open && (
-             <div className="absolute top-full mt-2 w-full rounded-md border bg-popover text-popover-foreground shadow-md z-50">
-                <CommandList>
-                    <CommandEmpty>No results found.</CommandEmpty>
-                    {searchResults.map((group) => (
-                        <CommandGroup key={group.group} heading={group.group}>
-                            {group.items.map((item) => (
-                                <CommandItem key={item.name} onMouseDown={() => handleSelect(item.route)} className="cursor-pointer">
-                                    <File className="mr-2 h-4 w-4" />
-                                    <span>{item.name}</span>
-                                </CommandItem>
-                            ))}
-                        </CommandGroup>
+        <div className="flex-1 md:flex-none md:w-auto">
+          <Command className="overflow-visible bg-transparent">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <CommandInput
+                placeholder="Search companies, contacts, campaigns…"
+                className="pl-10 h-10 w-full md:w-[300px] lg:w-[400px]"
+                onFocus={() => setOpen(true)}
+                onBlur={() => setOpen(false)}
+              />
+            </div>
+            {open && (
+            <div className="absolute top-full mt-2 w-full md:w-[300px] lg:w-[400px] rounded-md border bg-popover text-popover-foreground shadow-md z-50">
+              <CommandList>
+                <CommandEmpty>No results found.</CommandEmpty>
+                {searchResults.map((group) => (
+                  <CommandGroup key={group.group} heading={group.group}>
+                    {group.items.map((item) => (
+                      <CommandItem key={item.name} onMouseDown={() => handleSelect(item.route)} className="cursor-pointer">
+                        <File className="mr-2 h-4 w-4" />
+                        <span>{item.name}</span>
+                      </CommandItem>
                     ))}
-                </CommandList>
-             </div>
+                  </CommandGroup>
+                ))}
+              </CommandList>
+            </div>
             )}
-           </Command>
+          </Command>
         </div>
-        <div className="ml-auto flex items-center gap-4">
-          <DropdownMenu>
+        <div className="ml-auto flex items-center gap-2">
+           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-40 justify-between">
+              <Button variant="outline" className="w-full sm:w-40 justify-between">
                 <span>
                   {role.charAt(0).toUpperCase() +
                     role.slice(1).replace('-', ' ')}
@@ -130,12 +131,11 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button variant="outline">Paragon Intel</Button>
-
           <Button variant="ghost" size="icon" className="rounded-full">
             <Bell className="h-5 w-5" />
             <span className="sr-only">Toggle notifications</span>
           </Button>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full">
@@ -167,6 +167,7 @@ export function Header() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
           <Button>
             New Campaign
           </Button>
