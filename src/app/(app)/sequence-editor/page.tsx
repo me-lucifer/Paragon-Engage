@@ -39,6 +39,7 @@ import {
   Inbox,
   Ban,
   MoveRight,
+  ShieldAlert,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
@@ -47,11 +48,11 @@ const sequenceSteps = [
     type: 'email',
     title: 'Step 1: Cold Intro Email',
     icon: <Mail className="h-5 w-5 text-primary" />,
-    details: 'Template: "HF-AM Intro v1"',
+    details: 'Template: "Boards/IR Intro v1"',
   },
   {
     type: 'wait',
-    title: 'Wait 2 Business Days',
+    title: 'Wait 3 Business Days',
     icon: <Timer className="h-5 w-5 text-gray-500" />,
     details: 'Excludes weekends',
   },
@@ -59,32 +60,71 @@ const sequenceSteps = [
     type: 'email',
     title: 'Step 2: Follow-up Email',
     icon: <Mail className="h-5 w-5 text-primary" />,
-    details: 'Template: "HF-AM Follow-up v1"',
+    details: 'Template: "Boards/IR Follow-up v1"',
+  },
+  {
+    type: 'branch',
+    title: 'Branch: On Reply',
+    icon: <GitBranch className="h-5 w-5 text-purple-500" />,
+    branches: [
+      {
+        status: 'Compliance Keyword Detected',
+        icon: <ShieldAlert className="h-4 w-4 text-red-500" />,
+        nested: [
+          {
+            type: 'action',
+            title: 'Auto-Suppress Domain',
+            icon: <Ban className="h-5 w-5 text-red-500" />,
+            details: 'Reason: Unsubscribe/Remove keyword',
+          },
+           {
+            type: 'email',
+            title: 'Confirm Suppression',
+            icon: <Mail className="h-5 w-5 text-primary" />,
+            details: 'Snippet: "Compliance footer"',
+          },
+        ],
+      },
+    ],
   },
   {
     type: 'branch',
     title: 'Branch: If Opened but No Reply',
     icon: <GitBranch className="h-5 w-5 text-purple-500" />,
     branches: [
-      { 
-        status: 'Wait 3 Days', 
-        icon: <Timer className="h-4 w-4 text-gray-500" />, 
+      {
+        status: 'Wait 2 Days',
+        icon: <Timer className="h-4 w-4 text-gray-500" />,
         nested: [
-          { type: 'email', title: 'Step 3: Quick Bump', icon: <Mail className="h-5 w-5 text-primary" />, details: 'Template: "HF-AM Bump v1"' },
-          { type: 'branch', title: 'Branch: If No Engagement', icon: <GitBranch className="h-5 w-5 text-purple-500" />, branches: [{ status: 'No Response', icon: <Clock className="h-4 w-4 text-gray-500" />, nested: [{type: 'email', title: 'Step 4: Breakup Email', icon: <Mail className="h-5 w-5 text-primary" />, details: 'Template: "HF-AM Breakup v1"'}] }] }
-        ]
+          {
+            type: 'email',
+            title: 'Step 3: Quick Bump',
+            icon: <Mail className="h-5 w-5 text-primary" />,
+            details: 'Template: "Boards/IR Bump v1"',
+          },
+        ],
       },
     ],
   },
   {
     type: 'branch',
-    title: 'Branch: If Replied',
+    title: 'Branch: If No Engagement After Bump',
     icon: <GitBranch className="h-5 w-5 text-purple-500" />,
     branches: [
-      { status: 'Positive', icon: <ThumbsUp className="h-4 w-4 text-green-500" />, nested: [{ type: 'action', title: 'Move to Lead Triage', icon: <MoveRight className="h-5 w-5 text-blue-500" />, details: 'Tag: "HF-AM positive"' }] },
-      { status: 'Negative', icon: <ThumbsDown className="h-4 w-4 text-red-500" />, nested: [{ type: 'action', title: 'Auto-apply DNC', icon: <Ban className="h-5 w-5 text-red-500" />, details: 'Close thread' }] },
+      {
+        status: 'No Response',
+        icon: <Clock className="h-4 w-4 text-gray-500" />,
+        nested: [
+          {
+            type: 'email',
+            title: 'Step 4: Breakup Email',
+            icon: <Mail className="h-5 w-5 text-primary" />,
+            details: 'Template: "Boards/IR Breakup v1"',
+          },
+        ],
+      },
     ],
-  }
+  },
 ];
 
 export default function SequenceEditorPage() {
@@ -114,7 +154,7 @@ export default function SequenceEditorPage() {
         <div className="lg:col-span-2 space-y-4">
           <Card>
             <CardHeader>
-                <CardTitle>Sequence: "HF/AM – Balanced"</CardTitle>
+                <CardTitle>Sequence: "Boards/IR – Conservative"</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
                 {sequenceSteps.map((step, index) => (
