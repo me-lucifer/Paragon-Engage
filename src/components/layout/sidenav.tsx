@@ -17,6 +17,7 @@ import {
   BarChart3,
   Flame,
 } from 'lucide-react';
+import React from 'react';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -31,7 +32,7 @@ export function SideNav() {
 
   return (
     <div className="flex h-full flex-col">
-      <SidebarHeader className="border-b">
+      <SidebarHeader className="border-b md:hidden">
         <div className="flex items-center gap-2 p-2">
           <Flame className="h-8 w-8 text-accent" />
           <h1 className="text-xl font-semibold">Paragon Engage</h1>
