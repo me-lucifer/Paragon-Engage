@@ -1,4 +1,5 @@
 
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -47,41 +48,41 @@ import {
 } from "@/components/ui/tabs"
 
 const companies = [
-  // Accounting (CPAs) - 20 samples
+  // Accounting (CPAs)
   { name: 'Precision Accounts', domain: 'precisionaccounts.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Sarah Chen', signals: 3, confidence: 95, status: 'Mapped' },
   { name: 'Keystone CPA', domain: 'keystonecpa.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'David Lee', signals: 2, confidence: 91, status: 'Mapped' },
-  { name: 'Summit Tax', domain: 'summittax.ca', industry: 'Accounting', hqRegion: 'CA', fteBand: '5-50', owner: 'Emily White', signals: 4, confidence: 96, status: 'In Progress' },
-  { name: 'EuroBalance', domain: 'eurobalance.de', industry: 'Accounting', hqRegion: 'EU', fteBand: '5-50', owner: 'Lukas Weber', signals: 5, confidence: 88, status: 'Mapped' },
-  { name: 'Veritas Financials', domain: 'veritasfinancials.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Maria Garcia', signals: 3, confidence: 94, status: 'To Do' },
-  { name: 'Maple Leaf Tax', domain: 'mapleleaftax.ca', industry: 'Accounting', hqRegion: 'CA', fteBand: '5-50', owner: 'Johnathan Tremblay', signals: 2, confidence: 90, status: 'Mapped' },
-  { name: 'Apex Audit', domain: 'apexaudit.co.uk', industry: 'Accounting', hqRegion: 'EU', fteBand: '5-50', owner: 'James Smith', signals: 6, confidence: 97, status: 'Mapped' },
-  { name: 'Golden Gate CPA', domain: 'goldengatecpa.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Michael Johnson', signals: 4, confidence: 93, status: 'In Progress' },
-  { name: 'Pacific Coast Tax', domain: 'pacificcoasttax.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Olivia Kim', signals: 3, confidence: 92, status: 'Mapped' },
-  { name: 'Alpha Omega Advisors', domain: 'ao-advisors.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Ben Carter', signals: 5, confidence: 95, status: 'Mapped' },
+  { name: 'Summit Tax', domain: 'summittax.ca', industry: 'Accounting', hqRegion: 'CA', fteBand: '5-50', owner: 'Emily White', signals: 4, confidence: 75, status: 'In Progress' },
+  { name: 'EuroBalance', domain: 'eurobalance.de', industry: 'Accounting', hqRegion: 'EU', fteBand: '5-50', owner: 'Lukas Weber', signals: 5, confidence: 72, status: 'Mapped' },
+  { name: 'Veritas Financials', domain: 'veritasfinancials.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Maria Garcia', signals: 3, confidence: 85, status: 'To Do' },
+  { name: 'Maple Leaf Tax', domain: 'mapleleaftax.ca', industry: 'Accounting', hqRegion: 'CA', fteBand: '5-50', owner: 'Johnathan Tremblay', signals: 2, confidence: 68, status: 'Mapped' },
+  { name: 'Apex Audit', domain: 'apexaudit.co.uk', industry: 'Accounting', hqRegion: 'EU', fteBand: '5-50', owner: 'James Smith', signals: 6, confidence: 64, status: 'Mapped' },
+  { name: 'Golden Gate CPA', domain: 'goldengatecpa.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Michael Johnson', signals: 4, confidence: 58, status: 'In Progress' },
+  { name: 'Pacific Coast Tax', domain: 'pacificcoasttax.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Olivia Kim', signals: 3, confidence: 55, status: 'Mapped' },
+  { name: 'Alpha Omega Advisors', domain: 'ao-advisors.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Ben Carter', signals: 5, confidence: 49, status: 'Mapped' },
 
-  // IT MSPs - 20 samples
+  // IT MSPs
   { name: 'Secure IT Solutions', domain: 'secureitsolutions.com', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Kevin Brown', signals: 6, confidence: 98, status: 'Mapped' },
-  { name: 'Proactive Tech', domain: 'proactivetech.net', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Rachel Green', signals: 4, confidence: 92, status: 'In Progress' },
-  { name: 'Canuck IT', domain: 'canuckit.ca', industry: 'IT MSP', hqRegion: 'CA', fteBand: '5-50', owner: 'Sophie Martin', signals: 3, confidence: 89, status: 'To Do' },
-  { name: 'Berlin IT Services', domain: 'berlin-it.de', industry: 'IT MSP', hqRegion: 'EU', fteBand: '5-50', owner: 'Max Muller', signals: 5, confidence: 94, status: 'Mapped' },
-  { name: 'Cloud Cover MSP', domain: 'cloudcovermsp.com', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Daniel Rodriguez', signals: 7, confidence: 99, status: 'Mapped' },
-  { name: 'VanCity Tech', domain: 'vancitytech.ca', industry: 'IT MSP', hqRegion: 'CA', fteBand: '5-50', owner: 'Liam Campbell', signals: 4, confidence: 91, status: 'Mapped' },
-  { name: 'London Tech Support', domain: 'londontech.co.uk', industry: 'IT MSP', hqRegion: 'EU', fteBand: '5-50', owner: 'Oliver Taylor', signals: 6, confidence: 96, status: 'In Progress' },
-  { name: 'Cybernetic Protections', domain: 'cyberneticprotections.com', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Jessica Miller', signals: 8, confidence: 97, status: 'Mapped' },
-  { name: 'First Call IT', domain: 'firstcallit.com', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Chris Wilson', signals: 5, confidence: 93, status: 'To Do' },
-  { name: 'InfraNorth', domain: 'infranorth.ca', industry: 'IT MSP', hqRegion: 'CA', fteBand: '5-50', owner: 'Chloe Roy', signals: 3, confidence: 88, status: 'Mapped' },
+  { name: 'Proactive Tech', domain: 'proactivetech.net', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Rachel Green', signals: 4, confidence: 87, status: 'In Progress' },
+  { name: 'Canuck IT', domain: 'canuckit.ca', industry: 'IT MSP', hqRegion: 'CA', fteBand: '5-50', owner: 'Sophie Martin', signals: 3, confidence: 80, status: 'To Do' },
+  { name: 'Berlin IT Services', domain: 'berlin-it.de', industry: 'IT MSP', hqRegion: 'EU', fteBand: '5-50', owner: 'Max Muller', signals: 5, confidence: 78, status: 'Mapped' },
+  { name: 'Cloud Cover MSP', domain: 'cloudcovermsp.com', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Daniel Rodriguez', signals: 7, confidence: 92, status: 'Mapped' },
+  { name: 'VanCity Tech', domain: 'vancitytech.ca', industry: 'IT MSP', hqRegion: 'CA', fteBand: '5-50', owner: 'Liam Campbell', signals: 4, confidence: 71, status: 'Mapped' },
+  { name: 'London Tech Support', domain: 'londontech.co.uk', industry: 'IT MSP', hqRegion: 'EU', fteBand: '5-50', owner: 'Oliver Taylor', signals: 6, confidence: 66, status: 'In Progress' },
+  { name: 'Cybernetic Protections', domain: 'cyberneticprotections.com', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Jessica Miller', signals: 8, confidence: 62, status: 'Mapped' },
+  { name: 'First Call IT', domain: 'firstcallit.com', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Chris Wilson', signals: 5, confidence: 56, status: 'To Do' },
+  { name: 'InfraNorth', domain: 'infranorth.ca', industry: 'IT MSP', hqRegion: 'CA', fteBand: '5-50', owner: 'Chloe Roy', signals: 3, confidence: 51, status: 'Mapped' },
 
-  // Dental Clinics - 20 samples
-  { name: 'Bright Smile Dental', domain: 'brightsmiledental.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Anna Williams', signals: 2, confidence: 94, status: 'Mapped' },
-  { name: 'Prestige Dentistry', domain: 'prestigedentistry.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Mark Harris', signals: 3, confidence: 90, status: 'In Progress' },
-  { name: 'Healthy Smiles CA', domain: 'healthysmiles.ca', industry: 'Dental', hqRegion: 'CA', fteBand: '5-50', owner: 'Dr. Laura Chen', signals: 2, confidence: 87, status: 'Mapped' },
-  { name: 'ZahnKlinik Berlin', domain: 'zahnklinik-berlin.de', industry: 'Dental', hqRegion: 'EU', fteBand: '5-50', owner: 'Dr. Schmidt', signals: 4, confidence: 93, status: 'To Do' },
-  { name: 'City Dental Center', domain: 'citydentalcenter.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Michael Davis', signals: 3, confidence: 91, status: 'Mapped' },
-  { name: 'Toronto Dental Arts', domain: 'torontodentalarts.ca', industry: 'Dental', hqRegion: 'CA', fteBand: '5-50', owner: 'Dr. Olivia Chow', signals: 2, confidence: 89, status: 'Mapped' },
-  { name: 'The Molar Practice', domain: 'themolarpractice.co.uk', industry: 'Dental', hqRegion: 'EU', fteBand: '5-50', owner: 'Dr. Harry Jones', signals: 3, confidence: 95, status: 'In Progress' },
-  { name: 'Smile Studio', domain: 'smilestudious.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Emily Clark', signals: 4, confidence: 96, status: 'Mapped' },
-  { name: 'Gentle Dental Care', domain: 'gentledentalcare.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Robert Martinez', signals: 2, confidence: 92, status: 'Mapped' },
-  { name: 'Urban Orthodontics', domain: 'urbanortho.ca', industry: 'Dental', hqRegion: 'CA', fteBand: '5-50', owner: 'Dr. Isabelle Gauthier', signals: 3, confidence: 88, status: 'To Do' },
+  // Dental Clinics
+  { name: 'Bright Smile Dental', domain: 'brightsmiledental.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Anna Williams', signals: 2, confidence: 89, status: 'Mapped' },
+  { name: 'Prestige Dentistry', domain: 'prestigedentistry.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Mark Harris', signals: 3, confidence: 82, status: 'In Progress' },
+  { name: 'Healthy Smiles CA', domain: 'healthysmiles.ca', industry: 'Dental', hqRegion: 'CA', fteBand: '5-50', owner: 'Dr. Laura Chen', signals: 2, confidence: 77, status: 'Mapped' },
+  { name: 'ZahnKlinik Berlin', domain: 'zahnklinik-berlin.de', industry: 'Dental', hqRegion: 'EU', fteBand: '5-50', owner: 'Dr. Schmidt', signals: 4, confidence: 74, status: 'To Do' },
+  { name: 'City Dental Center', domain: 'citydentalcenter.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Michael Davis', signals: 3, confidence: 69, status: 'Mapped' },
+  { name: 'Toronto Dental Arts', domain: 'torontodentalarts.ca', industry: 'Dental', hqRegion: 'CA', fteBand: '5-50', owner: 'Dr. Olivia Chow', signals: 2, confidence: 65, status: 'Mapped' },
+  { name: 'The Molar Practice', domain: 'themolarpractice.co.uk', industry: 'Dental', hqRegion: 'EU', fteBand: '5-50', owner: 'Dr. Harry Jones', signals: 3, confidence: 61, status: 'In Progress' },
+  { name: 'Smile Studio', domain: 'smilestudious.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Emily Clark', signals: 4, confidence: 57, status: 'Mapped' },
+  { name: 'Gentle Dental Care', domain: 'gentledentalcare.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Robert Martinez', signals: 2, confidence: 53, status: 'Mapped' },
+  { name: 'Urban Orthodontics', domain: 'urbanortho.ca', industry: 'Dental', hqRegion: 'CA', fteBand: '5-50', owner: 'Dr. Isabelle Gauthier', signals: 3, confidence: 48, status: 'To Do' },
 ];
 
 const dataSources = [
@@ -260,7 +261,7 @@ export default function MarketMappingPage() {
                   <TableCell>{company.owner}</TableCell>
                   <TableCell>{company.signals}</TableCell>
                   <TableCell>
-                    <Badge variant={company.confidence > 90 ? 'default' : 'secondary'}>
+                    <Badge variant={company.confidence > 90 ? 'default' : company.confidence > 75 ? 'secondary' : 'outline'}>
                       {company.confidence}%
                     </Badge>
                   </TableCell>
