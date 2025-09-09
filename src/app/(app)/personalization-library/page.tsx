@@ -236,7 +236,7 @@ const personalizationData = {
           id: 'calendar-link',
           name: 'Calendar link',
           variants: [
-            { id: 'v1', content: 'Here is a short calendar link for a focused 15-minute session: {{calendar_link}}. If easier, reply with two times that work and we will confirm.' },
+            { id: 'v1', subject: '', content: 'Here is a short calendar link for a focused 15-minute session: {{calendar_link}}. If easier, reply with two times that work and we will confirm.' },
           ],
         },
       ],
@@ -250,28 +250,28 @@ const personalizationData = {
           id: 'education-hook',
           name: 'Education hook',
           variants: [
-            { id: 'v1', content: `Noticed your {{education_affinity}} background. We can weave that into the opener where relevant to increase reply probability.` },
+            { id: 'v1', subject: '', content: `Noticed your {{education_affinity}} background. We can weave that into the opener where relevant to increase reply probability.` },
           ],
         },
         {
           id: 'recent-news-hook',
           name: 'Recent news hook',
           variants: [
-            { id: 'v1', content: `Saw {{recent_news}}. We can reference this contextually in the first line and keep the CTA to a single yes/no.` },
+            { id: 'v1', subject: '', content: `Saw {{recent_news}}. We can reference this contextually in the first line and keep the CTA to a single yes/no.` },
           ],
         },
         {
           id: 'fit-reason-explainer',
           name: 'Fit reason explainer',
           variants: [
-            { id: 'v1', content: `We flagged {{company}} due to {{fit_reason}} (FTE band, ownership concentration, niche). That typically correlates with higher reply quality.` },
+            { id: 'v1', subject: '', content: `We flagged {{company}} due to {{fit_reason}} (FTE band, ownership concentration, niche). That typically correlates with higher reply quality.` },
           ],
         },
         {
           id: 'compliance-footer',
           name: 'Compliance footer',
           variants: [
-            { id: 'v1', content: `You received this because your address is publicly listed for business outreach. Unsubscribe via the link below and we will not contact you again.` },
+            { id: 'v1', subject: '', content: `You received this because your address is publicly listed for business outreach. Unsubscribe via the link below and we will not contact you again.` },
           ],
         },
       ],

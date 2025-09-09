@@ -4,6 +4,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import {
   SidebarContent,
   SidebarHeader,
   SidebarMenu,
@@ -28,36 +33,75 @@ import {
   History,
   Settings,
   GitBranch,
+  ChevronDown,
 } from 'lucide-react';
 import React from 'react';
 import { useRole } from '@/hooks/use-role';
+import { cn } from '@/lib/utils';
 
-const allNavItems = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['operator', 'analyst', 'admin'] },
-  { href: '/market-mapping', icon: Network, label: 'Market Mapping', roles: ['analyst', 'admin'] },
-  { href: '/data-sources', icon: Database, label: 'Data Sources', roles: ['admin'] },
-  { href: '/enrichment', icon: Sparkles, label: 'Enrichment', roles: ['analyst', 'admin'] },
-  { href: '/fit-scoring', icon: Target, label: 'Fit Scoring', roles: ['analyst', 'admin'] },
-  { href: '/segments', icon: Users, label: 'Segments', roles: ['operator', 'admin'] },
-  { href: '/personalization-library', icon: Library, label: 'Personalization Library', roles: ['admin'] },
-  { href: '/campaign-studio', icon: PenSquare, label: 'Campaign Studio', roles: ['operator', 'admin'] },
-  { href: '/sequence-editor', icon: GitBranch, label: 'Sequence Editor', roles: ['admin'] },
-  { href: '/inbox-manager', icon: Inbox, label: 'Inbox Manager', roles: ['admin'] },
-  { href: '/deliverability', icon: MailCheck, label: 'Deliverability', roles: ['admin'] },
-  { href: '/leads', icon: Filter, label: 'Lead Triage', roles: ['operator', 'admin'] },
-  { href: '/dnc-suppression', icon: Ban, label: 'DNC / Suppression', roles: ['admin'] },
-  { href: '/referral-hub', icon: Share2, label: 'Referral Hub', roles: ['operator', 'admin'] },
-  { href: '/reports', icon: BarChart3, label: 'Reports', roles: ['analyst', 'admin'] },
-  { href: '/audit-log', icon: History, label: 'Audit Log', roles: ['admin'] },
-  { href: '/settings', icon: Settings, label: 'Settings', roles: ['admin'] },
+const allNavGroups = [
+  {
+    title: 'HOME',
+    roles: ['operator', 'analyst', 'admin'],
+    items: [
+      { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['operator', 'analyst', 'admin'] },
+    ],
+  },
+  {
+    title: 'PIPELINE',
+    roles: ['analyst', 'admin'],
+    items: [
+      { href: '/market-mapping', icon: Network, label: 'Industry Mapper', roles: ['analyst', 'admin'] },
+      { href: '/data-sources', icon: Database, label: 'Data Sources', roles: ['admin'] },
+      { href: '/enrichment', icon: Sparkles, label: 'Enrichment', roles: ['analyst', 'admin'] },
+      { href: '/fit-scoring', icon: Target, label: 'Fit Scoring', roles: ['analyst', 'admin'] },
+    ],
+  },
+  {
+    title: 'OUTREACH',
+    roles: ['operator', 'admin'],
+    items: [
+      { href: '/segments', icon: Users, label: 'Segments', roles: ['operator', 'admin'] },
+      { href: '/personalization-library', icon: Library, label: 'Personalization', roles: ['admin'] },
+      { href: '/campaign-studio', icon: PenSquare, label: 'Campaigns', roles: ['operator', 'admin'] },
+      { href: '/sequence-editor', icon: GitBranch, label: 'Sequences', roles: ['admin'] },
+      { href: '/inbox-manager', icon: Inbox, label: 'Inboxes', roles: ['admin'] },
+      { href: '/deliverability', icon: MailCheck, label: 'Deliverability', roles: ['admin'] },
+      { href: '/leads', icon: Filter, label: 'Lead Triage', roles: ['operator', 'admin'] },
+      { href: '/referral-hub', icon: Share2, label: 'Referrals', roles: ['operator', 'admin'] },
+    ],
+  },
+  {
+    title: 'GOVERNANCE',
+    roles: ['admin'],
+    items: [
+      { href: '/dnc-suppression', icon: Ban, label: 'DNC / Suppression', roles: ['admin'] },
+      { href: '/audit-log', icon: History, label: 'Audit Log', roles: ['admin'] },
+      { href: '/settings', icon: Settings, label: 'Settings', roles: ['admin'] },
+    ]
+  },
+  {
+      title: 'ANALYTICS',
+      roles: ['analyst', 'admin'],
+      items: [
+        { href: '/reports', icon: BarChart3, label: 'Reports', roles: ['analyst', 'admin'] },
+      ]
+  }
 ];
+
 
 export function SideNav() {
   const pathname = usePathname();
   const { role } = useRole();
 
-  const navItems = React.useMemo(() => {
-    return allNavItems.filter(item => item.roles.includes(role));
+  const navGroups = React.useMemo(() => {
+    return allNavGroups
+      .filter(group => group.roles.includes(role))
+      .map(group => ({
+        ...group,
+        items: group.items.filter(item => item.roles.includes(role)),
+      }))
+      .filter(group => group.items.length > 0);
   }, [role]);
 
   return (
@@ -68,22 +112,32 @@ export function SideNav() {
           <h1 className="text-xl font-semibold">Paragon Engage</h1>
         </div>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarMenu>
-          {navItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <Link href={item.href}>
-                <SidebarMenuButton
-                    isActive={pathname.startsWith(item.href)}
-                    tooltip={{ children: item.label }}
-                >
-                  <item.icon />
-                  <span>{item.label}</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
+      <SidebarContent className="p-2">
+        {navGroups.map((group) => (
+          <Collapsible key={group.title} defaultOpen={true} className="mb-2">
+            <CollapsibleTrigger className="w-full flex items-center justify-between px-2 py-1 text-xs font-semibold uppercase text-muted-foreground hover:text-foreground">
+                {group.title}
+                <ChevronDown className="h-4 w-4 transition-transform [&[data-state=open]]:rotate-180" />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="pt-2">
+                <SidebarMenu>
+                {group.items.map((item) => (
+                    <SidebarMenuItem key={item.href}>
+                    <Link href={item.href}>
+                        <SidebarMenuButton
+                        isActive={pathname.startsWith(item.href)}
+                        tooltip={{ children: item.label }}
+                        >
+                        <item.icon />
+                        <span>{item.label}</span>
+                        </SidebarMenuButton>
+                    </Link>
+                    </SidebarMenuItem>
+                ))}
+                </SidebarMenu>
+            </CollapsibleContent>
+          </Collapsible>
+        ))}
       </SidebarContent>
     </div>
   );
