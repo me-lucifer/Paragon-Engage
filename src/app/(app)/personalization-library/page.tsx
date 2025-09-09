@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -426,5 +426,3 @@ export default function PersonalizationLibraryPage() {
     </div>
   );
 }
-
-    
