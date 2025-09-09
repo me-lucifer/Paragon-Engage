@@ -35,12 +35,70 @@ const personalizationData = {
     { token: '{{company}}', description: 'Contact\'s company name' },
     { token: '{{role}}', description: 'Contact\'s job title' },
     { token: '{{industry}}', description: 'Company\'s industry' },
+    { token: '{{fit_reason}}', description: 'Why they are a good fit' },
     { token: '{{recent_news}}', description: 'Recent news about the company' },
     { token: '{{education_affinity}}', description: 'Shared educational background' },
     { token: '{{mutual_topic}}', description: 'A topic of mutual interest' },
-    { token: '{{fit_reason}}', description: 'Why they are a good fit' },
+    { token: '{{aum_band}}', description: 'Assets Under Management band' },
+    { token: '{{strategy}}', description: 'Company\'s investment strategy' },
   ],
   segments: [
+    {
+      id: 'hf-am',
+      name: 'HF & Asset Managers',
+      icon: <Library className="h-5 w-5" />,
+      templates: [
+        {
+          id: 'hf-am-intro-v1',
+          name: 'HF-AM Intro v1',
+          variants: [
+            { id: 'v1', subject: 'Quick idea for {{company}}\'s {{strategy}} pipeline', content: `Hi {{first_name}},\n\nWe mapped your peer set in {{industry}} and identified pockets where managers with {{aum_band}} AUM are seeing faster intros. Based on {{fit_reason}}, we can surface curated targets and run compliant, personalized outreach that hands your team only warm replies.\n\nIf helpful, I can show the workflow using {{recent_news}} as the trigger.\n\nOpen to a 12-minute walk-through next week?` },
+          ],
+        },
+        {
+          id: 'hf-am-intro-v2',
+          name: 'HF-AM Intro v2 (short)',
+          variants: [
+            { id: 'v1', subject: 'Warm replies without more headcount', content: `Hi {{first_name}},\n\nWe score and contact prospects on your behalf, then route only positive replies to {{company}}. No spray and pray. Tunable scoring, rotating inboxes, and audit trails.\n\nWorth a quick look?` },
+          ],
+        },
+        {
+          id: 'hf-am-follow-up',
+          name: 'HF-AM Follow-up v1',
+          variants: [
+            { id: 'v1', subject: 'Re: warm replies for {{company}}', content: `Hi {{first_name}}, checking if a focused demo would help. We can preload {{company}}’s targets and show reply quality by scoring band. Would {{first_name}} prefer Mon or Tue morning?` },
+          ],
+        },
+        {
+          id: 'hf-am-bump',
+          name: 'HF-AM Bump v1',
+          variants: [
+            { id: 'v1', subject: 'Nudge on {{company}} outreach', content: `Looping back. Happy to send a 1-page summary and sample replies before a call. Should I?` },
+          ],
+        },
+        {
+          id: 'hf-am-breakup',
+          name: 'HF-AM Breakup v1',
+          variants: [
+            { id: 'v1', subject: 'Close the loop?', content: `If now isn’t a priority, I’ll pause on my end. If things change, reply “Reopen” and I’ll share a short demo tailored to {{company}}.` },
+          ],
+        },
+        {
+          id: 'hf-am-objection',
+          name: 'HF-AM Objection: already using a tool',
+          variants: [
+            { id: 'v1', subject: 'Keep existing stack, add warm-reply layer', content: `Understood. We typically sit on top of Apollo/Instantly, using your rules to filter and only pass warm replies into your CRM. Low lift, measurable trial. Explore a 2-week pilot?` },
+          ],
+        },
+        {
+          id: 'hf-am-positive-reply',
+          name: 'HF-AM Positive-reply handoff',
+          variants: [
+            { id: 'v1', subject: 'Thanks — next step', content: `Great. I’ll send a calendar link for a focused 15-minute session and a redacted sample campaign. Any teammates I should include?` },
+          ],
+        },
+      ]
+    },
     {
       id: 'accounting',
       name: 'Accounting (CPAs)',
@@ -183,7 +241,10 @@ export default function PersonalizationLibraryPage() {
                 <Card key={template.id}>
                     <Tabs defaultValue={template.variants[0].id}>
                         <CardHeader className="flex-row items-center justify-between">
-                             <CardTitle>{template.name}</CardTitle>
+                             <div>
+                                <CardTitle>{template.name}</CardTitle>
+                                {template.variants[0].subject && <CardDescription className="pt-1">{template.variants[0].subject}</CardDescription>}
+                             </div>
                              <TabsList>
                                 {template.variants.map(variant => (
                                     <TabsTrigger key={variant.id} value={variant.id}>
