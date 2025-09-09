@@ -45,9 +45,12 @@ const activityData = [
 export default function DashboardPage() {
     const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(true);
     const [loading, setLoading] = useState(true);
+    const [lastRunTime, setLastRunTime] = useState('');
+
 
     useEffect(() => {
       const timer = setTimeout(() => setLoading(false), 1500);
+      setLastRunTime(new Date().toLocaleString());
       return () => clearTimeout(timer);
     }, []);
 
@@ -143,7 +146,7 @@ export default function DashboardPage() {
                     <Switch defaultChecked />
                 </div>
                 <p className="text-xs text-muted-foreground">
-                    Last run: {new Date().toLocaleString()}
+                    Last run: {lastRunTime}
                 </p>
                 </CardContent>
             </Card>
