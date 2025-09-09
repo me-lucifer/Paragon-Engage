@@ -30,6 +30,7 @@ import {
   Share2,
   History,
   Settings,
+  GitBranch,
 } from 'lucide-react';
 import React from 'react';
 
@@ -42,6 +43,7 @@ const navItems = [
   { href: '/segments', icon: Users, label: 'Segments' },
   { href: '/personalization-library', icon: Library, label: 'Personalization Library' },
   { href: '/campaign-studio', icon: PenSquare, label: 'Campaign Studio' },
+  { href: '/sequence-editor', icon: GitBranch, label: 'Sequence Editor' },
   { href: '/inbox-manager', icon: Inbox, label: 'Inbox Manager' },
   { href: '/deliverability', icon: MailCheck, label: 'Deliverability' },
   { href: '/leads', icon: Filter, label: 'Lead Triage' },
