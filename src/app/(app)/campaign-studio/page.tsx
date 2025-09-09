@@ -12,9 +12,11 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, Edit } from 'lucide-react';
+import { PlusCircle, Edit, Play, Pause } from 'lucide-react';
 import SequenceEditorSheet from '@/components/sequence-editor-sheet';
 import { useState } from 'react';
+import { useDeliverability } from '@/hooks/use-deliverability';
+import { WarningBanner } from '@/components/warning-banner';
 
 const campaignsData = [
   {
@@ -84,6 +86,7 @@ type Campaign = (typeof campaignsData)[0];
 export default function CampaignStudioPage() {
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const { isHealthPoor } = useDeliverability();
 
   const handleEditSequence = (campaign: Campaign) => {
     setSelectedCampaign(campaign);
@@ -113,6 +116,15 @@ export default function CampaignStudioPage() {
             <PlusCircle className="mr-2 h-4 w-4" /> New Campaign
           </Button>
         </div>
+
+        {isHealthPoor && (
+            <WarningBanner
+                title="Deliverability Alert"
+                message="Your inbox health is below the recommended threshold. Running campaigns may harm your domain reputation."
+                actionLink="/deliverability"
+                actionText="Fix Auth & Deliverability"
+            />
+        )}
 
         <Card>
           <CardHeader>
@@ -156,10 +168,21 @@ export default function CampaignStudioPage() {
                     <TableCell>{campaign.replyRate}</TableCell>
                     <TableCell>{campaign.positiveIntent}</TableCell>
                     <TableCell>{campaign.owner}</TableCell>
-                    <TableCell>
+                    <TableCell className="space-x-2">
+                       {campaign.status === 'Active' ? (
+                          <Button variant="outline" size="sm">
+                            <Pause className="mr-2 h-4 w-4" />
+                            Pause
+                          </Button>
+                        ) : (
+                           <Button variant="outline" size="sm" disabled={isHealthPoor}>
+                            <Play className="mr-2 h-4 w-4" />
+                            Start
+                          </Button>
+                        )}
                       <Button variant="outline" size="sm" onClick={() => handleEditSequence(campaign)}>
                         <Edit className="mr-2 h-4 w-4" />
-                        Edit Sequence
+                        Edit
                       </Button>
                     </TableCell>
                   </TableRow>
