@@ -38,8 +38,10 @@ export default function ExplainScoreDialog({ company, criteria }: ExplainScoreDi
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Score Explanation for {company.name}</DialogTitle>
-          <DialogDescription>
-            This company has a fit score of <Badge variant="default">{company.score}</Badge> based on your rubric.
+          <DialogDescription asChild>
+            <div>
+              This company has a fit score of <Badge variant="default">{company.score}</Badge> based on your rubric.
+            </div>
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
