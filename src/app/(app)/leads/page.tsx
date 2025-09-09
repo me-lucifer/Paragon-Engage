@@ -19,38 +19,48 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const leads = [
-  { name: 'John Doe', email: 'john.doe@example.com', status: 'New', source: 'Website' },
-  { name: 'Jane Smith', email: 'jane.smith@example.com', status: 'Contacted', source: 'Referral' },
-  { name: 'Samuel Brown', email: 'sam.brown@example.com', status: 'Qualified', source: 'Social Media' },
-  { name: 'Lisa Green', email: 'lisa.green@example.com', status: 'Lost', source: 'Paid Ad' },
-  { name: 'Mike Johnson', email: 'mike.j@example.com', status: 'New', source: 'Website' },
-  { name: 'Sarah Wilson', email: 'sarah.w@example.com', status: 'Negotiation', source: 'Referral' },
+  { name: 'John Doe', company: 'Acme Inc.', thread: 'Re: Following up', intent: 'Positive', nextAction: 'Schedule Meeting', owner: 'A. Bhandari' },
+  { name: 'Jane Smith', company: 'Innovate LLC', thread: 'Quick question', intent: 'Neutral', nextAction: 'Send Info', owner: 'J. Doe' },
+  { name: 'Samuel Brown', company: 'Data Corp', thread: 'Not interested', intent: 'Negative', nextAction: 'Archive', owner: 'System' },
+  { name: 'Lisa Green', company: 'Solutions Co.', thread: 'Thanks for the info', intent: 'Positive', nextAction: 'Follow-up in 1w', owner: 'A. Bhandari' },
+  { name: 'Mike Johnson', company: 'NextGen', thread: 'Can you call me?', intent: 'Positive', nextAction_item: 'Schedule Meeting', owner: 'J. Doe' },
+  { name: 'Sarah Wilson', company: 'Synergy Ltd.', thread: 'Unsubscribe', intent: 'Negative', nextAction: 'DNC', owner: 'System' },
 ];
 
 export default function LeadsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
-          Lead Triage
-        </h1>
+        <div>
+            <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+            Lead Triage
+            </h1>
+            <p className="text-muted-foreground">
+                Review, qualify, and take action on incoming leads.
+            </p>
+        </div>
         <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
-          <PlusCircle className="mr-2 h-4 w-4" /> Create Lead
+          <PlusCircle className="mr-2 h-4 w-4" /> Add Lead Manually
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Leads</CardTitle>
+          <CardTitle>Incoming Leads</CardTitle>
+           <CardDescription>
+            Showing all new and unassigned leads.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Source</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead>Company</TableHead>
+                <TableHead>Thread Preview</TableHead>
+                <TableHead>Intent</TableHead>
+                <TableHead>Next Action</TableHead>
+                <TableHead>Owner</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -58,13 +68,19 @@ export default function LeadsPage() {
             </TableHeader>
             <TableBody>
               {leads.map((lead) => (
-                <TableRow key={lead.email}>
+                <TableRow key={lead.name}>
                   <TableCell className="font-medium">{lead.name}</TableCell>
-                  <TableCell>{lead.email}</TableCell>
+                  <TableCell>{lead.company}</TableCell>
+                  <TableCell className="text-muted-foreground">{lead.thread}</TableCell>
                   <TableCell>
-                    <Badge variant={lead.status === 'Lost' ? 'destructive' : lead.status === 'New' ? 'secondary' : 'outline'}>{lead.status}</Badge>
+                    <Badge variant={lead.intent === 'Positive' ? 'default' : lead.intent === 'Negative' ? 'destructive' : 'secondary'}
+                     className={lead.intent === 'Positive' ? 'bg-green-100 text-green-800' : ''}
+                    >
+                        {lead.intent}
+                    </Badge>
                   </TableCell>
-                  <TableCell>{lead.source}</TableCell>
+                  <TableCell>{lead.nextAction}</TableCell>
+                  <TableCell>{lead.owner}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -75,8 +91,10 @@ export default function LeadsPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DropdownMenuItem>Assign</DropdownMenuItem>
+                        <DropdownMenuItem>Snooze</DropdownMenuItem>
+                        <DropdownMenuItem>Archive</DropdownMenuItem>
+                        <DropdownMenuItem>Convert to Meeting</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
