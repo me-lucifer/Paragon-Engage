@@ -35,7 +35,7 @@ import {
   GitBranch,
   ChevronDown,
 } from 'lucide-react';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRole } from '@/hooks/use-role';
 import { cn } from '@/lib/utils';
 
@@ -93,6 +93,41 @@ const allNavGroups = [
 export function SideNav() {
   const pathname = usePathname();
   const { role } = useRole();
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    try {
+      const storedState = localStorage.getItem('sidebarSections');
+      if (storedState) {
+        setOpenSections(JSON.parse(storedState));
+      } else {
+        // Default all to open if nothing in storage
+        const defaultState = allNavGroups.reduce((acc, group) => {
+          acc[group.title] = true;
+          return acc;
+        }, {} as Record<string, boolean>);
+        setOpenSections(defaultState);
+      }
+    } catch (error) {
+        console.error("Failed to access localStorage", error);
+        // Fallback to default open
+        const defaultState = allNavGroups.reduce((acc, group) => {
+            acc[group.title] = true;
+            return acc;
+          }, {} as Record<string, boolean>);
+        setOpenSections(defaultState);
+    }
+  }, []);
+
+  const toggleSection = (title: string) => {
+    const newState = { ...openSections, [title]: !openSections[title] };
+    setOpenSections(newState);
+     try {
+        localStorage.setItem('sidebarSections', JSON.stringify(newState));
+    } catch (error) {
+        console.error("Failed to write to localStorage", error);
+    }
+  };
 
   const navGroups = React.useMemo(() => {
     return allNavGroups
@@ -114,7 +149,12 @@ export function SideNav() {
       </SidebarHeader>
       <SidebarContent className="p-0">
         {navGroups.map((group, groupIndex) => (
-          <Collapsible key={group.title} defaultOpen={true} className={cn(groupIndex < navGroups.length -1 && "mb-4")}>
+          <Collapsible 
+            key={group.title} 
+            open={openSections[group.title] !== false} // Default to open if not set
+            onOpenChange={() => toggleSection(group.title)}
+            className={cn(groupIndex > 0 && "mt-4")}
+        >
             <CollapsibleTrigger className="w-full flex items-center justify-between px-3 py-1 text-xs font-semibold uppercase text-muted-foreground hover:text-foreground">
                 {group.title}
                 <ChevronDown className="h-4 w-4 transition-transform [&[data-state=open]]:rotate-180" />
