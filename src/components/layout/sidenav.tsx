@@ -62,13 +62,13 @@ const allNavGroups = [
     roles: ['operator', 'admin'],
     items: [
       { href: '/segments', icon: Users, label: 'Segments', roles: ['operator', 'admin'] },
-      { href: '/personalization-library', icon: Library, label: 'Personalization', roles: ['admin'] },
-      { href: '/campaign-studio', icon: PenSquare, label: 'Campaigns', roles: ['operator', 'admin'] },
+      { href: '/personalization-library', icon: Library, label: 'Personalization Library', roles: ['admin'] },
+      { href: '/campaign-studio', icon: PenSquare, label: 'Campaign Studio', roles: ['operator', 'admin'] },
       { href: '/sequence-editor', icon: GitBranch, label: 'Sequences', roles: ['admin'] },
-      { href: '/inbox-manager', icon: Inbox, label: 'Inboxes', roles: ['admin'] },
+      { href: '/inbox-manager', icon: Inbox, label: 'Inbox Manager', roles: ['admin'] },
       { href: '/deliverability', icon: MailCheck, label: 'Deliverability', roles: ['admin'] },
       { href: '/leads', icon: Filter, label: 'Lead Triage', roles: ['operator', 'admin'] },
-      { href: '/referral-hub', icon: Share2, label: 'Referrals', roles: ['operator', 'admin'] },
+      { href: '/referral-hub', icon: Share2, label: 'Referral Hub', roles: ['operator', 'admin'] },
     ],
   },
   {
