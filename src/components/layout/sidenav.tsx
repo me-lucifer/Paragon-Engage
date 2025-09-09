@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Sidebar,
   SidebarContent,
   SidebarHeader,
   SidebarMenu,
@@ -31,7 +30,7 @@ export function SideNav() {
   const pathname = usePathname();
 
   return (
-    <>
+    <div className="flex h-full flex-col">
       <SidebarHeader className="border-b">
         <div className="flex items-center gap-2 p-2">
           <Flame className="h-8 w-8 text-accent" />
@@ -48,16 +47,16 @@ export function SideNav() {
                   isActive={pathname === item.href}
                   tooltip={{ children: item.label }}
                 >
-                  <>
+                  <a>
                     <item.icon />
                     <span>{item.label}</span>
-                  </>
+                  </a>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
       </SidebarContent>
-    </>
+    </div>
   );
 }
