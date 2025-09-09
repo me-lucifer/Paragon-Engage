@@ -34,6 +34,11 @@ import {
   PlusCircle,
   Trash2,
   Settings2,
+  ThumbsUp,
+  ThumbsDown,
+  Inbox,
+  Ban,
+  MoveRight,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
@@ -42,7 +47,7 @@ const sequenceSteps = [
     type: 'email',
     title: 'Step 1: Cold Intro Email',
     icon: <Mail className="h-5 w-5 text-primary" />,
-    details: 'Template: "Cold Intro" v1',
+    details: 'Template: "HF-AM Intro v1"',
   },
   {
     type: 'wait',
@@ -54,31 +59,32 @@ const sequenceSteps = [
     type: 'email',
     title: 'Step 2: Follow-up Email',
     icon: <Mail className="h-5 w-5 text-primary" />,
-    details: 'Template: "Follow-up" v2',
-  },
-  {
-    type: 'wait',
-    title: 'Wait 3 Business Days',
-    icon: <Timer className="h-5 w-5 text-gray-500" />,
-    details: 'Excludes weekends',
-  },
-  {
-    type: 'email',
-    title: 'Step 3: Quick Bump',
-    icon: <Mail className="h-5 w-5 text-primary" />,
-    details: 'Template: "Quick Bump"',
+    details: 'Template: "HF-AM Follow-up v1"',
   },
   {
     type: 'branch',
-    title: 'Branch on Reply',
+    title: 'Branch: If Opened but No Reply',
     icon: <GitBranch className="h-5 w-5 text-purple-500" />,
     branches: [
-      { status: 'Replied', icon: <MessageCircle className="h-4 w-4 text-blue-500" /> },
-      { status: 'Positive', icon: <CheckCircle className="h-4 w-4 text-green-500" /> },
-      { status: 'Negative', icon: <XCircle className="h-4 w-4 text-red-500" /> },
-      { status: 'No Response', icon: <Clock className="h-4 w-4 text-gray-500" /> },
+      { 
+        status: 'Wait 3 Days', 
+        icon: <Timer className="h-4 w-4 text-gray-500" />, 
+        nested: [
+          { type: 'email', title: 'Step 3: Quick Bump', icon: <Mail className="h-5 w-5 text-primary" />, details: 'Template: "HF-AM Bump v1"' },
+          { type: 'branch', title: 'Branch: If No Engagement', icon: <GitBranch className="h-5 w-5 text-purple-500" />, branches: [{ status: 'No Response', icon: <Clock className="h-4 w-4 text-gray-500" />, nested: [{type: 'email', title: 'Step 4: Breakup Email', icon: <Mail className="h-5 w-5 text-primary" />, details: 'Template: "HF-AM Breakup v1"'}] }] }
+        ]
+      },
     ],
   },
+  {
+    type: 'branch',
+    title: 'Branch: If Replied',
+    icon: <GitBranch className="h-5 w-5 text-purple-500" />,
+    branches: [
+      { status: 'Positive', icon: <ThumbsUp className="h-4 w-4 text-green-500" />, nested: [{ type: 'action', title: 'Move to Lead Triage', icon: <MoveRight className="h-5 w-5 text-blue-500" />, details: 'Tag: "HF-AM positive"' }] },
+      { status: 'Negative', icon: <ThumbsDown className="h-4 w-4 text-red-500" />, nested: [{ type: 'action', title: 'Auto-apply DNC', icon: <Ban className="h-5 w-5 text-red-500" />, details: 'Close thread' }] },
+    ],
+  }
 ];
 
 export default function SequenceEditorPage() {
@@ -108,12 +114,12 @@ export default function SequenceEditorPage() {
         <div className="lg:col-span-2 space-y-4">
           <Card>
             <CardHeader>
-                <CardTitle>Sequence: "High-Growth Tech Outreach"</CardTitle>
+                <CardTitle>Sequence: "HF/AM – Balanced"</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
                 {sequenceSteps.map((step, index) => (
                 <div key={index}>
-                    <div className="flex items-center gap-4 group">
+                    <div className="flex items-start gap-4 group">
                         <div className="flex-none h-10 w-10 bg-muted rounded-full flex items-center justify-center">
                             {step.icon}
                         </div>
@@ -121,12 +127,56 @@ export default function SequenceEditorPage() {
                             <h4 className="font-semibold">{step.title}</h4>
                             {step.details && <p className="text-sm text-muted-foreground">{step.details}</p>}
                             {step.branches && (
-                                <div className="flex flex-wrap gap-2 mt-2">
-                                    {step.branches.map(branch => (
-                                        <Badge key={branch.status} variant="outline" className="flex items-center gap-1.5">
-                                            {branch.icon}
-                                            {branch.status}
-                                        </Badge>
+                                <div className="space-y-2 mt-2">
+                                    {step.branches.map((branch, bIndex) => (
+                                        <div key={bIndex} className="pl-4 border-l-2 border-dashed border-gray-300">
+                                            <Badge variant="outline" className="flex items-center gap-1.5 w-fit">
+                                                {branch.icon}
+                                                {branch.status}
+                                            </Badge>
+                                            {branch.nested && (
+                                                <div className="mt-2 space-y-2">
+                                                {branch.nested.map((nestedStep, nIndex) => (
+                                                     <div key={nIndex} className="flex items-start gap-4 group">
+                                                        <div className="flex-none h-10 w-10 bg-muted/50 rounded-full flex items-center justify-center">
+                                                            {nestedStep.icon}
+                                                        </div>
+                                                        <div className="flex-grow">
+                                                            <h4 className="font-semibold">{nestedStep.title}</h4>
+                                                            <p className="text-sm text-muted-foreground">{nestedStep.details}</p>
+                                                            {nestedStep.branches && (
+                                                                <div className="space-y-2 mt-2">
+                                                                {nestedStep.branches.map((subBranch, sbIndex) =>(
+                                                                    <div key={sbIndex} className="pl-4 border-l-2 border-dashed border-gray-300">
+                                                                        <Badge variant="outline" className="flex items-center gap-1.5 w-fit">
+                                                                            {subBranch.icon}
+                                                                            {subBranch.status}
+                                                                        </Badge>
+                                                                         {subBranch.nested && (
+                                                                            <div className="mt-2 space-y-2">
+                                                                                {subBranch.nested.map((deepStep, dIndex) => (
+                                                                                    <div key={dIndex} className="flex items-start gap-4 group">
+                                                                                        <div className="flex-none h-10 w-10 bg-muted/50 rounded-full flex items-center justify-center">
+                                                                                            {deepStep.icon}
+                                                                                        </div>
+                                                                                        <div className="flex-grow">
+                                                                                            <h4 className="font-semibold">{deepStep.title}</h4>
+                                                                                            <p className="text-sm text-muted-foreground">{deepStep.details}</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                ))}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                ))}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                     </div>
+                                                ))}
+                                                </div>
+                                            )}
+                                        </div>
                                     ))}
                                 </div>
                             )}
@@ -155,7 +205,7 @@ export default function SequenceEditorPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="send-window">Send Window</Label>
-                <Select>
+                <Select defaultValue="biz-hours">
                     <SelectTrigger id="send-window">
                         <SelectValue placeholder="Business hours (recipient timezone)" />
                     </SelectTrigger>
@@ -166,8 +216,8 @@ export default function SequenceEditorPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="max-per-domain">Max Contacts per Domain/Day</Label>
-                <Input id="max-per-domain" type="number" placeholder="e.g., 5" />
+                <Label htmlFor="max-per-domain">Daily Send Cap</Label>
+                <Input id="max-per-domain" type="number" placeholder="e.g., 300" defaultValue="300" />
               </div>
                <div className="flex items-center justify-between rounded-lg border p-3">
                     <Label htmlFor="pause-alert" className="font-medium">Pause on Domain Alert</Label>
