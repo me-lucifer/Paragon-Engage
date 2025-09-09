@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -20,12 +21,12 @@ import { ArrowUp, Briefcase, Target, Heart, MessageCircle, Calendar, Bot, CheckC
 import DashboardChart from '@/components/dashboard-chart';
 
 const kpiData = [
-  { title: 'Mapped Companies', value: '12,450', trend: '+12.5%', icon: <Briefcase className="text-primary" /> },
-  { title: 'Reachable Contacts', value: '8,340', trend: '+8.2%', icon: <Target className="text-primary" /> },
-  { title: 'Active Campaigns', value: '27', trend: '+2', icon: <Mail className="text-primary" /> },
-  { title: 'Warm Replies', value: '1,289', trend: '+15%', icon: <MessageCircle className="text-primary" /> },
-  { title: 'Positive Intent', value: '342', trend: '+22%', icon: <Heart className="text-primary" /> },
-  { title: 'Meetings Booked', value: '58', trend: '+5', icon: <Calendar className="text-primary" /> },
+  { title: 'Mapped Companies', value: '52,840', trend: '+12.5%', icon: <Briefcase className="text-primary" /> },
+  { title: 'Reachable Contacts', value: '76,320', trend: '+8.2%', icon: <Target className="text-primary" /> },
+  { title: 'Active Campaigns', value: '12', trend: '-3', icon: <Mail className="text-primary" /> },
+  { title: 'Warm Replies (30d)', value: '1,146', trend: '-5%', icon: <MessageCircle className="text-primary" /> },
+  { title: 'Positive Intent (30d)', value: '318', trend: '-8%', icon: <Heart className="text-primary" /> },
+  { title: 'Meetings Booked (30d)', value: '94', trend: '+15%', icon: <Calendar className="text-primary" /> },
 ];
 
 const activityData = [

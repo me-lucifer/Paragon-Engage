@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -23,13 +24,13 @@ import {
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 const weeklyOutreachData = [
-  { day: 'Mon', sent: 120 },
-  { day: 'Tue', sent: 200 },
-  { day: 'Wed', sent: 150 },
-  { day: 'Thu', sent: 220 },
-  { day: 'Fri', sent: 180 },
-  { day: 'Sat', sent: 50 },
-  { day: 'Sun', sent: 30 },
+  { day: 'Mon', sent: 4800 },
+  { day: 'Tue', sent: 5100 },
+  { day: 'Wed', sent: 4500 },
+  { day: 'Thu', sent: 5200 },
+  { day: 'Fri', sent: 3300 },
+  { day: 'Sat', sent: 1100 },
+  { day: 'Sun', sent: 900 },
 ];
 
 const rateData = [
