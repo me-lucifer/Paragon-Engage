@@ -1,4 +1,5 @@
 
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -23,7 +24,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, ChevronRight, FileDown, Rocket, ShieldCheck, Target } from 'lucide-react';
+import { CheckCircle, ChevronRight, FileDown, HelpCircle, Rocket, ShieldCheck, Target } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const enrichmentRules = {
   emailDiscovery: ['Hunter', 'Apollo', 'Clearbit'],
@@ -94,6 +96,18 @@ export default function EnrichmentPage() {
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="h-5 w-5 text-primary" />
                     <span>Validation Thresholds</span>
+                     <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger onClick={(e) => e.stopPropagation()}>
+                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p className="max-w-xs">
+                                    Set the minimum confidence score for email validation. A "catch-all" server accepts all emails, making verification difficult. Requiring a high confidence score for catch-all domains reduces bounces.
+                                </p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>

@@ -24,6 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { HelpCircle, FilePlus, Copy, PlayCircle, Star, Target, Building, Users, Globe, Smile, TrendingUp, Cpu, BrainCircuit, Calendar, FileText } from 'lucide-react';
 import ExplainScoreDialog from '@/components/explain-score-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const fitProfiles = {
   conservative: {
@@ -113,7 +114,21 @@ export default function FitScoringPage() {
         <div className="grid gap-6 lg:grid-cols-2">
             <Card>
             <CardHeader>
-                <CardTitle>Training Rubrics: "{currentProfile.name}" Profile</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                    Training Rubrics: "{currentProfile.name}" Profile
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p className="max-w-xs">
+                                    Fit Scoring Models use weighted criteria to rank companies against your Ideal Customer Profile (ICP). Adjust the weights to prioritize signals that matter most to you.
+                                </p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </CardTitle>
                 <CardDescription>
                 Adjust the weights to refine your scoring model.
                 </CardDescription>
