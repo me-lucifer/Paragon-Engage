@@ -48,11 +48,11 @@ const sequenceSteps = [
     type: 'email',
     title: 'Step 1: Cold Intro Email',
     icon: <Mail className="h-5 w-5 text-primary" />,
-    details: 'Template: "Boards/IR Intro v1"',
+    details: 'Template: "PE Intro v1"',
   },
   {
     type: 'wait',
-    title: 'Wait 3 Business Days',
+    title: 'Wait 2 Business Days',
     icon: <Timer className="h-5 w-5 text-gray-500" />,
     details: 'Excludes weekends',
   },
@@ -60,72 +60,66 @@ const sequenceSteps = [
     type: 'email',
     title: 'Step 2: Follow-up Email',
     icon: <Mail className="h-5 w-5 text-primary" />,
-    details: 'Template: "Boards/IR Follow-up v1"',
+    details: 'Template: "PE Follow-up v1"',
   },
   {
     type: 'branch',
-    title: 'Branch: On Reply',
+    title: 'Branch: On Objection',
     icon: <GitBranch className="h-5 w-5 text-purple-500" />,
     branches: [
       {
-        status: 'Compliance Keyword Detected',
-        icon: <ShieldAlert className="h-4 w-4 text-red-500" />,
+        status: 'Objection Detected ("have team", "covered")',
+        icon: <ThumbsDown className="h-4 w-4 text-yellow-500" />,
         nested: [
           {
-            type: 'action',
-            title: 'Auto-Suppress Domain',
-            icon: <Ban className="h-5 w-5 text-red-500" />,
-            details: 'Reason: Unsubscribe/Remove keyword',
-          },
-           {
             type: 'email',
-            title: 'Confirm Suppression',
+            title: 'Reply to Objection',
             icon: <Mail className="h-5 w-5 text-primary" />,
-            details: 'Snippet: "Compliance footer"',
+            details: 'Template: "PE Objection: already have sourcing team"',
           },
         ],
       },
     ],
   },
+   {
+    type: 'wait',
+    title: 'Wait 3 Business Days',
+    icon: <Timer className="h-5 w-5 text-gray-500" />,
+    details: 'Excludes weekends',
+  },
   {
-    type: 'branch',
-    title: 'Branch: If Opened but No Reply',
-    icon: <GitBranch className="h-5 w-5 text-purple-500" />,
-    branches: [
-      {
-        status: 'Wait 2 Days',
-        icon: <Timer className="h-4 w-4 text-gray-500" />,
-        nested: [
-          {
-            type: 'email',
-            title: 'Step 3: Quick Bump',
-            icon: <Mail className="h-5 w-5 text-primary" />,
-            details: 'Template: "Boards/IR Bump v1"',
-          },
-        ],
-      },
-    ],
+    type: 'email',
+    title: 'Step 3: Quick Bump',
+    icon: <Mail className="h-5 w-5 text-primary" />,
+    details: 'Template: "PE Bump v1"',
   },
   {
     type: 'branch',
-    title: 'Branch: If No Engagement After Bump',
+    title: 'Fail-safe: No Response',
     icon: <GitBranch className="h-5 w-5 text-purple-500" />,
     branches: [
       {
-        status: 'No Response',
-        icon: <Clock className="h-4 w-4 text-gray-500" />,
+        status: 'No Engagement',
+        icon: <XCircle className="h-4 w-4 text-gray-500" />,
         nested: [
           {
             type: 'email',
             title: 'Step 4: Breakup Email',
             icon: <Mail className="h-5 w-5 text-primary" />,
-            details: 'Template: "Boards/IR Breakup v1"',
+            details: 'Template: "PE Breakup v1"',
+          },
+          {
+            type: 'action',
+            title: 'Apply Cooling Period',
+            icon: <Clock className="h-5 w-5 text-gray-500" />,
+            details: '60 days',
           },
         ],
       },
     ],
   },
 ];
+
 
 export default function SequenceEditorPage() {
   return (
@@ -154,7 +148,7 @@ export default function SequenceEditorPage() {
         <div className="lg:col-span-2 space-y-4">
           <Card>
             <CardHeader>
-                <CardTitle>Sequence: "Boards/IR – Conservative"</CardTitle>
+                <CardTitle>Sequence: "PE – Aggressive (Add-on discovery)"</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
                 {sequenceSteps.map((step, index) => (
@@ -257,7 +251,7 @@ export default function SequenceEditorPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="max-per-domain">Daily Send Cap</Label>
-                <Input id="max-per-domain" type="number" placeholder="e.g., 300" defaultValue="300" />
+                <Input id="max-per-domain" type="number" placeholder="e.g., 300" defaultValue="1800" />
               </div>
                <div className="flex items-center justify-between rounded-lg border p-3">
                     <Label htmlFor="pause-alert" className="font-medium">Pause on Domain Alert</Label>
