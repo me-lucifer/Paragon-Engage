@@ -112,10 +112,10 @@ export function SideNav() {
           <h1 className="text-xl font-semibold">Paragon Engage</h1>
         </div>
       </SidebarHeader>
-      <SidebarContent className="p-2">
-        {navGroups.map((group) => (
-          <Collapsible key={group.title} defaultOpen={true} className="mb-2">
-            <CollapsibleTrigger className="w-full flex items-center justify-between px-2 py-1 text-xs font-semibold uppercase text-muted-foreground hover:text-foreground">
+      <SidebarContent className="p-0">
+        {navGroups.map((group, groupIndex) => (
+          <Collapsible key={group.title} defaultOpen={true} className={cn(groupIndex < navGroups.length -1 && "mb-4")}>
+            <CollapsibleTrigger className="w-full flex items-center justify-between px-3 py-1 text-xs font-semibold uppercase text-muted-foreground hover:text-foreground">
                 {group.title}
                 <ChevronDown className="h-4 w-4 transition-transform [&[data-state=open]]:rotate-180" />
             </CollapsibleTrigger>
@@ -125,10 +125,13 @@ export function SideNav() {
                     <SidebarMenuItem key={item.href}>
                     <Link href={item.href}>
                         <SidebarMenuButton
-                        isActive={pathname.startsWith(item.href)}
+                        className={cn(
+                            "w-full justify-start gap-2 rounded-none p-3 h-auto hover:bg-[#F0FAFE]",
+                             pathname.startsWith(item.href) && "sidebar-menu-button-active"
+                        )}
                         tooltip={{ children: item.label }}
                         >
-                        <item.icon />
+                        <item.icon className="h-[18px] w-[18px]" />
                         <span>{item.label}</span>
                         </SidebarMenuButton>
                     </Link>
