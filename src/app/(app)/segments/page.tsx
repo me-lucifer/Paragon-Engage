@@ -13,33 +13,33 @@ import { ArrowRight, Users, Building, Briefcase } from 'lucide-react';
 
 const segmentsData = [
   {
-    name: 'Hedge Funds & Asset Managers',
-    count: '18,420',
+    name: 'Accounting (CPAs)',
+    count: '60,210',
     icon: <Users className="h-8 w-8 text-primary" />,
     rules: [
-      { type: 'Roles', values: ['Analyst', 'Portfolio Manager', 'Trader'] },
-      { type: 'Firm Size', values: ['10-1000'] },
-      { type: 'Region', values: ['Global'] },
+      { type: 'Roles', values: ['CPA', 'Managing Partner', 'Accountant', 'Tax Advisor'] },
+      { type: 'Firm Size', values: ['5-50'] },
+      { type: 'Region', values: ['US', 'CA', 'EU'] },
     ],
   },
   {
-    name: 'Corporate Boards & IR',
-    count: '7,860',
+    name: 'IT MSPs',
+    count: '45,800',
     icon: <Building className="h-8 w-8 text-primary" />,
     rules: [
-      { type: 'Roles', values: ['Board Member', 'Investor Relations', 'C-Level'] },
-      { type: 'Firm Size', values: ['500+'] },
-      { type: 'Region', values: ['North America', 'Europe'] },
+      { type: 'Roles', values: ['CIO', 'IT Director', 'Owner', 'Head of Technology'] },
+      { type: 'Firm Size', values: ['5-50'] },
+      { type: 'Region', values: ['US', 'CA', 'EU'] },
     ],
   },
   {
-    name: 'Private Equity Firms',
-    count: '9,240',
+    name: 'Dental Clinics',
+    count: '78,150',
     icon: <Briefcase className="h-8 w-8 text-primary" />,
     rules: [
-      { type: 'Roles', values: ['Partner', 'Associate', 'Analyst'] },
-      { type: 'Firm Size', values: ['10-500'] },
-      { type: 'Region', values: ['North America'] },
+      { type: 'Roles', values: ['Dentist', 'Owner', 'Clinic Manager'] },
+      { type: 'Firm Size', values: ['5-50'] },
+      { type: 'Region', values: ['US', 'CA', 'EU'] },
     ],
   },
 ];

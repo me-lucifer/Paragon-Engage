@@ -28,13 +28,20 @@ import { CheckCircle, ChevronRight, FileDown, Rocket, ShieldCheck, Target } from
 const enrichmentRules = {
   emailDiscovery: ['Hunter', 'Apollo', 'Clearbit'],
   validationThresholds: 'Must be valid or catch-all with confidence >= 0.75',
-  roleTargeting: ['Owner', 'Founder', 'Managing Partner', 'CFO', 'Head of IR'],
+  roleTargeting: ['Owner', 'Founder', 'Managing Partner', 'CFO', 'Head of IR', 'CIO', 'Dentist'],
 };
 
+function getDaysAgo(maxDays: number): string {
+    const days = Math.floor(Math.random() * maxDays) + 1;
+    return `${days}d ago`;
+}
+
 const sampleResults = [
-  { name: 'Elon Musk', email: 'elon@tesla.com', confidence: 95, source: 'Apollo', lastSeen: '2h ago' },
-  { name: 'Jeff Bezos', email: 'jeff@amazon.com', confidence: 78, source: 'Hunter', lastSeen: '1d ago' },
-  { name: 'Satya Nadella', email: 'satya@microsoft.com', confidence: 99, source: 'Clearbit', lastSeen: '5m ago' },
+  { name: 'Sarah Chen', email: 's.chen@precision...com', confidence: 95, source: 'Apollo', lastSeen: getDaysAgo(90) },
+  { name: 'David Lee', email: 'david.l@keystone...com', confidence: 88, source: 'Hunter', lastSeen: getDaysAgo(90) },
+  { name: 'Kevin Brown', email: 'kevin@secureit...com', confidence: 99, source: 'Clearbit', lastSeen: getDaysAgo(90) },
+  { name: 'Dr. A. Williams', email: 'dr.williams@bright...com', confidence: 92, source: 'Apollo', lastSeen: getDaysAgo(90) },
+  { name: 'Lukas Weber', email: 'lukas@eurobalance...de', confidence: 78, source: 'Hunter', lastSeen: getDaysAgo(90) },
 ];
 
 export default function EnrichmentPage() {
@@ -122,7 +129,7 @@ export default function EnrichmentPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <Textarea
-                    placeholder="example.com&#10;spacex.com&#10;openai.com"
+                    placeholder="precisionaccounts.com&#10;secureitsolutions.com&#10;brightsmiledental.com"
                     rows={5}
                     />
                     <Button className="w-full">

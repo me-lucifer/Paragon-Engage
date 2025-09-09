@@ -1,5 +1,4 @@
 
-
 import {
     Table,
     TableBody,
@@ -15,28 +14,38 @@ import {
   
   const campaignsData = [
     {
-      name: 'Q3 Investor Outreach',
-      segment: 'Hedge Funds & Asset Managers',
+      name: 'Q3 CPA Outreach',
+      segment: 'Accounting (CPAs)',
       status: 'Active',
-      dailyCap: '500/500',
-      openRate: '68%',
-      replyRate: '12%',
-      positiveIntent: '4%',
+      dailyCap: '480/500',
+      openRate: '62%',
+      replyRate: '11%',
+      positiveIntent: '3%',
       owner: 'A. Bhandari',
     },
     {
-      name: 'New Board Member Welcome',
-      segment: 'Corporate Boards & IR',
-      status: 'Paused',
-      dailyCap: '100/100',
-      openRate: '75%',
-      replyRate: '18%',
-      positiveIntent: '6%',
-      owner: 'System',
+      name: 'IT MSP Engagement',
+      segment: 'IT MSPs',
+      status: 'Active',
+      dailyCap: '495/500',
+      openRate: '58%',
+      replyRate: '9%',
+      positiveIntent: '2.5%',
+      owner: 'J. Doe',
     },
     {
-      name: 'PE Deal Sourcing - Fintech',
-      segment: 'Private Equity Firms',
+      name: 'Dental Clinic Welcome',
+      segment: 'Dental Clinics',
+      status: 'Paused',
+      dailyCap: '80/100',
+      openRate: '71%',
+      replyRate: '15%',
+      positiveIntent: '5%',
+      owner: 'System',
+    },
+     {
+      name: 'New CPA Prospects',
+      segment: 'Accounting (CPAs)',
       status: 'Draft',
       dailyCap: 'N/A',
       openRate: 'N/A',
@@ -44,14 +53,14 @@ import {
       positiveIntent: 'N/A',
       owner: 'A. Bhandari',
     },
-     {
-      name: 'Web3 VC Engagement',
-      segment: 'Crypto VCs',
+    {
+      name: 'US IT Services Push',
+      segment: 'IT MSPs',
       status: 'Active',
-      dailyCap: '450/500',
-      openRate: '55%',
-      replyRate: '8%',
-      positiveIntent: '2%',
+      dailyCap: '350/400',
+      openRate: '65%',
+      replyRate: '14%',
+      positiveIntent: '4%',
       owner: 'J. Doe',
     },
   ];
@@ -123,4 +132,3 @@ import {
       </div>
     );
   }
-  

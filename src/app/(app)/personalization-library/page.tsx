@@ -42,94 +42,70 @@ const personalizationData = {
   ],
   segments: [
     {
-      id: 'hf-am',
-      name: 'Hedge Funds & Asset Managers',
+      id: 'accounting',
+      name: 'Accounting (CPAs)',
       icon: <Library className="h-5 w-5" />,
       templates: [
         {
           id: 'intro',
           name: 'Cold Intro',
           variants: [
-            { id: 'v1', content: `Hi {{first_name}},\n\nNoticed your work at {{company}}. Given your focus on {{mutual_topic}}, thought you might find our approach to {{fit_reason}} interesting.\n\nLet's connect.` },
-            { id: 'v2', content: `{{first_name}} - saw your post on {{mutual_topic}}. Your insights on {{industry}} are spot on.\n\nWe're helping firms like {{company}} with {{fit_reason}}. Worth a chat?` },
+            { id: 'v1', content: `Hi {{first_name}},\n\nReaching out because we help accounting firms like {{company}} streamline their client onboarding. Thought you might be interested.\n\nOpen to a brief chat next week?` },
+            { id: 'v2', content: `{{first_name}} - Your firm {{company}} stands out. We have a unique approach to {{fit_reason}} for CPAs.\n\nWorth a look?` },
           ],
         },
         {
-          id: 'news',
-          name: 'Recent News Trigger',
+          id: 'tax-season',
+          name: 'Tax Season Angle',
           variants: [
-            { id: 'v1', content: `Hi {{first_name}},\n\nCongrats on the recent {{recent_news}} at {{company}}. It's impressive.\n\nWhen companies are in growth mode like yours, our solutions for {{fit_reason}} often become a priority. Open to a brief chat next week?` },
-            { id: 'v2', content: `{{first_name}}, that's a huge milestone ({{recent_news}}). Based on what we've seen in the {{industry}} space, this is a perfect time to consider {{fit_reason}}.\n\nQuick call to discuss?` },
-          ],
-        },
-        {
-          id: 'affinity',
-          name: 'Affinity/Alumni Angle',
-          variants: [
-            { id: 'v1', content: `Hi {{first_name}} - hope you're well. Saw we both went to {{education_affinity}}. Go team!\n\nReaching out because my work at Paragon often intersects with {{role}}s like yours, specifically around {{fit_reason}}. Would love to compare notes.` },
-            { id: 'v2', content: `{{first_name}}, small world - saw {{education_affinity}} on your profile. Reaching out as a fellow alum.\n\nMy team helps firms in the {{industry}} space tackle {{fit_reason}}. Any interest in a quick chat?` },
+            { id: 'v1', content: `Hi {{first_name}},\n\nAs tax season approaches, I imagine efficiency is top of mind at {{company}}. Our platform helps with {{fit_reason}}.\n\nCould this be relevant for you?` },
+            { id: 'v2', content: `{{first_name}}, hope you're surviving the pre-tax season rush. We're helping CPAs like you with {{fit_reason}} to make things easier.\n\nQuick call to discuss?` },
           ],
         },
       ],
     },
     {
-      id: 'corp-ir',
-      name: 'Corporate Boards & IR',
+      id: 'it-msp',
+      name: 'IT MSPs',
       icon: <Library className="h-5 w-5" />,
       templates: [
         {
-          id: 'governance',
-          name: 'Governance Angle',
+          id: 'security',
+          name: 'Security Angle',
           variants: [
-            { id: 'v1', content: `Hi {{first_name}},\n\nGiven your role on the board at {{company}}, thought you might be interested in our insights on {{mutual_topic}}.\n\nWe help boards like yours with {{fit_reason}}. Let me know if you're open to learning more.` },
-            { id: 'v2', content: `{{first_name}}, respecting your time. The latest discourse on {{mutual_topic}} prompted my outreach.\n\nAt Paragon, we specialize in {{fit_reason}} for boards. Is this a priority for {{company}}?` },
+            { id: 'v1', content: `Hi {{first_name}},\n\nWith cyber threats on the rise, I thought our work in {{fit_reason}} for MSPs might be relevant to {{company}}.\n\nLet me know if you're open to learning more.` },
+            { id: 'v2', content: `{{first_name}}, respecting your time. The latest on {{mutual_topic}} prompted my outreach.\n\nWe specialize in {{fit_reason}} for MSPs like {{company}}. Is this a priority?` },
           ],
         },
         {
-          id: 'shareholder',
-          name: 'Shareholder Value',
+          id: 'efficiency',
+          name: 'Operational Efficiency',
           variants: [
-            { id: 'v1', content: `Hi {{first_name}},\n\nYour focus on shareholder value at {{company}} is clear. We're working with {{industry}} leaders to enhance this through {{fit_reason}}.\n\nCould this be relevant for you?` },
-            { id: 'v2', content: `{{first_name}}, driving shareholder value is key. We've seen firms like {{company}} benefit from focusing on {{fit_reason}}.\n\nWorth exploring?` },
-          ],
-        },
-        {
-          id: 'risk',
-          name: 'Risk & Compliance',
-          variants: [
-            { id: 'v1', content: `Hi {{first_name}},\n\nThe current landscape for {{industry}} makes risk management crucial. Our work in {{fit_reason}} is directly addressing this.\n\nI'd be happy to share some high-level thoughts.` },
-            { id: 'v2', content: `{{first_name}}, {{recent_news}} highlights the importance of proactive risk management. We help with {{fit_reason}} to stay ahead.\n\nOpen to a brief discussion?` },
+            { id: 'v1', content: `Hi {{first_name}},\n\nI know how critical operational efficiency is for MSPs. We help firms like {{company}} improve margins with {{fit_reason}}.\n\nInterested in seeing how?` },
+            { id: 'v2', content: `{{first_name}}, boosting tech productivity and reducing ticket volume is key. We help with {{fit_reason}}.\n\nWorth exploring?` },
           ],
         },
       ],
     },
     {
-      id: 'pe',
-      name: 'Private Equity Firms',
+      id: 'dental',
+      name: 'Dental Clinics',
       icon: <Library className="h-5 w-5" />,
       templates: [
         {
-          id: 'deal-sourcing',
-          name: 'Deal Sourcing',
+          id: 'patient-booking',
+          name: 'Patient Booking',
           variants: [
-            { id: 'v1', content: `Hi {{first_name}},\n\nFinding proprietary deals in {{industry}} is tough. Our platform helps firms like {{company}} uncover opportunities based on {{fit_reason}}.\n\nInterested in seeing how?` },
-            { id: 'v2', content: `{{first_name}}, I know how critical deal flow is. We provide unique data signals for {{fit_reason}} that surface off-market opportunities.\n\nWorth a look?` },
+            { id: 'v1', content: `Hi Dr. {{first_name}},\n\nKeeping the schedule full at {{company}} is crucial. Our platform helps dental clinics with {{fit_reason}} to attract more patients.\n\nWould be great to connect.` },
+            { id: 'v2', content: `Dr. {{first_name}}, we're helping practices like yours in the {{industry}} space improve their patient acquisition via {{fit_reason}}.\n\nLet's chat.` },
           ],
         },
         {
-          id: 'portfolio-ops',
-          name: 'Portfolio Operations',
+          id: 'clinic-management',
+          name: 'Clinic Management',
           variants: [
-            { id: 'v1', content: `Hi {{first_name}},\n\nDriving value across the portfolio is paramount. We support PE firms by implementing {{fit_reason}} to accelerate growth.\n\nWould be great to connect.` },
-            { id: 'v2', content: `{{first_name}}, the pressure to perform at the port-co level is immense. We help with {{fit_reason}} to deliver operational alpha.\n\nLet's chat.` },
-          ],
-        },
-        {
-          id: 'due-diligence',
-          name: 'Due Diligence',
-          variants: [
-            { id: 'v1', content: `Hi {{first_name}},\n\nBetter data, better diligence. We arm investment teams like yours at {{company}} with proprietary insights for {{fit_reason}}.\n\nCan I show you how it works?` },
-            { id: 'v2', content: `{{first_name}}, running a fast, effective diligence process is a competitive advantage. We provide the data for {{fit_reason}} to make that happen.\n\nOpen to a quick demo?` },
+            { id: 'v1', content: `Hi Dr. {{first_name}},\n\nBetter data, better clinic management. We arm practices like yours at {{company}} with insights for {{fit_reason}}.\n\nCan I show you how it works?` },
+            { id: 'v2', content: `Dr. {{first_name}}, running an effective practice is a competitive advantage. We provide the tools for {{fit_reason}} to make that happen.\n\nOpen to a quick demo?` },
           ],
         },
       ],

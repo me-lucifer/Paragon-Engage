@@ -35,11 +35,13 @@ const scoringCriteria = [
 ];
 
 const sampleCompanies = [
-  { name: 'QuantumLeap', score: 98, explanation: { fte: 10, seniority: 10, industry: 9, geo: 9, sentiment: 10, hiring: 10, tech: 10, growth: 10, ownership: 10, recency: 10 } },
-  { name: 'InnovateHub', score: 95, explanation: { fte: 9, seniority: 10, industry: 9, geo: 10, sentiment: 9, hiring: 9, tech: 10, growth: 9, ownership: 10, recency: 10 } },
-  { name: 'Synergy Corp', score: 92, explanation: { fte: 9, seniority: 9, industry: 10, geo: 8, sentiment: 9, hiring: 10, tech: 9, growth: 9, ownership: 9, recency: 10 } },
-  { name: 'NextGen Solutions', score: 89, explanation: { fte: 10, seniority: 8, industry: 8, geo: 9, sentiment: 8, hiring: 9, tech: 9, growth: 10, ownership: 8, recency: 10 } },
-  { name: 'Apex Enterprises', score: 88, explanation: { fte: 8, seniority: 9, industry: 9, geo: 8, sentiment: 9, hiring: 8, tech: 8, growth: 9, ownership: 10, recency: 10 } },
+  { name: 'Secure IT Solutions', score: 98, explanation: { fte: 10, seniority: 10, industry: 9, geo: 9, sentiment: 10, hiring: 10, tech: 10, growth: 10, ownership: 10, recency: 10 } },
+  { name: 'Precision Accounts', score: 95, explanation: { fte: 9, seniority: 10, industry: 9, geo: 10, sentiment: 9, hiring: 9, tech: 10, growth: 9, ownership: 10, recency: 10 } },
+  { name: 'Cloud Cover MSP', score: 92, explanation: { fte: 9, seniority: 9, industry: 10, geo: 8, sentiment: 9, hiring: 10, tech: 9, growth: 9, ownership: 9, recency: 10 } },
+  { name: 'Bright Smile Dental', score: 89, explanation: { fte: 10, seniority: 8, industry: 8, geo: 9, sentiment: 8, hiring: 9, tech: 9, growth: 10, ownership: 8, recency: 10 } },
+  { name: 'Keystone CPA', score: 88, explanation: { fte: 8, seniority: 9, industry: 9, geo: 8, sentiment: 9, hiring: 8, tech: 8, growth: 9, ownership: 10, recency: 10 } },
+  { name: 'Proactive Tech', score: 87, explanation: { fte: 9, seniority: 8, industry: 9, geo: 8, sentiment: 8, hiring: 9, tech: 8, growth: 9, ownership: 9, recency: 10 } },
+  { name: 'Veritas Financials', score: 85, explanation: { fte: 8, seniority: 8, industry: 8, geo: 9, sentiment: 9, hiring: 8, tech: 9, growth: 8, ownership: 10, recency: 10 } },
 ];
 
 export default function FitScoringPage() {
@@ -58,7 +60,7 @@ export default function FitScoringPage() {
         {/* Training Rubrics */}
         <Card>
           <CardHeader>
-            <CardTitle>Training Rubrics: v2.1 "High-Growth Tech"</CardTitle>
+            <CardTitle>Training Rubrics: v3 "Small Business Services"</CardTitle>
             <CardDescription>
               Adjust the weights to refine your scoring model.
             </CardDescription>
@@ -102,7 +104,7 @@ export default function FitScoringPage() {
                     <div>
                         <CardTitle>Live Preview</CardTitle>
                         <CardDescription>
-                            Top 50 matching companies based on the current rubric.
+                            Top matching companies based on the current rubric.
                         </CardDescription>
                     </div>
                     <Button variant="secondary">

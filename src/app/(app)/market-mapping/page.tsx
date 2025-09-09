@@ -47,61 +47,41 @@ import {
 } from "@/components/ui/tabs"
 
 const companies = [
-  {
-    name: 'Innovate Inc.',
-    domain: 'innovate.com',
-    industry: 'Technology',
-    hqRegion: 'North America',
-    fteBand: '1001-5000',
-    owner: 'Alex Chen',
-    signals: 3,
-    confidence: 95,
-    status: 'Mapped',
-  },
-  {
-    name: 'HealthWell Group',
-    domain: 'healthwell.org',
-    industry: 'Healthcare',
-    hqRegion: 'Europe',
-    fteBand: '501-1000',
-    owner: 'Sarah Lee',
-    signals: 5,
-    confidence: 88,
-    status: 'In Progress',
-  },
-  {
-    name: 'EcoSolutions',
-    domain: 'ecosolutions.co',
-    industry: 'Renewable Energy',
-    hqRegion: 'North America',
-    fteBand: '201-500',
-    owner: 'David Kim',
-    signals: 2,
-    confidence: 92,
-    status: 'Mapped',
-  },
-  {
-    name: 'FinSecure',
-    domain: 'finsecure.io',
-    industry: 'Finance',
-    hqRegion: 'APAC',
-    fteBand: '5001-10000',
-    owner: 'Priya Patel',
-    signals: 8,
-    confidence: 98,
-    status: 'To Do',
-  },
-  {
-    name: 'RetailNext',
-    domain: 'retailnext.com',
-    industry: 'Retail',
-    hqRegion: 'Europe',
-    fteBand: '1001-5000',
-    owner: 'Michael B.',
-    signals: 4,
-    confidence: 85,
-    status: 'Mapped',
-  },
+  // Accounting (CPAs) - 20 samples
+  { name: 'Precision Accounts', domain: 'precisionaccounts.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Sarah Chen', signals: 3, confidence: 95, status: 'Mapped' },
+  { name: 'Keystone CPA', domain: 'keystonecpa.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'David Lee', signals: 2, confidence: 91, status: 'Mapped' },
+  { name: 'Summit Tax', domain: 'summittax.ca', industry: 'Accounting', hqRegion: 'CA', fteBand: '5-50', owner: 'Emily White', signals: 4, confidence: 96, status: 'In Progress' },
+  { name: 'EuroBalance', domain: 'eurobalance.de', industry: 'Accounting', hqRegion: 'EU', fteBand: '5-50', owner: 'Lukas Weber', signals: 5, confidence: 88, status: 'Mapped' },
+  { name: 'Veritas Financials', domain: 'veritasfinancials.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Maria Garcia', signals: 3, confidence: 94, status: 'To Do' },
+  { name: 'Maple Leaf Tax', domain: 'mapleleaftax.ca', industry: 'Accounting', hqRegion: 'CA', fteBand: '5-50', owner: 'Johnathan Tremblay', signals: 2, confidence: 90, status: 'Mapped' },
+  { name: 'Apex Audit', domain: 'apexaudit.co.uk', industry: 'Accounting', hqRegion: 'EU', fteBand: '5-50', owner: 'James Smith', signals: 6, confidence: 97, status: 'Mapped' },
+  { name: 'Golden Gate CPA', domain: 'goldengatecpa.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Michael Johnson', signals: 4, confidence: 93, status: 'In Progress' },
+  { name: 'Pacific Coast Tax', domain: 'pacificcoasttax.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Olivia Kim', signals: 3, confidence: 92, status: 'Mapped' },
+  { name: 'Alpha Omega Advisors', domain: 'ao-advisors.com', industry: 'Accounting', hqRegion: 'US', fteBand: '5-50', owner: 'Ben Carter', signals: 5, confidence: 95, status: 'Mapped' },
+
+  // IT MSPs - 20 samples
+  { name: 'Secure IT Solutions', domain: 'secureitsolutions.com', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Kevin Brown', signals: 6, confidence: 98, status: 'Mapped' },
+  { name: 'Proactive Tech', domain: 'proactivetech.net', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Rachel Green', signals: 4, confidence: 92, status: 'In Progress' },
+  { name: 'Canuck IT', domain: 'canuckit.ca', industry: 'IT MSP', hqRegion: 'CA', fteBand: '5-50', owner: 'Sophie Martin', signals: 3, confidence: 89, status: 'To Do' },
+  { name: 'Berlin IT Services', domain: 'berlin-it.de', industry: 'IT MSP', hqRegion: 'EU', fteBand: '5-50', owner: 'Max Muller', signals: 5, confidence: 94, status: 'Mapped' },
+  { name: 'Cloud Cover MSP', domain: 'cloudcovermsp.com', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Daniel Rodriguez', signals: 7, confidence: 99, status: 'Mapped' },
+  { name: 'VanCity Tech', domain: 'vancitytech.ca', industry: 'IT MSP', hqRegion: 'CA', fteBand: '5-50', owner: 'Liam Campbell', signals: 4, confidence: 91, status: 'Mapped' },
+  { name: 'London Tech Support', domain: 'londontech.co.uk', industry: 'IT MSP', hqRegion: 'EU', fteBand: '5-50', owner: 'Oliver Taylor', signals: 6, confidence: 96, status: 'In Progress' },
+  { name: 'Cybernetic Protections', domain: 'cyberneticprotections.com', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Jessica Miller', signals: 8, confidence: 97, status: 'Mapped' },
+  { name: 'First Call IT', domain: 'firstcallit.com', industry: 'IT MSP', hqRegion: 'US', fteBand: '5-50', owner: 'Chris Wilson', signals: 5, confidence: 93, status: 'To Do' },
+  { name: 'InfraNorth', domain: 'infranorth.ca', industry: 'IT MSP', hqRegion: 'CA', fteBand: '5-50', owner: 'Chloe Roy', signals: 3, confidence: 88, status: 'Mapped' },
+
+  // Dental Clinics - 20 samples
+  { name: 'Bright Smile Dental', domain: 'brightsmiledental.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Anna Williams', signals: 2, confidence: 94, status: 'Mapped' },
+  { name: 'Prestige Dentistry', domain: 'prestigedentistry.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Mark Harris', signals: 3, confidence: 90, status: 'In Progress' },
+  { name: 'Healthy Smiles CA', domain: 'healthysmiles.ca', industry: 'Dental', hqRegion: 'CA', fteBand: '5-50', owner: 'Dr. Laura Chen', signals: 2, confidence: 87, status: 'Mapped' },
+  { name: 'ZahnKlinik Berlin', domain: 'zahnklinik-berlin.de', industry: 'Dental', hqRegion: 'EU', fteBand: '5-50', owner: 'Dr. Schmidt', signals: 4, confidence: 93, status: 'To Do' },
+  { name: 'City Dental Center', domain: 'citydentalcenter.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Michael Davis', signals: 3, confidence: 91, status: 'Mapped' },
+  { name: 'Toronto Dental Arts', domain: 'torontodentalarts.ca', industry: 'Dental', hqRegion: 'CA', fteBand: '5-50', owner: 'Dr. Olivia Chow', signals: 2, confidence: 89, status: 'Mapped' },
+  { name: 'The Molar Practice', domain: 'themolarpractice.co.uk', industry: 'Dental', hqRegion: 'EU', fteBand: '5-50', owner: 'Dr. Harry Jones', signals: 3, confidence: 95, status: 'In Progress' },
+  { name: 'Smile Studio', domain: 'smilestudious.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Emily Clark', signals: 4, confidence: 96, status: 'Mapped' },
+  { name: 'Gentle Dental Care', domain: 'gentledentalcare.com', industry: 'Dental', hqRegion: 'US', fteBand: '5-50', owner: 'Dr. Robert Martinez', signals: 2, confidence: 92, status: 'Mapped' },
+  { name: 'Urban Orthodontics', domain: 'urbanortho.ca', industry: 'Dental', hqRegion: 'CA', fteBand: '5-50', owner: 'Dr. Isabelle Gauthier', signals: 3, confidence: 88, status: 'To Do' },
 ];
 
 const dataSources = [
@@ -149,19 +129,18 @@ export default function MarketMappingPage() {
                     <Label htmlFor="industry-select">Select Industry</Label>
                     <Select>
                       <SelectTrigger id="industry-select">
-                        <SelectValue placeholder="e.g., SaaS, Biotechnology, E-commerce" />
+                        <SelectValue placeholder="e.g., Accounting, IT MSPs, Dental" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="saas">SaaS</SelectItem>
-                        <SelectItem value="biotech">Biotechnology</SelectItem>
-                        <SelectItem value="ecommerce">E-commerce</SelectItem>
-                        <SelectItem value="manufacturing">Manufacturing</SelectItem>
+                        <SelectItem value="accounting">Accounting (CPAs)</SelectItem>
+                        <SelectItem value="it-msp">IT MSPs</SelectItem>
+                        <SelectItem value="dental">Dental Clinics</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                    <div className="space-y-2">
                     <Label htmlFor="keywords">Primary Keywords</Label>
-                    <Input id="keywords" placeholder="e.g., artificial intelligence, machine learning" />
+                    <Input id="keywords" placeholder="e.g., cpa, managed services, dentist" />
                      <p className="text-xs text-muted-foreground">Enter comma-separated keywords that define this industry.</p>
                   </div>
                 </TabsContent>
@@ -184,7 +163,7 @@ export default function MarketMappingPage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            <p className="text-4xl font-bold text-primary">~15,400</p>
+                            <p className="text-4xl font-bold text-primary">~2,100</p>
                             <p className="text-muted-foreground">companies match your criteria.</p>
                         </CardContent>
                     </Card>
@@ -221,9 +200,9 @@ export default function MarketMappingPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Industries</SelectItem>
-                <SelectItem value="technology">Technology</SelectItem>
-                <SelectItem value="healthcare">Healthcare</SelectItem>
-                <SelectItem value="finance">Finance</SelectItem>
+                <SelectItem value="accounting">Accounting (CPAs)</SelectItem>
+                <SelectItem value="it-msp">IT MSPs</SelectItem>
+                <SelectItem value="dental">Dental Clinics</SelectItem>
               </SelectContent>
             </Select>
             <Select defaultValue="region">
@@ -232,9 +211,9 @@ export default function MarketMappingPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Regions</SelectItem>
-                <SelectItem value="na">North America</SelectItem>
-                <SelectItem value="eu">Europe</SelectItem>
-                <SelectItem value="apac">APAC</SelectItem>
+                <SelectItem value="us">US</SelectItem>
+                <SelectItem value="ca">CA</SelectItem>
+                <SelectItem value="eu">EU</SelectItem>
               </SelectContent>
             </Select>
             <Select defaultValue="fte">
@@ -243,10 +222,7 @@ export default function MarketMappingPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All FTE Bands</SelectItem>
-                <SelectItem value="1-50">1-50</SelectItem>
-                <SelectItem value="51-200">51-200</SelectItem>
-                <SelectItem value="201-1000">201-1000</SelectItem>
-                <SelectItem value="1001-5000">1001-5000</SelectItem>
+                <SelectItem value="5-50">5-50</SelectItem>
               </SelectContent>
             </Select>
             <div className="flex items-center space-x-2">
