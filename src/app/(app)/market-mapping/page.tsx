@@ -376,17 +376,19 @@ export default function MarketMappingPage() {
                     </div>
                   </TableHead>
                   <TableHead>
-                     <div className="flex items-center gap-1">
-                      Confidence
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Model’s probability the company belongs in this segment (based on signals + source agreement).</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
+                     <Button variant="ghost" size="sm" className="-ml-3 h-8 data-[state=open]:bg-accent">
+                        <div className="flex items-center gap-1">
+                        Confidence
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                            <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                            <p>Higher = more evidence that this company fits the segment (source quality, recency, agreement).</p>
+                            </TooltipContent>
+                        </Tooltip>
+                        </div>
+                    </Button>
                   </TableHead>
                   <TableHead>
                      <div className="flex items-center gap-1">
@@ -443,4 +445,5 @@ export default function MarketMappingPage() {
 }
 
     
+
 
