@@ -90,6 +90,7 @@ export default function InboxSettingsDialog({
   }
 
   const warmupCap = currentSettings.warmup.enabled ? WARMUP_CAPS[currentSettings.warmup.schedule] : 1000;
+  const transportProvider = "SendGrid"; // Defaulting as per the prompt
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -123,6 +124,40 @@ export default function InboxSettingsDialog({
                     <Label htmlFor="signature">Signature</Label>
                     <Textarea id="signature" rows={4} value={currentSettings.signature} onChange={e => setCurrentSettings(s => ({...s, signature: e.target.value}))}/>
                 </div>
+            </div>
+            
+            <Separator />
+
+            <div className="space-y-4">
+                 <h4 className="font-semibold text-lg">Transport</h4>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="transport-provider">Transport Provider</Label>
+                        <Select defaultValue={transportProvider}>
+                            <SelectTrigger id="transport-provider">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="SendGrid">SendGrid</SelectItem>
+                                <SelectItem value="Mailgun">Mailgun</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="api-key">API Key</Label>
+                        <Select defaultValue="default-key">
+                            <SelectTrigger id="api-key">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="default-key">Default Key (sk...demo)</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                    Using {transportProvider} for outbound; replies handled by {inbox.provider}.
+                </p>
             </div>
 
             <Separator />
