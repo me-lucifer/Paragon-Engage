@@ -75,7 +75,7 @@ export default function SettingsPage() {
     const [isUnsubscribePreviewOpen, setIsUnsubscribePreviewOpen] = useState(false);
     const [unsubscribeKeywords, setUnsubscribeKeywords] = useState(["unsubscribe", "remove me", "opt out"]);
     const [newKeyword, setNewKeyword] = useState("");
-    const { statuses: integrationStatuses, testConnection, isTesting, revealed, toggleReveal, setStatuses: setIntegrationStatuses } = useIntegrationStatus(initialIntegrationStates);
+    const { statuses: integrationStatuses, testConnection, isTesting, revealed, toggleReveal, setStatuses: setIntegrationStatuses, rotateKey } = useIntegrationStatus(initialIntegrationStates);
     
     const [retentionReplies, setRetentionReplies] = useState(90);
     const [retentionLogs, setRetentionLogs] = useState(180);
@@ -505,7 +505,7 @@ export default function SettingsPage() {
                                             {revealed[id] ? <EyeOff /> : <Eye />}
                                             <span className="sr-only">{revealed[id] ? 'Hide' : 'Reveal'} key</span>
                                         </Button>
-                                        <Button variant="outline" size="icon"><RotateCw /><span className="sr-only">Rotate key</span></Button>
+                                        <Button variant="outline" size="icon" onClick={() => rotateKey(id)}><RotateCw /><span className="sr-only">Rotate key</span></Button>
                                         <Button variant="destructive" size="icon" outline><Trash2 /><span className="sr-only">Delete key</span></Button>
                                         <Button variant="secondary" onClick={() => testConnection(id)} disabled={isTesting[id]}>
                                             {isTesting[id] ? 'Testing...' : 'Test'}

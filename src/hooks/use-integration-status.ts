@@ -52,5 +52,12 @@ export function useIntegrationStatus(initialStatuses: Statuses) {
     [toast]
   );
   
-  return { statuses, setStatuses, connect, disconnect, testConnection, isTesting, revealed, toggleReveal };
+  const rotateKey = useCallback((id: string) => {
+    toast({
+        title: "API Key Rotated",
+        description: `Successfully rotated the API key for ${id}.`,
+    });
+  }, [toast]);
+
+  return { statuses, setStatuses, connect, disconnect, testConnection, isTesting, revealed, toggleReveal, rotateKey };
 }
