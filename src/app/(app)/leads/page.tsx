@@ -12,7 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { PlusCircle, MoreHorizontal, CheckCircle, ShieldAlert } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, CheckCircle, ShieldAlert, HelpCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +25,14 @@ import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import ConvertLeadDialog from '@/components/convert-lead-dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import LeadExplanationSheet from '@/components/lead-explanation-sheet';
+
+
+type LeadExplanation = {
+  ruleMatch?: string;
+  mlScore?: number;
+  llmRationale?: string;
+};
 
 type Lead = {
   name: string;
@@ -33,28 +41,29 @@ type Lead = {
   intent: 'Positive' | 'Neutral' | 'Negative';
   nextAction: string;
   owner: string;
+  explanation: LeadExplanation;
   status?: 'default' | 'suppressed' | 'meeting_created';
   suppressionReason?: string;
 };
 
 const initialLeadsData: Lead[] = [
   // Positive Intent
-  { name: 'John Smith', company: 'Precision Accounts', thread: 'Re: Your services', intent: 'Positive', nextAction: 'Schedule Meeting', owner: 'A. Bhandari' },
-  { name: 'Maria Garcia', company: 'Veritas Financials', thread: 'Great, thanks!', intent: 'Positive', nextAction: 'Follow-up in 1w', owner: 'J. Doe' },
-  { name: 'Dr. Anna Williams', company: 'Bright Smile Dental', thread: 'Yes, let\'s talk', intent: 'Positive', nextAction: 'Schedule Meeting', owner: 'A. Bhandari' },
-  { name: 'Kevin Brown', company: 'Secure IT Solutions', thread: 'Looks interesting', intent: 'Positive', nextAction: 'Send Info', owner: 'J. Doe' },
-  { name: 'Daniel Rodriguez', company: 'Cloud Cover MSP', thread: 'Can you call me?', intent: 'Positive', nextAction: 'Schedule Meeting', owner: 'A. Bhandari' },
+  { name: 'John Smith', company: 'Precision Accounts', thread: 'Re: Your services', intent: 'Positive', nextAction: 'Schedule Meeting', owner: 'A. Bhandari', explanation: { mlScore: 0.92, llmRationale: "User expresses clear interest in scheduling a meeting." } },
+  { name: 'Maria Garcia', company: 'Veritas Financials', thread: 'Great, thanks!', intent: 'Positive', nextAction: 'Follow-up in 1w', owner: 'J. Doe', explanation: { mlScore: 0.88, llmRationale: "Positive sentiment and gratitude indicate interest." } },
+  { name: 'Dr. Anna Williams', company: 'Bright Smile Dental', thread: 'Yes, let\'s talk', intent: 'Positive', nextAction: 'Schedule Meeting', owner: 'A. Bhandari', explanation: { ruleMatch: "let's talk", mlScore: 0.95 } },
+  { name: 'Kevin Brown', company: 'Secure IT Solutions', thread: 'Looks interesting', intent: 'Positive', nextAction: 'Send Info', owner: 'J. Doe', explanation: { ruleMatch: "looks interesting", mlScore: 0.81 } },
+  { name: 'Daniel Rodriguez', company: 'Cloud Cover MSP', thread: 'Can you call me?', intent: 'Positive', nextAction: 'Schedule Meeting', owner: 'A. Bhandari', explanation: { mlScore: 0.93, llmRationale: "Direct request for a call is a strong positive signal." } },
 
   // Neutral Intent
-  { name: 'David Lee', company: 'Keystone CPA', thread: 'Got it, thanks', intent: 'Neutral', nextAction: 'Send Info', owner: 'System' },
-  { name: 'Dr. Mark Harris', company: 'Prestige Dentistry', thread: 'Acknowledged', intent: 'Neutral', nextAction: 'Archive', owner: 'System' },
-  { name: 'Rachel Green', company: 'Proactive Tech', thread: 'Is this automated?', intent: 'Neutral', nextAction: 'Send Info', owner: 'J. Doe' },
-  { name: 'Lukas Weber', company: 'EuroBalance', thread: 'What are your rates?', intent: 'Neutral', nextAction: 'Send Info', owner: 'System' },
+  { name: 'David Lee', company: 'Keystone CPA', thread: 'Got it, thanks', intent: 'Neutral', nextAction: 'Send Info', owner: 'System', explanation: { mlScore: 0.55, llmRationale: "Simple acknowledgement, no clear positive or negative intent." } },
+  { name: 'Dr. Mark Harris', company: 'Prestige Dentistry', thread: 'Acknowledged', intent: 'Neutral', nextAction: 'Archive', owner: 'System', explanation: { mlScore: 0.51 } },
+  { name: 'Rachel Green', company: 'Proactive Tech', thread: 'Is this automated?', intent: 'Neutral', nextAction: 'Send Info', owner: 'J. Doe', explanation: { mlScore: 0.60, llmRationale: "A question about the process, neither positive nor negative." } },
+  { name: 'Lukas Weber', company: 'EuroBalance', thread: 'What are your rates?', intent: 'Neutral', nextAction: 'Send Info', owner: 'System', explanation: { ruleMatch: "what are your", mlScore: 0.65 } },
 
   // Negative Intent
-  { name: 'Emily White', company: 'Summit Tax', thread: 'Not interested', intent: 'Negative', nextAction: 'DNC', owner: 'System' },
-  { name: 'Max Muller', company: 'Berlin IT Services', thread: 'Unsubscribe', intent: 'Negative', nextAction: 'DNC', owner: 'System' },
-  { name: 'Dr. Schmidt', company: 'ZahnKlinik Berlin', thread: 'Remove me', intent: 'Negative', nextAction: 'DNC', owner: 'System' },
+  { name: 'Emily White', company: 'Summit Tax', thread: 'Not interested', intent: 'Negative', nextAction: 'DNC', owner: 'System', explanation: { ruleMatch: "not interested", mlScore: 0.98 } },
+  { name: 'Max Muller', company: 'Berlin IT Services', thread: 'Unsubscribe', intent: 'Negative', nextAction: 'DNC', owner: 'System', explanation: { ruleMatch: "unsubscribe", mlScore: 0.99 } },
+  { name: 'Dr. Schmidt', company: 'ZahnKlinik Berlin', thread: 'Remove me', intent: 'Negative', nextAction: 'DNC', owner: 'System', explanation: { ruleMatch: "remove me", mlScore: 0.97 } },
 ];
 
 
@@ -62,7 +71,9 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState(true);
   const [leadsData, setLeadsData] = useState<Lead[]>(initialLeadsData);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isConvertDialogOpen, setIsConvertDialogOpen] = useState(false);
+  const [isExplainSheetOpen, setIsExplainSheetOpen] = useState(false);
+  const [explainedLead, setExplainedLead] = useState<Lead | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -71,9 +82,14 @@ export default function LeadsPage() {
     return () => clearTimeout(timer);
   }, []);
   
-  const handleOpenDialog = (lead: Lead) => {
+  const handleOpenConvertDialog = (lead: Lead) => {
     setSelectedLead(lead);
-    setIsDialogOpen(true);
+    setIsConvertDialogOpen(true);
+  };
+  
+  const handleOpenExplainSheet = (lead: Lead) => {
+    setExplainedLead(lead);
+    setIsExplainSheetOpen(true);
   };
 
   const handleSuppress = (leadName: string) => {
@@ -90,7 +106,7 @@ export default function LeadsPage() {
         lead.name === leadName ? { ...lead, status: 'meeting_created', nextAction: 'Meeting Created' } : lead
       )
     );
-    setIsDialogOpen(false);
+    setIsConvertDialogOpen(false);
   };
 
 
@@ -162,15 +178,20 @@ export default function LeadsPage() {
                         <div className="text-xs text-gray-400 mt-1">Sent by: {lead.owner}</div>
                       </TableCell>
                       <TableCell>
-                          <Badge 
-                              variant={lead.intent === 'Positive' ? 'default' : lead.intent === 'Negative' ? 'destructive' : 'secondary'}
-                              className={
-                                  lead.intent === 'Positive' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' :
-                                  lead.intent === 'Negative' ? 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' : ''
-                              }
-                          >
-                              {lead.intent}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge 
+                                variant={lead.intent === 'Positive' ? 'default' : lead.intent === 'Negative' ? 'destructive' : 'secondary'}
+                                className={
+                                    lead.intent === 'Positive' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' :
+                                    lead.intent === 'Negative' ? 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' : ''
+                                }
+                            >
+                                {lead.intent}
+                            </Badge>
+                             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleOpenExplainSheet(lead)}>
+                                <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                             </Button>
+                          </div>
                       </TableCell>
                       <TableCell>
                         {lead.status === 'suppressed' ? (
@@ -199,7 +220,7 @@ export default function LeadsPage() {
                               <DropdownMenuItem>Snooze</DropdownMenuItem>
                               <DropdownMenuItem>Archive</DropdownMenuItem>
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem onClick={() => handleOpenDialog(lead)}>Convert to Meeting</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleOpenConvertDialog(lead)}>Convert to Meeting</DropdownMenuItem>
                                <DropdownMenuItem onClick={() => handleSuppress(lead.name)} className="text-destructive">
                                 Suppress
                               </DropdownMenuItem>
@@ -216,10 +237,17 @@ export default function LeadsPage() {
       </div>
       {selectedLead && (
         <ConvertLeadDialog
-          open={isDialogOpen}
-          onOpenChange={setIsDialogOpen}
+          open={isConvertDialogOpen}
+          onOpenChange={setIsConvertDialogOpen}
           lead={selectedLead}
           onSave={handleSaveMeeting}
+        />
+      )}
+      {explainedLead && (
+        <LeadExplanationSheet
+          open={isExplainSheetOpen}
+          onOpenChange={setIsExplainSheetOpen}
+          lead={explainedLead}
         />
       )}
     </>
