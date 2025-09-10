@@ -157,7 +157,7 @@ export function SideNav() {
             subItems: item.subItems?.filter(subItem => subItem.roles.includes(role))
           }))
       }))
-      .filter(group => group.items.length > 0);
+      .filter(group => group.items.length > 0 && group.items.some(item => item.subItems ? item.subItems.length > 0 : true));
   }, [role]);
 
   return (

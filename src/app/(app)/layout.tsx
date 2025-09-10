@@ -8,7 +8,7 @@ import { SidebarProvider, Sidebar, SidebarInset } from "@/components/ui/sidebar"
 import { RoleProvider, useRole } from "@/hooks/use-role";
 import { allNavGroups } from "@/components/layout/sidenav";
 import { defaultPermissions } from "@/components/roles-matrix";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { AccessDenied } from "@/components/access-denied";
 
 function Footer() {
@@ -21,15 +21,25 @@ function Footer() {
 
 function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { role } = useRole();
 
-  const currentNavItem = allNavGroups
-    .flatMap(group => group.items)
-    .find(item => item.href.split('?')[0] === pathname.split('?')[0]);
+  const currentPath = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+
+  const navItems = allNavGroups.flatMap(group =>
+    group.items.flatMap(item => (item.subItems ? item.subItems : item))
+  );
+
+  let currentNavItem = navItems.find(item => item.href === currentPath);
+  
+  if (!currentNavItem) {
+      currentNavItem = navItems.find(item => item.href.split('?')[0] === pathname);
+  }
 
   const hasPermission = currentNavItem
     ? defaultPermissions[currentNavItem.label as keyof typeof defaultPermissions]?.[role]?.includes('View')
     : true; // Allow access to non-menu pages like /dashboard or pages not in nav
+
 
   return (
     <SidebarProvider>

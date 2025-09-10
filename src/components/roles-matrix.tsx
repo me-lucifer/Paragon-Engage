@@ -38,7 +38,7 @@ const modulesConfig = [
   },
   {
     category: 'GOVERNANCE',
-    modules: ['DNC / Suppression', 'Audit Log', 'Settings'],
+    modules: ['DNC / Suppression', 'Audit Log', 'Settings', 'Organization', 'Roles & Permissions', 'Compliance', 'Integrations'],
   },
   {
     category: 'ANALYTICS',
@@ -65,6 +65,10 @@ export const defaultPermissions: PermissionsState = {
   'DNC / Suppression': { operator: [], analyst: [], admin: [] },
   'Audit Log': { operator: [], analyst: [], admin: [] },
   Settings: { operator: ['View'], analyst: ['View'], admin: [] },
+  Organization: { operator: [], analyst: [], admin: [] },
+  'Roles & Permissions': { operator: [], analyst: [], admin: [] },
+  Compliance: { operator: [], analyst: [], admin: [] },
+  Integrations: { operator: [], analyst: [], admin: [] },
   Reports: { operator: [], analyst: ['View', 'Export'], admin: [] },
 };
 
