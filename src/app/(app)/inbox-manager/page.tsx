@@ -256,13 +256,16 @@ export default function InboxManagerPage() {
                                 <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent>
-                                <div className="p-2 space-y-2">
-                                    <h4 className="font-semibold">Health Factors</h4>
-                                    <div className="flex justify-between text-xs"><span className="text-muted-foreground">Auth Score (30%)</span> <span>{inbox.healthFactors.auth}/30</span></div>
-                                    <div className="flex justify-between text-xs"><span className="text-muted-foreground">Bounce Rate (25%)</span> <span>{inbox.healthFactors.bounce}/25</span></div>
-                                    <div className="flex justify-between text-xs"><span className="text-muted-foreground">Spam Rate (25%)</span> <span>{inbox.healthFactors.spam}/25</span></div>
-                                    <div className="flex justify-between text-xs"><span className="text-muted-foreground">Warm-up (10%)</span> <span>{inbox.healthFactors.warmup}/10</span></div>
-                                    <div className="flex justify-between text-xs"><span className="text-muted-foreground">Send Errors (10%)</span> <span>{inbox.healthFactors.errors}/10</span></div>
+                                <div className="p-2 space-y-2 max-w-xs">
+                                    <h4 className="font-semibold">Health Score Formula</h4>
+                                    <p className="text-xs text-muted-foreground">30% Auth + 25% Bounce + 25% Spam + 10% Warm-up + 10% Errors</p>
+                                    <h4 className="font-semibold">Current Values</h4>
+                                     <ul className="text-xs text-muted-foreground list-disc pl-4">
+                                        <li>Auth: {inbox.healthFactors.auth > 0 ? 'Passing' : 'Failing'}</li>
+                                        <li>Bounce Rate: {((25 - inbox.healthFactors.bounce) / 25 * 5).toFixed(1)}%</li>
+                                        <li>Spam Rate: {((25 - inbox.healthFactors.spam) / 25 * 8).toFixed(1)}%</li>
+                                        <li>Sending Errors (24h): {10-inbox.healthFactors.errors}</li>
+                                    </ul>
                                 </div>
                             </TooltipContent>
                         </Tooltip>
