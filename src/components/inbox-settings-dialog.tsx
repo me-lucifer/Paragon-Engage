@@ -29,7 +29,9 @@ import type { Inbox } from '@/app/(app)/inbox-manager/page';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from './ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, CheckCircle } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { Alert, AlertDescription } from './ui/alert';
 
 interface InboxSettingsDialogProps {
   open: boolean;
@@ -57,6 +59,7 @@ export default function InboxSettingsDialog({
   onSave,
 }: InboxSettingsDialogProps) {
   const [currentSettings, setCurrentSettings] = useState(inbox);
+  const [replyMethod, setReplyMethod] = useState<'api' | 'webhook'>('api');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -162,6 +165,49 @@ export default function InboxSettingsDialog({
 
             <Separator />
             
+            <div className="space-y-4">
+                <h4 className="font-semibold text-lg">Reply Handling</h4>
+                <RadioGroup value={replyMethod} onValueChange={(v) => setReplyMethod(v as any)} className="space-y-4">
+                    <div>
+                        <div className="flex items-center space-x-2 pb-2">
+                            <RadioGroupItem value="api" id="api" />
+                            <Label htmlFor="api">Mailbox API ({inbox.provider})</Label>
+                        </div>
+                         {replyMethod === 'api' && (
+                             <div className="pl-8 space-y-2">
+                                <div className="flex items-center gap-2 text-sm">
+                                    <CheckCircle className="h-4 w-4 text-green-500" />
+                                    <span>Connected via {inbox.provider}</span>
+                                </div>
+                                <Button variant="outline" size="sm">Test Fetch</Button>
+                            </div>
+                         )}
+                    </div>
+                     <div>
+                        <div className="flex items-center space-x-2 pb-2">
+                            <RadioGroupItem value="webhook" id="webhook" disabled />
+                            <Label htmlFor="webhook" className="text-muted-foreground">SendGrid Inbound Parse</Label>
+                        </div>
+                         {replyMethod === 'webhook' && (
+                             <div className="pl-8 space-y-2">
+                                <div>
+                                    <Label htmlFor="webhook-url">Webhook URL</Label>
+                                    <Input id="webhook-url" readOnly value="https://api.paragon.com/webhooks/sendgrid" />
+                                </div>
+                                 <Alert>
+                                    <AlertDescription className="text-xs">
+                                        Requires setting MX/CNAME records at your DNS provider to point to SendGrid.
+                                    </AlertDescription>
+                                </Alert>
+                            </div>
+                         )}
+                    </div>
+                </RadioGroup>
+            </div>
+
+
+            <Separator />
+
             <div className="space-y-4">
                 <h4 className="font-semibold text-lg">Warm-up</h4>
                 <div className="flex items-center justify-between p-4 border rounded-lg">
