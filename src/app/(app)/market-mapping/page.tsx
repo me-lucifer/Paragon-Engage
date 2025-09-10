@@ -33,7 +33,6 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
   SheetFooter,
   SheetClose
 } from '@/components/ui/sheet';
@@ -41,7 +40,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Info, PlusCircle, ArrowRight, BrainCircuit, Check, FileText } from 'lucide-react';
+import { Info, PlusCircle, ArrowRight, BrainCircuit, Check, FileText, HelpCircle } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Tabs,
@@ -50,6 +49,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { CompanyDetailsDrawer } from '@/components/company-details-drawer';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 
 const companies = [
@@ -115,6 +115,7 @@ export default function MarketMappingPage() {
 
   return (
     <>
+    <TooltipProvider>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -265,9 +266,45 @@ export default function MarketMappingPage() {
                   <TableHead>HQ Region</TableHead>
                   <TableHead>FTE Band</TableHead>
                   <TableHead>Owner/Principal</TableHead>
-                  <TableHead>Signals</TableHead>
-                  <TableHead>Confidence</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>
+                    <div className="flex items-center gap-1">
+                      Signals
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Count of evidence items that support this mapping (news, directories, keywords…).</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TableHead>
+                  <TableHead>
+                     <div className="flex items-center gap-1">
+                      Confidence
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Model’s probability the company belongs in this segment (based on signals + source agreement).</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TableHead>
+                  <TableHead>
+                     <div className="flex items-center gap-1">
+                      Status
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Workflow state. ‘Mapped’ moves to Enrichment.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -297,6 +334,7 @@ export default function MarketMappingPage() {
           </CardContent>
         </Card>
       </div>
+      </TooltipProvider>
 
       <CompanyDetailsDrawer 
         company={selectedCompany}
