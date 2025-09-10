@@ -14,6 +14,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 const unboundControls = [
   { path: '/audit-log', control: 'Export Logs' },
@@ -47,17 +50,49 @@ const unboundControls = [
   { path: '/settings', control: 'Test' },
 ];
 
+const devTools = [
+    { path: '/_dev/intent', name: 'Classifier Test Tool', description: 'Test intent classification on sample text.' },
+];
+
 export default function DevPage() {
   return (
-    <div className="p-4 md:p-6 lg:p-8">
-      <div className="space-y-2 mb-6">
+    <div className="p-4 md:p-6 lg:p-8 space-y-6">
+      <div className="space-y-2">
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
           Developer Panel
         </h1>
         <p className="text-muted-foreground">
-          This page lists UI controls that are placeholders and not yet bound to any action.
+          This page lists developer tools and UI controls that are placeholders.
         </p>
       </div>
+      
+       <Card>
+        <CardHeader>
+          <CardTitle>Developer Tools</CardTitle>
+          <CardDescription>
+            Tools for testing and debugging application features.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            {devTools.map((tool) => (
+                <Card key={tool.path}>
+                    <CardHeader>
+                        <CardTitle className="text-lg">{tool.name}</CardTitle>
+                        <CardDescription>{tool.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                         <Link href={tool.path}>
+                            <Button>
+                                Go to Tool <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                        </Link>
+                    </CardContent>
+                </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
