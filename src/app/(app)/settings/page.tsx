@@ -365,12 +365,32 @@ export default function SettingsPage() {
                             </Table>
                         </div>
                         
-                        <div className="flex items-center justify-between p-4 border rounded-lg">
-                            <div>
-                                <Label htmlFor="in-conversation" className="font-medium">In-Conversation Suppression</Label>
-                                <p className="text-sm text-muted-foreground">Skip contacts currently in active human threads.</p>
+                        <div className="space-y-4 p-4 border rounded-lg">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <Label htmlFor="in-conversation" className="font-medium">In-Conversation Suppression</Label>
+                                    <p className="text-sm text-muted-foreground">Skip contacts currently in active human threads.</p>
+                                </div>
+                                <Switch id="in-conversation" defaultChecked />
                             </div>
-                            <Switch id="in-conversation" defaultChecked />
+                            <Separator />
+                            <div className="space-y-2">
+                                <Label htmlFor="auto-lift">Auto-lift after</Label>
+                                <Select defaultValue="14">
+                                    <SelectTrigger id="auto-lift" className="w-[180px]">
+                                        <SelectValue placeholder="Select a period" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="off">Off</SelectItem>
+                                        <SelectItem value="7">7 days</SelectItem>
+                                        <SelectItem value="14">14 days</SelectItem>
+                                        <SelectItem value="30">30 days</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <p className="text-xs text-muted-foreground">
+                                    If no human reply activity for this period, remove ‘In-Conversation’ flag.
+                                </p>
+                            </div>
                         </div>
                         
                         <div className="space-y-2 p-4 border rounded-lg">
@@ -498,8 +518,8 @@ export default function SettingsPage() {
                                         <Input 
                                             id={`${id}-key`} 
                                             type={revealed[id] ? 'text' : 'password'} 
-                                            value={revealed[id] ? 'sk_live_****demo****' : '••••••••••••••••••••'}
-                                            onChange={() => {}}
+                                            defaultValue={revealed[id] ? 'sk_live_****demo****' : '••••••••••••••••••••'}
+                                            readOnly
                                         />
                                         <Button variant="outline" size="icon" onClick={() => toggleReveal(id)}>
                                             {revealed[id] ? <EyeOff /> : <Eye />}
