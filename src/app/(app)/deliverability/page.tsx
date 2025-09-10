@@ -1,5 +1,7 @@
 
 
+'use client';
+
 import {
   Card,
   CardContent,
@@ -9,8 +11,9 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { MailCheck, ShieldCheck, AlertTriangle, Inbox } from 'lucide-react';
+import { MailCheck, ShieldCheck, AlertTriangle, Inbox, CheckCircle } from 'lucide-react';
 import ReportsChart from '@/components/reports-chart';
+import { useIntegrationStatus } from '@/hooks/use-integration-status';
 
 const deliverabilityStats = [
   { title: 'Inbox Placement Rate', value: '98.2%', icon: <Inbox className="h-6 w-6 text-primary" />, progress: 98.2, domain: 'paragon.com' },
@@ -19,7 +22,18 @@ const deliverabilityStats = [
   { title: 'Authentication (SPF, DKIM, DMARC)', value: 'Passing', icon: <ShieldCheck className="h-6 w-6 text-green-500" />, status: 'Passing', domain: 'paragon.com' },
 ];
 
+const initialIntegrationStates = {
+    mailgun: true,
+    sendgrid: false,
+};
+
+
 export default function DeliverabilityPage() {
+    const { statuses: integrationStatuses } = useIntegrationStatus(initialIntegrationStates);
+    const isMailgunConnected = integrationStatuses.mailgun;
+    const isSendgridConnected = integrationStatuses.sendgrid;
+    const authProviderConnected = isMailgunConnected || isSendgridConnected;
+
   return (
     <div className="space-y-6">
       <div>
@@ -51,6 +65,23 @@ export default function DeliverabilityPage() {
             </CardContent>
           </Card>
         ))}
+        {authProviderConnected && (
+            <Card>
+                <CardHeader className="flex flex-row items-center gap-4 space-y-0">
+                    <ShieldCheck className="h-6 w-6 text-green-500" />
+                    <CardTitle className="text-base font-medium">Auth via Provider</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Badge className="bg-green-100 text-green-800">
+                        <CheckCircle className="mr-1 h-3 w-3" />
+                        Webhook Configured
+                    </Badge>
+                    <div className="text-xs text-muted-foreground mt-2">
+                        {isMailgunConnected ? 'Mailgun' : 'SendGrid'}
+                    </div>
+                </CardContent>
+            </Card>
+        )}
       </div>
 
       <Card>

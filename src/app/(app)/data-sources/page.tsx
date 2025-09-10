@@ -24,18 +24,17 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { PlusCircle, Plug, Rss, Briefcase, Globe, Mail, Bot, Inbox } from 'lucide-react';
-import Image from 'next/image';
 import { useIntegrationStatus } from '@/hooks/use-integration-status';
 
 const initialDataSources = [
   { id: 'apollo', name: 'Apollo.io', icon: <Plug className="h-6 w-6 text-primary" />, defaultStatus: 'Connected', lastSync: '2h ago', records: '1.2M' },
   { id: 'linkedin', name: 'LinkedIn Sales Navigator', icon: <Briefcase className="h-6 w-6 text-blue-700" />, defaultStatus: 'Not Connected', lastSync: 'N/A', records: 'N/A' },
-  { id: 'clearbit', name: 'Clearbit / Hunter', icon: <Plug className="h-6 w-6 text-primary" />, defaultStatus: 'Connected', lastSync: '30m ago', records: '850K' },
-  { id: 'crunchbase', name: 'Crunchbase / Tracxn', icon: <Plug className="h-6 w-6 text-primary" />, defaultStatus: 'Not Connected', lastSync: 'N/A', records: 'N/A' },
+  { id: 'clearbit', name: 'Clearbit', icon: <Plug className="h-6 w-6 text-primary" />, defaultStatus: 'Connected', lastSync: '30m ago', records: '850K' },
+  { id: 'hunter', name: 'Hunter', icon: <Plug className="h-6 w-6 text-primary" />, defaultStatus: 'Not Connected', lastSync: 'N/A', records: 'N/A' },
   { id: 'google-news', name: 'Google News', icon: <Rss className="h-6 w-6 text-orange-500" />, defaultStatus: 'Connected', lastSync: '15m ago', records: '5.2K' },
   { id: 'company-websites', name: 'Company Websites', icon: <Globe className="h-6 w-6 text-primary" />, defaultStatus: 'Active', lastSync: 'Continuous', records: '780K' },
-  { id: 'mailgun', name: 'Mailgun / Sendgrid', icon: <Mail className="h-6 w-6 text-red-500" />, defaultStatus: 'Connected', lastSync: '1m ago', records: '2.1M' },
-  { id: 'instantly', name: 'Instantly.ai', icon: <Bot className="h-6 w-6 text-purple-500" />, defaultStatus: 'Connected', lastSync: '5m ago', records: '300K' },
+  { id: 'mailgun', name: 'Mailgun', icon: <Mail className="h-6 w-6 text-red-500" />, defaultStatus: 'Connected', lastSync: '1m ago', records: '2.1M' },
+  { id: 'sendgrid', name: 'SendGrid', icon: <Mail className="h-6 w-6 text-blue-400" />, defaultStatus: 'Not Connected', lastSync: 'N/A', records: 'N/A'},
   { id: 'google-workspace', name: 'Google Workspace / O365', icon: <Inbox className="h-6 w-6 text-blue-500" />, defaultStatus: 'Connected', lastSync: 'Real-time', records: '1.5M' },
 ];
 

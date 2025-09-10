@@ -29,9 +29,15 @@ import { CheckCircle, ChevronRight, FileDown, HelpCircle, Rocket, ShieldCheck, T
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useEffect, useState } from 'react';
 import { WarningBanner } from '@/components/warning-banner';
+import { useIntegrationStatus } from '@/hooks/use-integration-status';
+
+const initialIntegrationStates = {
+    apollo: true,
+    clearbit: true,
+    hunter: false,
+};
 
 const enrichmentRules = {
-  emailDiscovery: ['Hunter', 'Apollo', 'Clearbit'],
   validationThresholds: 'Must be valid or catch-all with confidence >= 0.75',
   roleTargeting: ['Owner', 'Founder', 'Managing Partner', 'CFO', 'Head of IR', 'CIO', 'Dentist'],
 };
@@ -49,11 +55,16 @@ const initialSampleResults = [
   { name: 'Lukas Weber', email: 'lukas@eurobalance...de', confidence: 78, source: 'Hunter', lastSeen: '' },
 ];
 
-// In a real app, this would come from a shared state or context
-const areVerificationProvidersEnabled = false;
 
 export default function EnrichmentPage() {
     const [sampleResults, setSampleResults] = useState(initialSampleResults);
+    const { statuses: integrationStatuses } = useIntegrationStatus(initialIntegrationStates);
+
+    const enabledDiscoveryProviders = Object.entries(integrationStatuses)
+        .filter(([key, isConnected]) => ['apollo', 'clearbit', 'hunter'].includes(key) && isConnected)
+        .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1));
+
+    const areVerificationProvidersEnabled = enabledDiscoveryProviders.length > 0;
 
     useEffect(() => {
         setSampleResults(initialSampleResults.map(result => ({
@@ -106,12 +117,13 @@ export default function EnrichmentPage() {
                 </AccordionTrigger>
                 <AccordionContent>
                   <ol className="list-decimal list-inside space-y-2 pl-2">
-                    {enrichmentRules.emailDiscovery.map((source, index) => (
+                    {enabledDiscoveryProviders.map((source, index) => (
                       <li key={index} className="flex items-center gap-2">
                         <span className="font-medium text-primary">{index + 1}.</span>
                         <span>{source}</span>
                       </li>
                     ))}
+                    {enabledDiscoveryProviders.length === 0 && <p className="text-sm text-muted-foreground">No discovery providers connected.</p>}
                   </ol>
                 </AccordionContent>
               </AccordionItem>
