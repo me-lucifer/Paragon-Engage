@@ -35,6 +35,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { SaveEnrichmentProfileDialog } from '@/components/save-enrichment-profile-dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import Link from 'next/link';
 
 
 const initialIntegrationStates = {
@@ -224,6 +225,14 @@ export default function EnrichmentPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    <div className="text-sm text-muted-foreground p-3 border rounded-md bg-muted/50 space-y-1">
+                        <p><span className="font-semibold text-foreground">Scope:</span> 1,842 companies (Industry=Accounting, Region=US+CA, FTE=5–50, Status=Mapped)</p>
+                        <Link href="/market-mapping">
+                            <Button variant="link" className="p-0 h-auto">
+                                Change scope
+                            </Button>
+                        </Link>
+                    </div>
                     <Textarea
                     placeholder="precisionaccounts.com&#10;secureitsolutions.com&#10;brightsmiledental.com"
                     rows={5}
