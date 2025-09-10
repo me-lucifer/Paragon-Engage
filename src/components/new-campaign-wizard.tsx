@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -22,9 +22,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { ArrowRight, Inbox, AlertTriangle, CalendarDays, Info } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { ArrowRight, Inbox, AlertTriangle, CalendarDays, Info, Users } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Badge } from './ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 
 interface NewCampaignWizardProps {
   open: boolean;
@@ -34,9 +35,11 @@ interface NewCampaignWizardProps {
 
 export function NewCampaignWizard({ open, onOpenChange, inboxes }: NewCampaignWizardProps) {
   const [step, setStep] = useState(1);
+  const [touches, setTouches] = useState(250);
 
   const reset = () => {
     setStep(1);
+    setTouches(250);
   };
   
   const handleOpenChange = (isOpen: boolean) => {
@@ -51,22 +54,31 @@ export function NewCampaignWizard({ open, onOpenChange, inboxes }: NewCampaignWi
   }
 
   // Capacity Planner calculations
-  const warmedInboxes = inboxes.filter(ib => ib.status === 'Connected');
+  const warmedInboxes = useMemo(() => inboxes.filter(ib => ib.status === 'Connected'), [inboxes]);
   const totalInboxes = inboxes.length;
   const aggregateCapacity = Math.floor(warmedInboxes.reduce((acc, ib) => acc + ib.dailySendCap, 0) * 0.8);
   const daysToComplete = aggregateCapacity > 0 ? Math.ceil(500 / aggregateCapacity) : 'N/A';
-  const bottlenecks = inboxes.filter(ib => ib.status === 'Warming');
+  const bottlenecks = useMemo(() => inboxes.filter(ib => ib.status === 'Warming'), [inboxes]);
   
+  const plan = useMemo(() => {
+    const totalCap = warmedInboxes.reduce((sum, ib) => sum + ib.dailySendCap, 0);
+    if (totalCap === 0) return [];
+    return warmedInboxes.map(ib => ({
+      email: ib.email,
+      sends: Math.floor((ib.dailySendCap / totalCap) * touches),
+    }));
+  }, [warmedInboxes, touches]);
+
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>New Campaign</DialogTitle>
           <DialogDescription>
             Step {step} of 3: {
                 step === 1 ? 'Select Segment & Sequence' :
-                step === 2 ? 'Review & Plan Capacity' :
+                step === 2 ? 'Capacity & Schedule' :
                 'Confirm & Launch'
             }
           </DialogDescription>
@@ -108,7 +120,8 @@ export function NewCampaignWizard({ open, onOpenChange, inboxes }: NewCampaignWi
                 </div>
             )}
             {step === 2 && (
-                <Card>
+               <div className="grid md:grid-cols-2 gap-6">
+                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">Send Capacity Planner</CardTitle>
                     </CardHeader>
@@ -155,6 +168,56 @@ export function NewCampaignWizard({ open, onOpenChange, inboxes }: NewCampaignWi
                         </div>
                     </CardContent>
                 </Card>
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Throttles</CardTitle>
+                        </CardHeader>
+                         <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="first-touches">Max new first-touches/day</Label>
+                                <Input id="first-touches" type="number" value={touches} onChange={e => setTouches(parseInt(e.target.value, 10) || 0)} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="domain-cap">Per-domain cap/day</Label>
+                                <Input id="domain-cap" type="number" defaultValue="400" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="inbox-cap">Per-inbox cap/day (from Inbox Mgr)</Label>
+                                <Input id="inbox-cap" defaultValue={Math.min(...warmedInboxes.map(ib => ib.dailySendCap))} readOnly />
+                            </div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Today's Plan</CardTitle>
+                             <CardDescription>Estimated sends per inbox.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                           <Table>
+                               <TableHeader>
+                                   <TableRow>
+                                       <TableHead>Inbox</TableHead>
+                                       <TableHead className="text-right">Sends</TableHead>
+                                   </TableRow>
+                               </TableHeader>
+                               <TableBody>
+                                   {plan.map(p => (
+                                       <TableRow key={p.email}>
+                                           <TableCell className="text-xs truncate">{p.email}</TableCell>
+                                           <TableCell className="text-right font-medium">{p.sends}</TableCell>
+                                       </TableRow>
+                                   ))}
+                                    <TableRow className="font-bold bg-muted/50">
+                                        <TableCell>Total</TableCell>
+                                        <TableCell className="text-right">{plan.reduce((sum, p) => sum + p.sends, 0)}</TableCell>
+                                    </TableRow>
+                               </TableBody>
+                           </Table>
+                        </CardContent>
+                    </Card>
+                </div>
+               </div>
             )}
              {step === 3 && (
                 <div className="text-center py-8">
