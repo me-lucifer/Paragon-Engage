@@ -93,8 +93,7 @@ export default function EnrichmentPage() {
         <WarningBanner
           title="Low Email Confidence"
           message="No email verification provider (e.g., Hunter, Clearbit) is active. This may result in lower email confidence."
-          actionLink="/settings?tab=integrations"
-          actionText="Enable a Provider"
+          actions={[{ href: '/settings?tab=integrations', text: 'Enable a Provider' }]}
         />
       )}
 

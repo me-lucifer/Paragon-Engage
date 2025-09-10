@@ -15,6 +15,7 @@ import { MailCheck, ShieldCheck, AlertTriangle, Inbox, CheckCircle, HelpCircle }
 import ReportsChart from '@/components/reports-chart';
 import { useIntegrationStatus } from '@/hooks/use-integration-status';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { WarningBanner } from '@/components/warning-banner';
 
 const deliverabilityStats = [
   { title: 'Inbox Placement Rate', value: '98.2%', icon: <Inbox className="h-6 w-6 text-primary" />, progress: 98.2, domain: 'paragon.com', tooltip: '% of delivered emails that landed in Inbox, not Spam, over last 7 days.' },
@@ -45,6 +46,14 @@ export default function DeliverabilityPage() {
           Monitor and improve your email deliverability.
         </p>
       </div>
+      
+       {!authProviderConnected && (
+            <WarningBanner
+                title="No mail provider configured—sending disabled"
+                message="Please connect Mailgun or SendGrid to enable email sending."
+                actions={[{ href: '/settings?tab=integrations', text: 'Connect Provider' }]}
+            />
+        )}
 
       <TooltipProvider>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -77,23 +86,6 @@ export default function DeliverabilityPage() {
                 </CardContent>
             </Card>
             ))}
-            {authProviderConnected && (
-                <Card>
-                    <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-                        <ShieldCheck className="h-6 w-6 text-green-500" />
-                        <CardTitle className="text-base font-medium">Auth via Provider</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Badge className="bg-green-100 text-green-800">
-                            <CheckCircle className="mr-1 h-3 w-3" />
-                            Webhook Configured
-                        </Badge>
-                        <div className="text-xs text-muted-foreground mt-2">
-                            {isMailgunConnected ? 'Mailgun' : 'SendGrid'}
-                        </div>
-                    </CardContent>
-                </Card>
-            )}
         </div>
       </TooltipProvider>
 

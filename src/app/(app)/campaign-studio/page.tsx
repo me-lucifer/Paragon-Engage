@@ -121,8 +121,10 @@ export default function CampaignStudioPage() {
             <WarningBanner
                 title="Fix deliverability before sending"
                 message="Your inbox health is below the recommended threshold. Running campaigns may harm your domain reputation."
-                actionLink="/deliverability"
-                actionText="View Deliverability"
+                actions={[
+                    { href: '/deliverability', text: 'View Deliverability'},
+                    { href: '/inbox-manager', text: 'Inbox Manager' },
+                ]}
             />
         )}
 
