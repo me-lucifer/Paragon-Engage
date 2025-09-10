@@ -15,6 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Globe, Rss, Briefcase, Check, X, Flag, HelpCircle, BarChart } from 'lucide-react';
 import type { Company } from '@/app/(app)/market-mapping/page';
+import { useToast } from '@/hooks/use-toast';
 
 interface CompanyDetailsDrawerProps {
   open: boolean;
@@ -33,7 +34,17 @@ export function CompanyDetailsDrawer({
   onOpenChange,
   company,
 }: CompanyDetailsDrawerProps) {
+  const { toast } = useToast();
+
   if (!company) return null;
+
+  const handleAction = (action: string) => {
+      toast({
+          title: `Action: ${action}`,
+          description: `${company.name} has been ${action.toLowerCase()}.`
+      });
+      onOpenChange(false);
+  }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -78,12 +89,11 @@ export function CompanyDetailsDrawer({
           </div>
         </div>
         <SheetFooter className="gap-2">
-          <Button variant="outline"><Flag className="mr-2 h-4 w-4" /> Flag for Review</Button>
-          <Button variant="destructive"><X className="mr-2 h-4 w-4" /> Exclude</Button>
-          <Button variant="default"><Check className="mr-2 h-4 w-4" /> Approve to Universe</Button>
+          <Button variant="outline" onClick={() => handleAction('Flagged for Review')}><Flag className="mr-2 h-4 w-4" /> Flag for Review</Button>
+          <Button variant="destructive" onClick={() => handleAction('Excluded')}><X className="mr-2 h-4 w-4" /> Exclude</Button>
+          <Button variant="default" onClick={() => handleAction('Approved')}><Check className="mr-2 h-4 w-4" /> Approve to Universe</Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>
   );
 }
-
