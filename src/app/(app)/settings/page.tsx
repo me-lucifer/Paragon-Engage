@@ -1,13 +1,12 @@
-
 'use client';
 
+import { useState } from 'react';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,11 +24,10 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { User, Bell, Shield, CreditCard, Users, Database, Globe, Building, Mail, FileText, Eye } from 'lucide-react';
+import { Building, Eye, Shield, Users, Database, Mail, FileText, Globe } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 
 export default function SettingsPage() {
@@ -42,11 +40,10 @@ export default function SettingsPage() {
     const [activeTab, setActiveTab] = useState("organization");
     const [isUnsubscribePreviewOpen, setIsUnsubscribePreviewOpen] = useState(false);
 
-
     const validateEmail = (email: string) => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
-    }
+    };
 
     const handleSaveChanges = () => {
         let hasError = false;
@@ -71,7 +68,6 @@ export default function SettingsPage() {
             });
         }
     };
-
 
   return (
     <div className="space-y-6">
@@ -239,7 +235,7 @@ export default function SettingsPage() {
                   <CardDescription>
                     Manage compliance and data governance settings.
                   </CardDescription>
-                </Header>
+                </CardHeader>
                 <CardContent>
                     <p>Compliance settings will be configured here.</p>
                 </CardContent>
@@ -253,7 +249,7 @@ export default function SettingsPage() {
                   <CardDescription>
                     Connect your tools and manage API keys.
                   </CardDescription>
-                </Header>
+                </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex items-center gap-4">
@@ -323,3 +319,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+    
