@@ -30,6 +30,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
+import { RolesMatrix } from '@/components/roles-matrix';
 
 export default function SettingsPage() {
     const { toast } = useToast();
@@ -210,7 +211,7 @@ export default function SettingsPage() {
 
                     <div className="flex justify-end gap-2">
                         <Button variant="outline">Cancel</Button>
-                        <Button variant="accent" onClick={handleSaveChanges}>Save Changes</Button>
+                        <Button onClick={handleSaveChanges}>Save Changes</Button>
                     </div>
                 </div>
             </TabsContent>
@@ -220,11 +221,11 @@ export default function SettingsPage() {
                 <CardHeader>
                   <CardTitle>Roles & Permissions</CardTitle>
                   <CardDescription>
-                    Manage user roles and access levels.
+                    Manage user roles and access levels for each module.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <p>Roles & Permissions settings will be configured here.</p>
+                    <RolesMatrix />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -295,7 +296,7 @@ export default function SettingsPage() {
             <Separator />
             <div className="text-xs text-muted-foreground space-y-2">
                 <p>
-                    {footerIdentity}
+                    {footerIdentity.replace('{{org_name}}', orgName).replace('{{legal_name}}', 'Paragon Intelligence, Inc.')}
                 </p>
                 <p>
                     If you have any questions or wish to resubscribe, please contact our support team at{' '}
