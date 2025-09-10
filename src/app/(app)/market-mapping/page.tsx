@@ -334,6 +334,7 @@ export default function MarketMappingPage() {
             </Table>
           </CardContent>
         </Card>
+        <p className="text-center text-sm text-muted-foreground mt-8">What happens next? Approved companies go to Enrichment.</p>
       </div>
       </TooltipProvider>
 

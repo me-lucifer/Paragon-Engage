@@ -261,6 +261,7 @@ export default function DataSourcesPage() {
           </Card>
         ))}
       </div>
+      <p className="text-center text-sm text-muted-foreground mt-8">What happens next? Mapped companies go to Industry Mapper.</p>
     </div>
     </TooltipProvider>
   );

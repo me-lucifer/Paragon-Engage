@@ -287,6 +287,7 @@ export default function EnrichmentPage() {
             </Card>
         </div>
       </div>
+       <p className="text-center text-sm text-muted-foreground mt-8">What happens next? Accepted contacts go to Fit Scoring & Segments.</p>
     </div>
     <SaveEnrichmentProfileDialog
         open={isSaveProfileDialogOpen}
