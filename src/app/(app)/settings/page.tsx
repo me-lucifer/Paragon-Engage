@@ -612,8 +612,7 @@ export default function SettingsPage() {
                     <WarningBanner
                     title="Low Email Confidence"
                     message="No email verification provider (e.g., Hunter, Clearbit) is active. This may result in lower email confidence."
-                    actionLink="/data-sources"
-                    actionText="Enable a Provider"
+                    actions={[{ href: '/data-sources', text: 'Enable a Provider' }]}
                     />
                 )}
                 <Card>
@@ -721,6 +720,7 @@ export default function SettingsPage() {
                                     <Input id="sendgrid-domain" defaultValue="send.paragon-demo.io" />
                                 </div>
                             </div>
+                            <p className="text-xs text-muted-foreground">Sends include correlation headers (campaign, sequence, contact) for precise event mapping.</p>
                             <Button variant="secondary" onClick={() => testConnection('sendgrid')} disabled={isTesting.sendgrid}>
                                 {isTesting.sendgrid ? 'Testing...' : 'Test Connection'}
                             </Button>
