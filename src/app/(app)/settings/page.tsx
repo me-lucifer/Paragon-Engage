@@ -499,7 +499,7 @@ export default function SettingsPage() {
                                             id={`${id}-key`} 
                                             type={revealed[id] ? 'text' : 'password'} 
                                             value={revealed[id] ? 'sk_live_****demo****' : '••••••••••••••••••••'}
-                                            readOnly={!revealed[id]}
+                                            onChange={() => {}}
                                         />
                                         <Button variant="outline" size="icon" onClick={() => toggleReveal(id)}>
                                             {revealed[id] ? <EyeOff /> : <Eye />}
@@ -532,15 +532,15 @@ export default function SettingsPage() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="mailgun-key" className="text-xs font-medium text-muted-foreground">API Key</Label>
-                                    <Input id="mailgun-key" type="password" value="••••••••••••••••••••" />
+                                    <Input id="mailgun-key" type="password" defaultValue="••••••••••••••••••••" />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="mailgun-domain" className="text-xs font-medium text-muted-foreground">Sending Domain</Label>
-                                    <Input id="mailgun-domain" value="mg.paragon-demo.io" />
+                                    <Input id="mailgun-domain" defaultValue="mg.paragon-demo.io" />
                                 </div>
                                 <div className="space-y-2 sm:col-span-2">
                                     <Label htmlFor="mailgun-webhook" className="text-xs font-medium text-muted-foreground">Webhook Signing Key</Label>
-                                    <Input id="mailgun-webhook" type="password" value="••••••••••••••••••••" />
+                                    <Input id="mailgun-webhook" type="password" defaultValue="••••••••••••••••••••" />
                                 </div>
                             </div>
                              <Button variant="secondary" onClick={() => testConnection('mailgun')} disabled={isTesting.mailgun}>
@@ -566,11 +566,11 @@ export default function SettingsPage() {
                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="sendgrid-key" className="text-xs font-medium text-muted-foreground">API Key</Label>
-                                    <Input id="sendgrid-key" type="password" value="••••••••••••••••••••" />
+                                    <Input id="sendgrid-key" type="password" defaultValue="••••••••••••••••••••" />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="sendgrid-domain" className="text-xs font-medium text-muted-foreground">From Domain</Label>
-                                    <Input id="sendgrid-domain" value="send.paragon-demo.io" />
+                                    <Input id="sendgrid-domain" defaultValue="send.paragon-demo.io" />
                                 </div>
                             </div>
                             <Button variant="secondary" onClick={() => testConnection('sendgrid')} disabled={isTesting.sendgrid}>
