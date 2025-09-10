@@ -12,7 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { PlusCircle, MoreHorizontal, CheckCircle } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, CheckCircle, ShieldAlert } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +24,7 @@ import {
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import ConvertLeadDialog from '@/components/convert-lead-dialog';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 type Lead = {
   name: string;
@@ -33,6 +34,7 @@ type Lead = {
   nextAction: string;
   owner: string;
   status?: 'default' | 'suppressed' | 'meeting_created';
+  suppressionReason?: string;
 };
 
 const initialLeadsData: Lead[] = [
@@ -77,7 +79,7 @@ export default function LeadsPage() {
   const handleSuppress = (leadName: string) => {
     setLeadsData(prev => 
       prev.map(lead => 
-        lead.name === leadName ? { ...lead, status: 'suppressed', nextAction: 'DNC' } : lead
+        lead.name === leadName ? { ...lead, status: 'suppressed', nextAction: 'DNC', suppressionReason: 'Manual DNC' } : lead
       )
     );
   };
@@ -142,11 +144,21 @@ export default function LeadsPage() {
                   </TableHeader>
                   <TableBody>
                   {leadsData.map((lead) => (
-                      <TableRow key={lead.name}>
+                      <TableRow key={lead.name} className={lead.status === 'suppressed' ? 'bg-muted/30' : ''}>
                       <TableCell className="font-medium">{lead.name}</TableCell>
                       <TableCell>{lead.company}</TableCell>
                       <TableCell className="text-muted-foreground">
-                        <div>{lead.thread}</div>
+                        {lead.status === 'suppressed' ? (
+                             <Alert variant="destructive" className="p-2 text-xs">
+                                <ShieldAlert className="h-4 w-4" />
+                                <AlertTitle>Contact Suppressed</AlertTitle>
+                                <AlertDescription>
+                                    Reason: {lead.suppressionReason}
+                                </AlertDescription>
+                            </Alert>
+                        ) : (
+                             <div>{lead.thread}</div>
+                        )}
                         <div className="text-xs text-gray-400 mt-1">Sent by: {lead.owner}</div>
                       </TableCell>
                       <TableCell>
@@ -162,7 +174,7 @@ export default function LeadsPage() {
                       </TableCell>
                       <TableCell>
                         {lead.status === 'suppressed' ? (
-                            <Badge variant="outline" className="border-green-600 text-green-600">
+                            <Badge variant="outline" className="border-yellow-600 text-yellow-600">
                                 <CheckCircle className="mr-1 h-3 w-3" />
                                 Suppressed
                             </Badge>
@@ -175,8 +187,8 @@ export default function LeadsPage() {
                       <TableCell>{lead.owner}</TableCell>
                       <TableCell>
                           <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                              <Button aria-haspopup="true" size="icon" variant="ghost">
+                          <DropdownMenuTrigger asChild disabled={lead.status === 'suppressed'}>
+                              <Button aria-haspopup="true" size="icon" variant="ghost" disabled={lead.status === 'suppressed'}>
                               <MoreHorizontal className="h-4 w-4" />
                               <span className="sr-only">Toggle menu</span>
                               </Button>
