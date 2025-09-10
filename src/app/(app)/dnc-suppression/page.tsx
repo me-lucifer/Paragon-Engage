@@ -16,7 +16,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { UploadCloud, PlusCircle, Search, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { UploadCloud, PlusCircle, Search, ShieldCheck, ShieldAlert, CheckCircle } from 'lucide-react';
 import {
   Tabs,
   TabsContent,
@@ -24,6 +24,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { SuppressionImportDialog } from '@/components/suppression-import-dialog';
 
 const suppressionList = [
     { email: "do-not-contact@example.com", reason: "Manual Add", date: "2024-07-01" },
@@ -38,9 +39,18 @@ type SuppressionResult = {
     email: string;
 } | null;
 
+type ImportResult = {
+    total: number;
+    added: number;
+    skipped: number;
+    invalid: number;
+} | null;
+
 export default function DNCSuppressionPage() {
     const [testEmail, setTestEmail] = useState('');
     const [testResult, setTestResult] = useState<SuppressionResult>(null);
+    const [isImportOpen, setIsImportOpen] = useState(false);
+    const [importResult, setImportResult] = useState<ImportResult>(null);
 
     const handleTestSuppression = () => {
         if (!testEmail) {
@@ -66,9 +76,18 @@ export default function DNCSuppressionPage() {
             });
         }
     };
+    
+    const handleImportComplete = (result: ImportResult) => {
+        setImportResult(result);
+        setIsImportOpen(false);
+         setTimeout(() => {
+            setImportResult(null);
+        }, 8000);
+    }
 
 
   return (
+    <>
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
@@ -78,6 +97,16 @@ export default function DNCSuppressionPage() {
           Manage your do-not-contact lists and suppression rules.
         </p>
       </div>
+      
+       {importResult && (
+            <Alert variant="default" className="bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertTitle className="text-green-800 dark:text-green-300">Import Successful</AlertTitle>
+                <AlertDescription className="text-green-700 dark:text-green-400">
+                    Imported {importResult.total} records. Added: {importResult.added}, Skipped: {importResult.skipped}, Invalid: {importResult.invalid}.
+                </AlertDescription>
+            </Alert>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-6">
@@ -101,7 +130,10 @@ export default function DNCSuppressionPage() {
                                 </Button>
                             </TabsContent>
                             <TabsContent value="upload" className="pt-4">
-                               <div className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted">
+                               <div 
+                                    className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted"
+                                    onClick={() => setIsImportOpen(true)}
+                                >
                                     <UploadCloud className="h-10 w-10 text-muted-foreground" />
                                     <p className="mt-2 text-sm text-muted-foreground">
                                         <span className="font-semibold">Click to upload</span> or drag and drop
@@ -179,5 +211,11 @@ export default function DNCSuppressionPage() {
             </Card>
         </div>
     </div>
+    <SuppressionImportDialog 
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
+        onImportComplete={handleImportComplete}
+    />
+    </>
   );
 }
