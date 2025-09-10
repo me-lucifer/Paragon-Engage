@@ -25,11 +25,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, ChevronRight, FileDown, HelpCircle, Rocket, ShieldCheck, Target } from 'lucide-react';
+import { CheckCircle, ChevronRight, FileDown, HelpCircle, Rocket, ShieldCheck, Target, XCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useEffect, useState } from 'react';
 import { WarningBanner } from '@/components/warning-banner';
 import { useIntegrationStatus } from '@/hooks/use-integration-status';
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 const initialIntegrationStates = {
     apollo: true,
@@ -38,7 +41,6 @@ const initialIntegrationStates = {
 };
 
 const enrichmentRules = {
-  validationThresholds: 'Must be valid or catch-all with confidence >= 0.75',
   roleTargeting: ['Owner', 'Founder', 'Managing Partner', 'CFO', 'Head of IR', 'CIO', 'Dentist'],
 };
 
@@ -52,13 +54,14 @@ const initialSampleResults = [
   { name: 'David Lee', email: 'david.l@keystone...com', confidence: 88, source: 'Hunter', lastSeen: '' },
   { name: 'Kevin Brown', email: 'kevin@secureit...com', confidence: 99, source: 'Clearbit', lastSeen: '' },
   { name: 'Dr. A. Williams', email: 'dr.williams@bright...com', confidence: 92, source: 'Apollo', lastSeen: '' },
-  { name: 'Lukas Weber', email: 'lukas@eurobalance...de', confidence: 78, source: 'Hunter', lastSeen: '' },
+  { name: 'Lukas Weber', email: 'lukas@eurobalance...de', confidence: 58, source: 'Hunter', lastSeen: '' },
 ];
 
 
 export default function EnrichmentPage() {
     const [sampleResults, setSampleResults] = useState(initialSampleResults);
     const { statuses: integrationStatuses } = useIntegrationStatus(initialIntegrationStates);
+    const [confidenceThreshold, setConfidenceThreshold] = useState(75);
 
     const enabledDiscoveryProviders = Object.entries(integrationStatuses)
         .filter(([key, isConnected]) => ['apollo', 'clearbit', 'hunter'].includes(key) && isConnected)
@@ -124,6 +127,7 @@ export default function EnrichmentPage() {
                     ))}
                     {enabledDiscoveryProviders.length === 0 && <p className="text-sm text-muted-foreground">No discovery providers connected.</p>}
                   </ol>
+                   <p className="text-xs text-muted-foreground mt-2 pl-2">If a provider fails to meet the validation threshold, the next in the list is automatically used as a fallback.</p>
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-2">
@@ -147,8 +151,23 @@ export default function EnrichmentPage() {
                     </TooltipProvider>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent>
-                  <p className="pl-2">{enrichmentRules.validationThresholds}</p>
+                <AccordionContent className="space-y-4">
+                  <div className="space-y-3 px-2">
+                    <div className="flex justify-between">
+                        <Label htmlFor="confidence-slider">Min confidence to accept</Label>
+                        <span className="text-sm font-medium text-primary">{confidenceThreshold}%</span>
+                    </div>
+                    <Slider 
+                        id="confidence-slider"
+                        value={[confidenceThreshold]} 
+                        onValueChange={(value) => setConfidenceThreshold(value[0])}
+                        min={60} max={100} step={1} 
+                    />
+                  </div>
+                   <div className="flex items-center justify-between rounded-lg border p-3">
+                        <Label htmlFor="reject-catch-all" className="font-medium">Reject catch-all emails</Label>
+                        <Switch id="reject-catch-all" />
+                    </div>
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-3">
@@ -199,11 +218,13 @@ export default function EnrichmentPage() {
                                 <TableHead>Contact</TableHead>
                                 <TableHead>Confidence</TableHead>
                                 <TableHead>Source</TableHead>
-                                <TableHead>Last Seen</TableHead>
+                                <TableHead>Status</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {sampleResults.map(result => (
+                            {sampleResults.map(result => {
+                                const isAccepted = result.confidence >= confidenceThreshold;
+                                return (
                                 <TableRow key={result.email}>
                                     <TableCell>
                                         <div className="font-medium">{result.name}</div>
@@ -216,9 +237,15 @@ export default function EnrichmentPage() {
                                         </Badge>
                                     </TableCell>
                                     <TableCell>{result.source}</TableCell>
-                                    <TableCell>{result.lastSeen}</TableCell>
+                                    <TableCell>
+                                        <Badge variant={isAccepted ? 'default' : 'destructive'} 
+                                        className={isAccepted ? 'bg-green-100 text-green-800' : ''}>
+                                            {isAccepted ? <CheckCircle className="mr-1 h-3 w-3" /> : <XCircle className="mr-1 h-3 w-3" />}
+                                            {isAccepted ? 'Accepted' : 'Below Threshold'}
+                                        </Badge>
+                                    </TableCell>
                                 </TableRow>
-                            ))}
+                            )})}
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -228,3 +255,5 @@ export default function EnrichmentPage() {
     </div>
   );
 }
+
+    
