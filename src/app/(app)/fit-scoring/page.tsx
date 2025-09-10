@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -22,7 +22,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { HelpCircle, FilePlus, Copy, PlayCircle, Star, Target, Building, Users, Globe, Smile, TrendingUp, Cpu, BrainCircuit, Calendar, FileText } from 'lucide-react';
+import { HelpCircle, FilePlus, Copy, PlayCircle, Star, Target, Building, Users, Globe, Smile, TrendingUp, Cpu, BrainCircuit, Calendar, FileText, RefreshCw } from 'lucide-react';
 import ExplainScoreDialog from '@/components/explain-score-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -86,6 +86,11 @@ export default function FitScoringPage() {
   const { toast } = useToast();
   const [isCloneDialogOpen, setIsCloneDialogOpen] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
+  const [lastScored, setLastScored] = useState<string | null>(null);
+  
+  useEffect(() => {
+    setLastScored(new Date().toLocaleString());
+  }, []);
 
   const handleProfileChange = (profile: string) => {
     const newProfile = profile as keyof typeof fitProfiles;
@@ -126,18 +131,32 @@ export default function FitScoringPage() {
       description: "Recalculated scores for sample companies.",
     });
   };
+  
+  const handleRescore = () => {
+    toast({
+      title: "Re-scoring Started",
+      description: "Scores are being recalculated based on the latest data.",
+    });
+    setLastScored(new Date().toLocaleString());
+  };
 
 
   return (
     <>
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
-          Fit Scoring Models
-        </h1>
-        <p className="text-muted-foreground">
-          Train and apply your ideal customer profile rubrics.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+            <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+            Fit Scoring Models
+            </h1>
+            <p className="text-muted-foreground">
+            Train and apply your ideal customer profile rubrics.
+            </p>
+        </div>
+        <Button variant="outline" onClick={handleRescore}>
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Re-score Now
+        </Button>
       </div>
 
        <Tabs value={activeProfile} onValueChange={handleProfileChange}>
@@ -207,8 +226,9 @@ export default function FitScoringPage() {
                     <CardHeader className="flex flex-row items-center justify-between">
                         <div>
                             <CardTitle>Live Preview</CardTitle>
-                            <CardDescription>
+                            <CardDescription className="mt-1">
                                 {filteredCompanies.length} companies match the ≥{currentProfile.threshold} threshold.
+                                {lastScored && <span className="block text-xs mt-1">Last scored: {lastScored}</span>}
                             </CardDescription>
                         </div>
                         <Button variant="secondary" onClick={handleTestOnSample}>
