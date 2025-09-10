@@ -35,6 +35,7 @@ export function DnsSetupHelper() {
     const [isVerifying, setIsVerifying] = useState(false);
     const { statuses: integrationStatuses } = useIntegrationStatus(initialIntegrationStates);
     const { toast } = useToast();
+    const [lastVerified, setLastVerified] = useState<string | null>(null);
 
     const handleDomainChange = (newDomain: string) => {
         setDomain(newDomain);
@@ -55,13 +56,31 @@ export function DnsSetupHelper() {
     
     const handleVerify = () => {
         setIsVerifying(true);
+        setVerificationStatus({ spf: 'pending', dkim: 'pending', dmarc: 'pending' });
         setTimeout(() => {
-            setVerificationStatus({
+            const newStatus = {
                 spf: Math.random() > 0.3 ? 'passing' : 'fail',
                 dkim: Math.random() > 0.3 ? 'passing' : 'fail',
                 dmarc: Math.random() > 0.3 ? 'passing' : 'fail',
-            });
+            };
+            setVerificationStatus(newStatus);
             setIsVerifying(false);
+            setLastVerified(new Date().toLocaleTimeString());
+
+            const failedChecks = Object.entries(newStatus).filter(([, status]) => status === 'fail').map(([key]) => key.toUpperCase());
+
+            if (failedChecks.length > 0) {
+                 toast({
+                    variant: 'destructive',
+                    title: "Verification Failed",
+                    description: `${failedChecks.join(', ')} check(s) failed. Records may be cached—try again in ~15 min.`,
+                });
+            } else {
+                 toast({
+                    title: "Verification Successful",
+                    description: "All records are passing.",
+                });
+            }
         }, 1500);
     };
 
@@ -73,9 +92,10 @@ export function DnsSetupHelper() {
     };
 
     const getStatusIcon = (status: VerificationStatus) => {
+        if (isVerifying) return <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />;
         if (status === 'passing') return <CheckCircle className="h-4 w-4 text-green-500" />;
         if (status === 'fail') return <AlertCircle className="h-4 w-4 text-red-500" />;
-        return <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />;
+        return <HelpCircle className="h-4 w-4 text-muted-foreground" />;
     };
     
     return (
@@ -123,7 +143,7 @@ export function DnsSetupHelper() {
                         <div className="flex items-center justify-between">
                             <Label className="font-semibold">1. SPF (TXT)</Label>
                             <div className="flex items-center gap-2">
-                               {isVerifying ? getStatusIcon('pending') : getStatusIcon(verificationStatus.spf)}
+                               {getStatusIcon(verificationStatus.spf)}
                             </div>
                         </div>
                         <div className="p-3 border rounded-md space-y-2 bg-muted/30">
@@ -141,6 +161,7 @@ export function DnsSetupHelper() {
                                 </div>
                             )}
                         </div>
+                        {lastVerified && <p className="text-xs text-muted-foreground">Last verified: {lastVerified}</p>}
                     </div>
                     
                     {/* DKIM */}
@@ -148,7 +169,7 @@ export function DnsSetupHelper() {
                        <div className="flex items-center justify-between">
                             <Label className="font-semibold">2. DKIM</Label>
                             <div className="flex items-center gap-2">
-                               {isVerifying ? getStatusIcon('pending') : getStatusIcon(verificationStatus.dkim)}
+                               {getStatusIcon(verificationStatus.dkim)}
                             </div>
                         </div>
                         <div className="p-3 border rounded-md space-y-2 bg-muted/30">
@@ -192,6 +213,7 @@ export function DnsSetupHelper() {
                                  </>
                             )}
                         </div>
+                         {lastVerified && <p className="text-xs text-muted-foreground">Last verified: {lastVerified}</p>}
                     </div>
 
                     {/* DMARC */}
@@ -199,7 +221,7 @@ export function DnsSetupHelper() {
                        <div className="flex items-center justify-between">
                             <Label className="font-semibold">3. DMARC (TXT)</Label>
                             <div className="flex items-center gap-2">
-                               {isVerifying ? getStatusIcon('pending') : getStatusIcon(verificationStatus.dmarc)}
+                               {getStatusIcon(verificationStatus.dmarc)}
                             </div>
                         </div>
                         <div className="p-3 border rounded-md space-y-2 bg-muted/30">
@@ -221,6 +243,7 @@ export function DnsSetupHelper() {
                                 ))}
                              </RadioGroup>
                         </div>
+                         {lastVerified && <p className="text-xs text-muted-foreground">Last verified: {lastVerified}</p>}
                     </div>
                 </div>
 
