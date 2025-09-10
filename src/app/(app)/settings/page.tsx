@@ -43,6 +43,7 @@ import { WarningBanner } from '@/components/warning-banner';
 import Link from 'next/link';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useRole } from '@/hooks/use-role';
+import { allNavGroups } from '@/components/layout/sidenav';
 
 const dncList = [
     { source: "List Upload", reason: "Global DNC", added: "2024-06-01" },
@@ -646,7 +647,7 @@ export default function SettingsPage() {
                                             id={`${id}-key`} 
                                             type={revealed[id] ? 'text' : 'password'} 
                                             defaultValue={revealed[id] ? 'sk_live_****demo****' : '••••••••••••••••••••'}
-                                            onChange={() => {}}
+                                            readOnly
                                         />
                                         <Button variant="outline" size="icon" onClick={() => toggleReveal(id)}>
                                             {revealed[id] ? <EyeOff /> : <Eye />}
