@@ -27,12 +27,12 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { Building, Eye, Shield, Users, Database, UploadCloud, Key, RotateCw, Trash2, EyeOff, Link as LinkIcon, Mail, Inbox, FileText, HelpCircle } from 'lucide-react';
+import { Building, Eye, Shield, Users, Database, UploadCloud, Key, RotateCw, Trash2, EyeOff, Link as LinkIcon, Mail, Inbox, FileText, HelpCircle, Bot } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { RolesMatrix } from '@/components/roles-matrix';
+import { RolesMatrix, defaultPermissions } from '@/components/roles-matrix';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -42,6 +42,7 @@ import { useIntegrationStatus } from '@/hooks/use-integration-status';
 import { WarningBanner } from '@/components/warning-banner';
 import Link from 'next/link';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { useRole } from '@/hooks/use-role';
 
 const dncList = [
     { source: "List Upload", reason: "Global DNC", added: "2024-06-01" },
@@ -60,11 +61,17 @@ const initialIntegrationStates = {
     hubspot: false,
 };
 
+const negativePhraseSeeds = [
+    "unsubscribe", "remove me", "opt out", "stop emailing", "do not contact",
+    "not interested", "no interest", "not now", "no thanks", "wrong contact", "cease contact"
+];
+
 export default function SettingsPage() {
     const { toast } = useToast();
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const { role } = useRole();
 
     const [orgName, setOrgName] = useState("Paragon Engage Demo");
     const [primaryDomain, setPrimaryDomain] = useState("paragon-demo.io");
@@ -82,6 +89,21 @@ export default function SettingsPage() {
     const [retentionLogs, setRetentionLogs] = useState(180);
     const [retentionAggregates, setRetentionAggregates] = useState(24);
 
+    const [negativePhrases, setNegativePhrases] = useState(negativePhraseSeeds);
+    const [newNegativePhrase, setNewNegativePhrase] = useState("");
+
+    const handleAddNegativePhrase = () => {
+        if (newNegativePhrase && !negativePhrases.includes(newNegativePhrase)) {
+            setNegativePhrases([...negativePhrases, newNegativePhrase]);
+            setNewNegativePhrase("");
+        }
+    };
+
+    const handleRemoveNegativePhrase = (phraseToRemove: string) => {
+        setNegativePhrases(negativePhrases.filter(phrase => phrase !== phraseToRemove));
+    };
+
+
     const enabledDiscoveryProviders = Object.entries(integrationStatuses)
         .filter(([key, isConnected]) => ['apollo', 'clearbit', 'hunter'].includes(key) && isConnected)
         .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1));
@@ -89,9 +111,27 @@ export default function SettingsPage() {
     const areVerificationProvidersEnabled = enabledDiscoveryProviders.length > 0;
 
     const activeTab = searchParams.get('tab') || 'organization';
+
+    const hasConfigureCompliancePermission = defaultPermissions['Compliance']?.[role]?.includes('Configure');
     
     const handleTabChange = (value: string) => {
-        router.push(`${pathname}?tab=${value}`);
+        const newPath = `${pathname}?tab=${value}`;
+        const navItems = allNavGroups.flatMap(group => group.items.flatMap(item => (item.subItems ? item.subItems : item)));
+        let currentNavItem = navItems.find(item => item.href === newPath);
+        if (!currentNavItem) {
+            currentNavItem = navItems.find(item => item.href.split('?')[0] === pathname);
+        }
+        const hasPermission = currentNavItem ? defaultPermissions[currentNavItem.label as keyof typeof defaultPermissions]?.[role]?.includes('View') : true;
+
+        if(hasPermission) {
+            router.push(newPath);
+        } else {
+             toast({
+                variant: 'destructive',
+                title: "Access Denied",
+                description: `You do not have permission to view this page with the "${role}" role.`,
+             });
+        }
     };
 
     const handleAddKeyword = () => {
@@ -317,7 +357,7 @@ export default function SettingsPage() {
                     <CardContent className="space-y-4">
                         <div className="flex items-center justify-between p-4 border rounded-lg">
                             <p className="text-sm text-muted-foreground">Preview what users see when they unsubscribe.</p>
-                            <Button variant="secondary" onClick={() => setIsUnsubscribePreviewOpen(true)}>
+                            <Button variant="secondary" onClick={() => setIsUnsubscribePreviewOpen(true)} disabled={!hasConfigureCompliancePermission}>
                                 <Eye className="mr-2 h-4 w-4" /> Unsubscribe Page Preview
                             </Button>
                         </div>
@@ -333,6 +373,69 @@ export default function SettingsPage() {
                     </CardContent>
                 </Card>
 
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Intent Classification</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="space-y-3 p-4 border rounded-lg">
+                            <Label className="font-medium flex items-center gap-2">
+                                <Bot className="h-5 w-5 text-primary" />
+                                Classification Mode
+                            </Label>
+                            <RadioGroup defaultValue="rules-ml" disabled={!hasConfigureCompliancePermission}>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="rules" id="rules" />
+                                    <Label htmlFor="rules">Rules only</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="rules-ml" id="rules-ml" />
+                                    <Label htmlFor="rules-ml">Rules + ML (recommended)</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="rules-ml-llm" id="rules-ml-llm" />
+                                    <Label htmlFor="rules-ml-llm">Rules + ML + LLM fallback</Label>
+                                </div>
+                            </RadioGroup>
+                        </div>
+                         <div className="flex items-center justify-between p-4 border rounded-lg">
+                             <div className="flex items-center gap-2">
+                                <div>
+                                    <Label htmlFor="auto-suppress-negative" className="font-medium">Auto-suppress strong negative replies (≥0.90)</Label>
+                                </div>
+                            </div>
+                            <Switch id="auto-suppress-negative" disabled={!hasConfigureCompliancePermission} />
+                        </div>
+                        <div className="space-y-2 p-4 border rounded-lg">
+                            <Label className="font-medium">Negative Phrases</Label>
+                            <div className="flex flex-wrap gap-2">
+                                {negativePhrases.map(phrase => (
+                                    <Badge key={phrase} variant="secondary">
+                                        {phrase}
+                                        <button
+                                            onClick={() => handleRemoveNegativePhrase(phrase)}
+                                            className="ml-2 rounded-full hover:bg-muted-foreground/20 p-0.5"
+                                            disabled={!hasConfigureCompliancePermission}
+                                        >
+                                            <Trash2 className="h-3 w-3" />
+                                        </button>
+                                    </Badge>
+                                ))}
+                            </div>
+                            <div className="flex gap-2 pt-2">
+                                <Input
+                                    value={newNegativePhrase}
+                                    onChange={e => setNewNegativePhrase(e.target.value)}
+                                    placeholder="Add phrase"
+                                    disabled={!hasConfigureCompliancePermission}
+                                />
+                                <Button onClick={handleAddNegativePhrase} disabled={!hasConfigureCompliancePermission}>Add</Button>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+
                  <Card>
                     <CardHeader>
                         <CardTitle>Suppression Policies</CardTitle>
@@ -342,8 +445,17 @@ export default function SettingsPage() {
                             <div className="flex items-center justify-between">
                                 <Label htmlFor="global-dnc" className="font-medium">Global DNC List</Label>
                                 <div className="flex gap-2">
-                                    <Button variant="outline" size="sm"><UploadCloud className="mr-2" /> Upload CSV</Button>
-                                    <Button variant="outline" size="sm">Export</Button>
+                                     <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <div tabIndex={0} className={!hasConfigureCompliancePermission ? 'cursor-not-allowed' : ''}>
+                                                    <Button variant="outline" size="sm" disabled={!hasConfigureCompliancePermission}><UploadCloud className="mr-2" /> Upload CSV</Button>
+                                                </div>
+                                            </TooltipTrigger>
+                                            {!hasConfigureCompliancePermission && <TooltipContent><p>Admin/Analyst only</p></TooltipContent>}
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                    <Button variant="outline" size="sm" disabled={!hasConfigureCompliancePermission}>Export</Button>
                                 </div>
                             </div>
                             <Table>
@@ -372,12 +484,12 @@ export default function SettingsPage() {
                                     <Label htmlFor="in-conversation" className="font-medium">In-Conversation Suppression</Label>
                                     <p className="text-sm text-muted-foreground">Skip contacts currently in active human threads.</p>
                                 </div>
-                                <Switch id="in-conversation" defaultChecked />
+                                <Switch id="in-conversation" defaultChecked disabled={!hasConfigureCompliancePermission} />
                             </div>
                             <Separator />
                             <div className="space-y-2">
                                 <Label htmlFor="auto-lift">Auto-lift after</Label>
-                                <Select defaultValue="14">
+                                <Select defaultValue="14" disabled={!hasConfigureCompliancePermission}>
                                     <SelectTrigger id="auto-lift" className="w-[180px]">
                                         <SelectValue placeholder="Select a period" />
                                     </SelectTrigger>
@@ -400,15 +512,15 @@ export default function SettingsPage() {
                                 {unsubscribeKeywords.map(keyword => (
                                     <Badge key={keyword} variant="secondary">
                                         {keyword}
-                                        <button onClick={() => handleRemoveKeyword(keyword)} className="ml-2 rounded-full hover:bg-muted-foreground/20 p-0.5">
+                                        <button onClick={() => handleRemoveKeyword(keyword)} className="ml-2 rounded-full hover:bg-muted-foreground/20 p-0.5" disabled={!hasConfigureCompliancePermission}>
                                             <Trash2 className="h-3 w-3" />
                                         </button>
                                     </Badge>
                                 ))}
                             </div>
                             <div className="flex gap-2 pt-2">
-                                <Input value={newKeyword} onChange={e => setNewKeyword(e.target.value)} placeholder="Add keyword" />
-                                <Button onClick={handleAddKeyword}>Add</Button>
+                                <Input value={newKeyword} onChange={e => setNewKeyword(e.target.value)} placeholder="Add keyword" disabled={!hasConfigureCompliancePermission}/>
+                                <Button onClick={handleAddKeyword} disabled={!hasConfigureCompliancePermission}>Add</Button>
                             </div>
                         </div>
 
@@ -431,7 +543,7 @@ export default function SettingsPage() {
                                     </Tooltip>
                                 </TooltipProvider>
                             </div>
-                            <Switch id="negative-intent" />
+                            <Switch id="negative-intent" disabled={!hasConfigureCompliancePermission}/>
                         </div>
                     </CardContent>
                 </Card>
@@ -443,7 +555,7 @@ export default function SettingsPage() {
                     <CardContent className="space-y-6">
                         <div className="space-y-3 p-4 border rounded-lg">
                             <Label className="font-medium">Region Mode</Label>
-                            <RadioGroup defaultValue="us-only">
+                            <RadioGroup defaultValue="us-only" disabled={!hasConfigureCompliancePermission}>
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="us-only" id="us-only" />
                                     <Label htmlFor="us-only">US-only</Label>
@@ -467,28 +579,28 @@ export default function SettingsPage() {
                                     <Label htmlFor="retention-replies" className="font-medium">Raw Replies Retention</Label>
                                     <span className="text-sm text-muted-foreground font-medium">{retentionReplies} days</span>
                                 </div>
-                                <Slider id="retention-replies" value={[retentionReplies]} onValueChange={(value) => setRetentionReplies(value[0])} max={365} min={30} step={15} />
+                                <Slider id="retention-replies" value={[retentionReplies]} onValueChange={(value) => setRetentionReplies(value[0])} max={365} min={30} step={15} disabled={!hasConfigureCompliancePermission}/>
                              </div>
                              <div className="space-y-2">
                                 <div className="flex justify-between">
                                     <Label htmlFor="retention-logs" className="font-medium">Logs Retention</Label>
                                     <span className="text-sm text-muted-foreground font-medium">{retentionLogs} days</span>
                                 </div>
-                                <Slider id="retention-logs" value={[retentionLogs]} onValueChange={(value) => setRetentionLogs(value[0])} max={365} min={30} step={30} />
+                                <Slider id="retention-logs" value={[retentionLogs]} onValueChange={(value) => setRetentionLogs(value[0])} max={365} min={30} step={30} disabled={!hasConfigureCompliancePermission}/>
                              </div>
                               <div className="space-y-2">
                                 <div className="flex justify-between">
                                     <Label htmlFor="retention-aggregates" className="font-medium">Aggregates Retention</Label>
                                     <span className="text-sm text-muted-foreground font-medium">{retentionAggregates} months</span>
                                 </div>
-                                <Slider id="retention-aggregates" value={[retentionAggregates]} onValueChange={(value) => setRetentionAggregates(value[0])} max={48} min={6} step={3} />
+                                <Slider id="retention-aggregates" value={[retentionAggregates]} onValueChange={(value) => setRetentionAggregates(value[0])} max={48} min={6} step={3} disabled={!hasConfigureCompliancePermission}/>
                              </div>
                         </div>
                     </CardContent>
                 </Card>
 
                  <div className="flex justify-end">
-                    <Button variant="accent" onClick={handleSaveCompliance}>Save Compliance</Button>
+                    <Button variant="accent" onClick={handleSaveCompliance} disabled={!hasConfigureCompliancePermission}>Save Compliance</Button>
                 </div>
               </div>
             </TabsContent>
