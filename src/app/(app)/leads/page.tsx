@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -61,9 +62,9 @@ const initialLeadsData: Lead[] = [
   { name: 'Lukas Weber', company: 'EuroBalance', thread: 'What are your rates?', intent: 'Neutral', nextAction: 'Send Info', owner: 'System', explanation: { ruleMatch: "what are your", mlScore: 0.65 } },
 
   // Negative Intent
-  { name: 'Emily White', company: 'Summit Tax', thread: 'Not interested', intent: 'Negative', nextAction: 'DNC', owner: 'System', explanation: { ruleMatch: "not interested", mlScore: 0.98 } },
-  { name: 'Max Muller', company: 'Berlin IT Services', thread: 'Unsubscribe', intent: 'Negative', nextAction: 'DNC', owner: 'System', explanation: { ruleMatch: "unsubscribe", mlScore: 0.99 } },
-  { name: 'Dr. Schmidt', company: 'ZahnKlinik Berlin', thread: 'Remove me', intent: 'Negative', nextAction: 'DNC', owner: 'System', explanation: { ruleMatch: "remove me", mlScore: 0.97 } },
+  { name: 'Emily White', company: 'Summit Tax', thread: 'Not interested', intent: 'Negative', nextAction: 'DNC', owner: 'System', explanation: { ruleMatch: "not interested", mlScore: 0.98, llmRationale: "Strong negative signal detected. Marked for auto-suppression." } },
+  { name: 'Max Muller', company: 'Berlin IT Services', thread: 'Unsubscribe', intent: 'Negative', nextAction: 'DNC', owner: 'System', explanation: { ruleMatch: "unsubscribe", mlScore: 0.99, llmRationale: "Unsubscribe keyword is definitive and overrides other models." } },
+  { name: 'Dr. Schmidt', company: 'ZahnKlinik Berlin', thread: 'Remove me', intent: 'Negative', nextAction: 'DNC', owner: 'System', explanation: { ruleMatch: "remove me", mlScore: 0.97, llmRationale: "Unsubscribe keyword is definitive and overrides other models." } },
 ];
 
 

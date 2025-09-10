@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -18,7 +19,8 @@ type Result = {
 };
 
 const intents = ['unsubscribe', 'ooo', 'bounce', 'positive', 'neutral', 'negative', 'referral'];
-const rules = ['not interested', 'remove me', 'out of office', 'forwarded'];
+const rules = ['not interested', 'remove me', 'out of office', 'forwarded', 'unsubscribe'];
+const unsubscribeKeywords = ['unsubscribe', 'remove me', 'opt out'];
 
 function simulateClassification(text: string): Result {
   const lowerText = text.toLowerCase();
@@ -28,19 +30,29 @@ function simulateClassification(text: string): Result {
 
   // Simulate type detection
   let detectedType = intents[Math.floor(Math.random() * intents.length)];
-  if (matchedRules.includes('unsubscribe') || matchedRules.includes('remove me')) {
+  if (unsubscribeKeywords.some(keyword => lowerText.includes(keyword))) {
     detectedType = 'unsubscribe';
   } else if (matchedRules.includes('out of office')) {
     detectedType = 'ooo';
   } else if (lowerText.includes('interested') || lowerText.includes('let\'s talk')) {
     detectedType = 'positive';
+  } else if (matchedRules.includes('not interested')) {
+      detectedType = 'negative';
   }
 
   // Simulate ML score
   const mlScore = Math.random();
 
-  // Simulate LLM note (50% chance)
-  const llmNote = Math.random() > 0.5 ? "The user expressed curiosity about pricing but did not commit to a meeting." : null;
+  // Simulate LLM note
+  let llmNote = null;
+  if (detectedType === 'unsubscribe') {
+      llmNote = "Unsubscribe keyword is definitive and overrides other models.";
+  } else if (detectedType === 'negative') {
+      llmNote = "Strong negative signal detected. Marked for auto-suppression.";
+  } else if (Math.random() > 0.5) {
+      llmNote = "The user expressed curiosity about pricing but did not commit to a meeting.";
+  }
+
 
   return {
     type: detectedType,
@@ -111,7 +123,7 @@ export function ClassifierTestTool() {
             <div className="space-y-6">
               <div>
                 <Label className="text-xs uppercase text-muted-foreground">Detected Type</Label>
-                <Badge className="text-lg" variant="default">{result.type}</Badge>
+                <Badge className="text-lg" variant={result.type === 'negative' || result.type === 'unsubscribe' ? 'destructive' : 'default'}>{result.type}</Badge>
               </div>
 
               <Separator />

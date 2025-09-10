@@ -21,12 +21,13 @@ import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 
 const logData = [
+  { user: 'System', action: 'Auto-Suppression', details: 'Unsubscribe keyword found in reply from max.muller@berlin-it.de', timestamp: '2024-07-29 11:10:00', ip: 'N/A' },
   { user: 'A. Bhandari', action: 'Rotated API Key', details: 'Rotated API key for provider: apollo', timestamp: '2024-07-29 11:05:00', ip: '192.168.1.1' },
   { user: 'A. Bhandari', action: 'Updated Permissions', details: 'Admin updated Operator role for Campaign Studio', timestamp: '2024-07-29 11:00:00', ip: '192.168.1.1' },
   { user: 'A. Bhandari', action: 'Integration Connected', details: 'Connected Salesforce', timestamp: '2024-07-29 10:50:00', ip: '192.168.1.1' },
   { user: 'A. Bhandari', action: 'Integration Connected', details: 'Connected Apollo.io', timestamp: '2024-07-29 10:45:00', ip: '192.168.1.1' },
   { user: 'A. Bhandari', action: 'Created Campaign', details: '"Q2 Outreach"', timestamp: '2024-07-29 10:30:15', ip: '192.168.1.1' },
-  { user: 'System', action: 'Suppression Added', details: 'Unsubscribed: emily.white@summittax.ca', timestamp: '2024-07-29 10:15:00', ip: 'N/A' },
+  { user: 'System', action: 'Auto-Suppression', details: 'Negative intent (0.98) detected for emily.white@summittax.ca', timestamp: '2024-07-29 10:15:00', ip: 'N/A' },
   { user: 'System', action: 'Enrichment Run', details: '500 new contacts', timestamp: '2024-07-29 10:00:00', ip: 'N/A' },
   { user: 'jane.doe@paragon.com', action: 'Updated Segment', details: '"High-Growth Tech"', timestamp: '2024-07-28 15:45:02', ip: '203.0.113.25' },
   { user: 'A. Bhandari', action: 'Suppression Added', details: 'DNC List Upload: competitor.com', timestamp: '2024-07-28 12:00:00', ip: '192.168.1.1' },
@@ -72,7 +73,7 @@ export default function AuditLogPage() {
                   <TableCell className="text-muted-foreground">{log.timestamp}</TableCell>
                   <TableCell className="font-medium">{log.user}</TableCell>
                   <TableCell>
-                    <Badge variant="secondary">{log.action}</Badge>
+                    <Badge variant={log.action.includes('Suppression') ? 'destructive' : 'secondary'}>{log.action}</Badge>
                   </TableCell>
                   <TableCell>{log.details}</TableCell>
                   <TableCell className="font-mono text-xs">{log.ip}</TableCell>
