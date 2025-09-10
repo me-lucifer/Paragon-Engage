@@ -109,7 +109,12 @@ export default function InboxSettingsDialog({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div><Label>Provider</Label><p className="text-sm text-muted-foreground">{inbox.provider}</p></div>
                 <div><Label>Domain</Label><p className="text-sm text-muted-foreground">{inbox.domain}</p></div>
-                <div><Label>Status</Label><p><Badge variant={inbox.status === 'Connected' ? 'default' : 'secondary'}>{inbox.status}</Badge></p></div>
+                <div>
+                  <Label>Status</Label>
+                  <div>
+                    <Badge variant={inbox.status === 'Connected' ? 'default' : 'secondary'}>{inbox.status}</Badge>
+                  </div>
+                </div>
             </div>
 
             <Separator />
