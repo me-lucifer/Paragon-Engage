@@ -27,7 +27,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { Building, Eye, Shield, Users, Database, UploadCloud, Key, RotateCw, Trash2, EyeOff, Link as LinkIcon, Mail, Inbox } from 'lucide-react';
+import { Building, Eye, Shield, Users, Database, UploadCloud, Key, RotateCw, Trash2, EyeOff, Link as LinkIcon, Mail, Inbox, FileText } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
@@ -40,6 +40,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
 import { useIntegrationStatus } from '@/hooks/use-integration-status';
 import { WarningBanner } from '@/components/warning-banner';
+import Link from 'next/link';
 
 const dncList = [
     { source: "List Upload", reason: "Global DNC", added: "2024-06-01" },
@@ -54,6 +55,8 @@ const initialIntegrationStates = {
     sendgrid: false,
     'google-workspace': true,
     'microsoft-365': false,
+    salesforce: false,
+    hubspot: false,
 };
 
 export default function SettingsPage() {
@@ -597,6 +600,40 @@ export default function SettingsPage() {
                                     onClick={() => handleOAuthConnect(id)}
                                 >
                                     {integrationStatuses[id] ? 'Disconnect' : `Connect ${id.replace('-', ' ')}`}
+                                </Button>
+                            </div>
+                        ))}
+                        {Object.entries({
+                            salesforce: 'Sync leads and contacts, push positive intent signals.',
+                            hubspot: 'Sync leads and contacts, enroll in sequences.',
+                        }).map(([id, description]) => (
+                            <div key={id} className="space-y-4 p-4 border rounded-lg">
+                                <div className="flex items-start sm:items-center gap-4 flex-col sm:flex-row">
+                                    <Database className="h-6 w-6 text-primary flex-shrink-0" />
+                                    <div className="flex-1">
+                                        <Label className="font-medium capitalize">{id}</Label>
+                                        <p className="text-xs text-muted-foreground">{description}</p>
+                                    </div>
+                                    <Badge variant={integrationStatuses[id] ? 'default' : 'secondary'} className={integrationStatuses[id] ? 'bg-green-100 text-green-800' : ''}>
+                                        {integrationStatuses[id] ? 'Connected' : 'Not Connected'}
+                                    </Badge>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-2">
+                                        <Switch id={`${id}-push`} disabled={!integrationStatuses[id]} />
+                                        <Label htmlFor={`${id}-push`} className={!integrationStatuses[id] ? 'text-muted-foreground' : ''}>Enable Positive-Intent Push</Label>
+                                    </div>
+                                    <Link href="#">
+                                        <Button variant="link" className="p-0 h-auto" disabled={!integrationStatuses[id]}>
+                                            <FileText className="mr-2 h-4 w-4" /> Field Mapping
+                                        </Button>
+                                    </Link>
+                                </div>
+                                <Button 
+                                    variant={integrationStatuses[id] ? 'destructive' : 'default'} 
+                                    onClick={() => handleOAuthConnect(id)}
+                                >
+                                    {integrationStatuses[id] ? `Disconnect ${id.charAt(0).toUpperCase() + id.slice(1)}` : `Connect ${id.charAt(0).toUpperCase() + id.slice(1)}`}
                                 </Button>
                             </div>
                         ))}

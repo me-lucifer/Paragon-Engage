@@ -22,6 +22,7 @@ import { Search } from 'lucide-react';
 
 const logData = [
   { user: 'A. Bhandari', action: 'Updated Permissions', details: 'Admin updated Operator role for Campaign Studio', timestamp: '2024-07-29 11:00:00', ip: '192.168.1.1' },
+  { user: 'A. Bhandari', action: 'Integration Connected', details: 'Connected Salesforce', timestamp: '2024-07-29 10:50:00', ip: '192.168.1.1' },
   { user: 'A. Bhandari', action: 'Integration Connected', details: 'Connected Apollo.io', timestamp: '2024-07-29 10:45:00', ip: '192.168.1.1' },
   { user: 'A. Bhandari', action: 'Created Campaign', details: '"Q2 Outreach"', timestamp: '2024-07-29 10:30:15', ip: '192.168.1.1' },
   { user: 'System', action: 'Suppression Added', details: 'Unsubscribed: emily.white@summittax.ca', timestamp: '2024-07-29 10:15:00', ip: 'N/A' },
