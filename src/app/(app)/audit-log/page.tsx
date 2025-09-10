@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 
 const logData = [
+  { user: 'A. Bhandari', action: 'Updated Permissions', details: 'Admin updated Operator role for Campaign Studio', timestamp: '2024-07-29 11:00:00', ip: '192.168.1.1' },
   { user: 'A. Bhandari', action: 'Created Campaign', details: '"Q2 Outreach"', timestamp: '2024-07-29 10:30:15', ip: '192.168.1.1' },
   { user: 'System', action: 'Enrichment Run', details: '500 new contacts', timestamp: '2024-07-29 10:00:00', ip: 'N/A' },
   { user: 'jane.doe@paragon.com', action: 'Updated Segment', details: '"High-Growth Tech"', timestamp: '2024-07-28 15:45:02', ip: '203.0.113.25' },

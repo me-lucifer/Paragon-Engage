@@ -14,6 +14,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from './ui/separator';
+import React from 'react';
 
 const permissions = ['View', 'Configure', 'Execute', 'Export'] as const;
 type Permission = typeof permissions[number];
@@ -31,7 +32,7 @@ const modulesConfig = [
   {
     category: 'OUTREACH',
     modules: [
-      'Segments', 'Personalization Library', 'Campaign Studio', 'Inbox Manager',
+      'Segments', 'Personalization Library', 'Campaign Studio', 'Sequences', 'Inbox Manager',
       'Deliverability', 'Lead Triage', 'Referral Hub',
     ],
   },
@@ -47,24 +48,24 @@ const modulesConfig = [
 
 type PermissionsState = Record<string, Record<Role, Permission[]>>;
 
-const defaultPermissions: PermissionsState = {
-  // Operator: View all, Execute some
-  Dashboard: { operator: ['View'], analyst: ['View'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  'Industry Mapper': { operator: ['View'], analyst: ['View', 'Configure'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  'Data Sources': { operator: ['View'], analyst: ['View', 'Configure'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  Enrichment: { operator: ['View'], analyst: ['View', 'Configure'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  'Fit Scoring': { operator: ['View'], analyst: ['View', 'Configure'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  Segments: { operator: ['View', 'Execute'], analyst: ['View', 'Configure'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  'Personalization Library': { operator: ['View'], analyst: ['View', 'Configure'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  'Campaign Studio': { operator: ['View', 'Execute'], analyst: ['View'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  'Inbox Manager': { operator: ['View'], analyst: ['View'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  Deliverability: { operator: ['View'], analyst: ['View'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  'Lead Triage': { operator: ['View', 'Execute'], analyst: ['View'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  'Referral Hub': { operator: ['View', 'Execute'], analyst: ['View'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  'DNC / Suppression': { operator: ['View'], analyst: ['View'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  'Audit Log': { operator: ['View'], analyst: ['View'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  Settings: { operator: ['View'], analyst: ['View'], admin: ['View', 'Configure', 'Execute', 'Export'] },
-  Reports: { operator: ['View'], analyst: ['View', 'Export'], admin: ['View', 'Configure', 'Execute', 'Export'] },
+export const defaultPermissions: PermissionsState = {
+  Dashboard: { operator: ['View'], analyst: ['View'], admin: [] },
+  'Industry Mapper': { operator: [], analyst: ['View', 'Configure'], admin: [] },
+  'Data Sources': { operator: [], analyst: ['View', 'Configure'], admin: [] },
+  Enrichment: { operator: [], analyst: ['View', 'Configure'], admin: [] },
+  'Fit Scoring': { operator: [], analyst: ['View', 'Configure'], admin: [] },
+  Segments: { operator: ['View', 'Execute'], analyst: ['View', 'Configure'], admin: [] },
+  'Personalization Library': { operator: ['View'], analyst: ['View', 'Configure'], admin: [] },
+  'Campaign Studio': { operator: ['View', 'Execute'], analyst: ['View'], admin: [] },
+  'Sequences': { operator: [], analyst: [], admin: [] },
+  'Inbox Manager': { operator: ['View'], analyst: ['View'], admin: [] },
+  Deliverability: { operator: ['View'], analyst: ['View'], admin: [] },
+  'Lead Triage': { operator: ['View', 'Execute'], analyst: ['View'], admin: [] },
+  'Referral Hub': { operator: ['View', 'Execute'], analyst: [], admin: [] },
+  'DNC / Suppression': { operator: [], analyst: [], admin: [] },
+  'Audit Log': { operator: [], analyst: [], admin: [] },
+  Settings: { operator: ['View'], analyst: ['View'], admin: [] },
+  Reports: { operator: [], analyst: ['View', 'Export'], admin: [] },
 };
 
 
@@ -72,6 +73,21 @@ const defaultPermissions: PermissionsState = {
 Object.keys(defaultPermissions).forEach(module => {
     defaultPermissions[module].admin = ['View', 'Configure', 'Execute', 'Export'];
 });
+
+// Operator: view all
+Object.keys(defaultPermissions).forEach(module => {
+    if (!defaultPermissions[module].operator.includes('View')) {
+        defaultPermissions[module].operator.push('View');
+    }
+});
+
+// Analyst: view all
+Object.keys(defaultPermissions).forEach(module => {
+    if (!defaultPermissions[module].analyst.includes('View')) {
+        defaultPermissions[module].analyst.push('View');
+    }
+});
+
 
 export function RolesMatrix() {
   const [currentPermissions, setCurrentPermissions] = useState<PermissionsState>(JSON.parse(JSON.stringify(defaultPermissions)));
@@ -152,6 +168,7 @@ export function RolesMatrix() {
                           <Checkbox
                             checked={currentPermissions[module]?.[role as Role]?.includes(p)}
                             onCheckedChange={(checked) => handlePermissionChange(module, role as Role, p, !!checked)}
+                            disabled={role === 'admin'}
                           />
                         </TableCell>
                       ))
@@ -171,7 +188,7 @@ export function RolesMatrix() {
         <Button variant="outline">
           Preview as Role
         </Button>
-        <Button variant="accent" onClick={handleSaveChanges}>
+        <Button variant="default" onClick={handleSaveChanges}>
           Save
         </Button>
       </div>

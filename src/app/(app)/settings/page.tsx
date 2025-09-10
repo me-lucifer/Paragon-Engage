@@ -122,41 +122,41 @@ export default function SettingsPage() {
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor="timezone">Default Timezone*</Label>
-                                <Select defaultValue="ist">
+                                <Select defaultValue="Asia/Kolkata">
                                     <SelectTrigger id="timezone">
                                         <SelectValue placeholder="Select a timezone" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="est">EST (UTC-5)</SelectItem>
-                                        <SelectItem value="pst">PST (UTC-8)</SelectItem>
-                                        <SelectItem value="gmt">GMT (UTC+0)</SelectItem>
-                                        <SelectItem value="ist">IST (UTC+5:30)</SelectItem>
+                                        <SelectItem value="EST">EST (UTC-5)</SelectItem>
+                                        <SelectItem value="PST">PST (UTC-8)</SelectItem>
+                                        <SelectItem value="GMT">GMT (UTC+0)</SelectItem>
+                                        <SelectItem value="Asia/Kolkata">IST (UTC+5:30)</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor="locale">Default Locale</Label>
-                                <Select defaultValue="en-us">
+                                <Select defaultValue="en-US">
                                     <SelectTrigger id="locale">
                                         <SelectValue placeholder="Select a locale" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="en-us">en-US</SelectItem>
-                                        <SelectItem value="en-gb">en-GB</SelectItem>
-                                        <SelectItem value="fr-fr">fr-FR</SelectItem>
+                                        <SelectItem value="en-US">en-US</SelectItem>
+                                        <SelectItem value="en-GB">en-GB</SelectItem>
+                                        <SelectItem value="fr-FR">fr-FR</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor="currency">Default Currency</Label>
-                                <Select defaultValue="usd">
+                                <Select defaultValue="USD">
                                     <SelectTrigger id="currency">
                                         <SelectValue placeholder="Select a currency" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="usd">USD</SelectItem>
-                                        <SelectItem value="eur">EUR</SelectItem>
-                                        <SelectItem value="inr">INR</SelectItem>
+                                        <SelectItem value="USD">USD</SelectItem>
+                                        <SelectItem value="EUR">EUR</SelectItem>
+                                        <SelectItem value="INR">INR</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
