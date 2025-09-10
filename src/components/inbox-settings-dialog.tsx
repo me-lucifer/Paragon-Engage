@@ -28,6 +28,8 @@ import { Slider } from '@/components/ui/slider';
 import type { Inbox } from '@/app/(app)/inbox-manager/page';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from './ui/separator';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { HelpCircle } from 'lucide-react';
 
 interface InboxSettingsDialogProps {
   open: boolean;
@@ -40,6 +42,12 @@ const WARMUP_CAPS = {
   conservative: 50,
   balanced: 100,
   aggressive: 200,
+};
+
+const WARMUP_DESCRIPTIONS = {
+    conservative: "Ramps sending slowly, adding ~10 emails/day.",
+    balanced: "A moderate ramp, adding ~20 emails/day.",
+    aggressive: "Ramps sending quickly, adding ~35 emails/day.",
 };
 
 export default function InboxSettingsDialog({
@@ -90,6 +98,7 @@ export default function InboxSettingsDialog({
             Configure the sending behavior for this mailbox.
           </DialogDescription>
         </DialogHeader>
+        <TooltipProvider>
         <div className="flex-grow overflow-y-auto pr-6 pl-1 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div><Label>Provider</Label><p className="text-sm text-muted-foreground">{inbox.provider}</p></div>
@@ -130,9 +139,18 @@ export default function InboxSettingsDialog({
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="conservative">Conservative</SelectItem>
-                                <SelectItem value="balanced">Balanced</SelectItem>
-                                <SelectItem value="aggressive">Aggressive</SelectItem>
+                                {Object.entries(WARMUP_DESCRIPTIONS).map(([value, description]) => (
+                                    <Tooltip key={value} delayDuration={300}>
+                                        <TooltipTrigger asChild>
+                                            <SelectItem value={value}>
+                                                {value.charAt(0).toUpperCase() + value.slice(1)}
+                                            </SelectItem>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="right">
+                                            <p>{description}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>
@@ -149,7 +167,17 @@ export default function InboxSettingsDialog({
                 <h4 className="font-semibold text-lg">Sending Rules</h4>
                 <div className="space-y-2">
                     <div className="flex justify-between">
-                        <Label htmlFor="daily-cap">Daily Send Cap</Label>
+                        <div className="flex items-center gap-1.5">
+                            <Label htmlFor="daily-cap">Daily Send Cap</Label>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>We distribute campaign volume across your inbox pool to protect reputation.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </div>
                         <span className="text-sm text-muted-foreground font-medium">{currentSettings.dailySendCap} emails</span>
                     </div>
                     <Slider id="daily-cap" value={[currentSettings.dailySendCap]} onValueChange={value => setCurrentSettings(s => ({...s, dailySendCap: value[0]}))} max={currentSettings.warmup.enabled ? warmupCap : 1000} min={20} step={10} />
@@ -165,6 +193,7 @@ export default function InboxSettingsDialog({
                 </div>
             </div>
         </div>
+        </TooltipProvider>
         <DialogFooter className="border-t pt-4 gap-2">
             <Button variant="secondary" onClick={handleTestSend} className="mr-auto">Test Send</Button>
             <DialogClose asChild>
