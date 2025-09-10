@@ -20,10 +20,15 @@ export function WarningBanner({ title, message, actionLink, actionText }: Warnin
           <AlertTitle>{title}</AlertTitle>
           <AlertDescription>{message}</AlertDescription>
         </div>
-        <div className="mt-2 sm:mt-0 sm:ml-4">
+        <div className="mt-2 sm:mt-0 sm:ml-4 flex gap-2">
             <Link href={actionLink}>
                 <Button variant="destructive" size="sm">
                     {actionText}
+                </Button>
+            </Link>
+            <Link href="/inbox-manager">
+                 <Button variant="destructive" size="sm">
+                    Inbox Manager
                 </Button>
             </Link>
         </div>

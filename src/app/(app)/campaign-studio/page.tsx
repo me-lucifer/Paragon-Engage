@@ -119,10 +119,10 @@ export default function CampaignStudioPage() {
 
         {isHealthPoor && (
             <WarningBanner
-                title="Deliverability Alert"
+                title="Fix deliverability before sending"
                 message="Your inbox health is below the recommended threshold. Running campaigns may harm your domain reputation."
                 actionLink="/deliverability"
-                actionText="Fix Auth & Deliverability"
+                actionText="View Deliverability"
             />
         )}
 
