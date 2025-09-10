@@ -27,6 +27,9 @@ import ExplainScoreDialog from '@/components/explain-score-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+
 
 const fitProfiles = {
   conservative: {
@@ -81,6 +84,8 @@ export default function FitScoringPage() {
   const [activeProfile, setActiveProfile] = useState<keyof typeof fitProfiles>('balanced');
   const [weights, setWeights] = useState(fitProfiles[activeProfile].weights);
   const { toast } = useToast();
+  const [isCloneDialogOpen, setIsCloneDialogOpen] = useState(false);
+  const [newProfileName, setNewProfileName] = useState('');
 
   const handleProfileChange = (profile: string) => {
     const newProfile = profile as keyof typeof fitProfiles;
@@ -100,9 +105,24 @@ export default function FitScoringPage() {
       title: "Profile saved.",
     });
   };
+  
+  const handleOpenCloneDialog = () => {
+    setNewProfileName(`${currentProfile.name} (Copy)`);
+    setIsCloneDialogOpen(true);
+  };
+  
+  const handleCloneProfile = () => {
+    // In a real app, you would save the new profile with the cloned weights
+    toast({
+      title: "Profile cloned.",
+      description: `"${newProfileName}" has been created.`,
+    });
+    setIsCloneDialogOpen(false);
+  }
 
 
   return (
+    <>
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
@@ -166,11 +186,11 @@ export default function FitScoringPage() {
                 ))}
             </CardContent>
             <CardContent className="flex justify-end gap-2 border-t pt-6">
-                <Button variant="outline">
-                <FilePlus className="mr-2" /> Clone Profile
+                <Button variant="outline" onClick={handleOpenCloneDialog}>
+                  <FilePlus className="mr-2" /> Clone Profile
                 </Button>
                 <Button onClick={handleSaveProfile}>
-                <Copy className="mr-2" /> Save Profile
+                  <Copy className="mr-2" /> Save Profile
                 </Button>
             </CardContent>
             </Card>
@@ -217,5 +237,31 @@ export default function FitScoringPage() {
         </div>
       </Tabs>
     </div>
+    <Dialog open={isCloneDialogOpen} onOpenChange={setIsCloneDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+                <DialogTitle>Clone Profile</DialogTitle>
+                <DialogDescription>
+                    Create a copy of the "{currentProfile.name}" profile.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+                <Label htmlFor="new-profile-name">New Profile Name</Label>
+                <Input 
+                    id="new-profile-name" 
+                    value={newProfileName} 
+                    onChange={(e) => setNewProfileName(e.target.value)} 
+                />
+            </div>
+            <DialogFooter>
+                <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button onClick={handleCloneProfile}>Save Clone</Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+    </>
   );
 }
+
