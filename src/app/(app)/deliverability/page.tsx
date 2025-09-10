@@ -16,6 +16,7 @@ import ReportsChart from '@/components/reports-chart';
 import { useIntegrationStatus } from '@/hooks/use-integration-status';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { WarningBanner } from '@/components/warning-banner';
+import { DnsSetupHelper } from '@/components/dns-setup-helper';
 
 const deliverabilityStats = [
   { title: 'Inbox Placement Rate', value: '98.2%', icon: <Inbox className="h-6 w-6 text-primary" />, progress: 98.2, domain: 'paragon.com', tooltip: '% of delivered emails that landed in Inbox, not Spam, over last 7 days.' },
@@ -54,50 +55,56 @@ export default function DeliverabilityPage() {
                 actions={[{ href: '/settings?tab=integrations', text: 'Connect Provider' }]}
             />
         )}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div className="lg:col-span-2 space-y-6">
+            <TooltipProvider>
+                <div className="grid gap-6 md:grid-cols-2">
+                    {deliverabilityStats.map((stat) => (
+                    <Card key={stat.title}>
+                        <CardHeader className="flex flex-row items-center gap-4 space-y-0">
+                        {stat.icon}
+                        <CardTitle className="text-base font-medium flex items-center gap-1">
+                            {stat.title}
+                            <Tooltip>
+                            <TooltipTrigger asChild>
+                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p className="max-w-xs">{stat.tooltip}</p>
+                            </TooltipContent>
+                            </Tooltip>
+                        </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                        {stat.progress !== undefined ? (
+                            <>
+                                <div className="text-2xl font-bold">{stat.value}</div>
+                                <Progress value={stat.progress} className="mt-2 h-2" />
+                            </>
+                        ) : (
+                            <Badge className={stat.status === 'Passing' ? 'bg-green-100 text-green-800' : ''}>{stat.status}</Badge>
+                        )}
+                        <div className="text-xs text-muted-foreground mt-2">{stat.domain}</div>
+                        </CardContent>
+                    </Card>
+                    ))}
+                </div>
+            </TooltipProvider>
 
-      <TooltipProvider>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {deliverabilityStats.map((stat) => (
-            <Card key={stat.title}>
-                <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-                {stat.icon}
-                 <CardTitle className="text-base font-medium flex items-center gap-1">
-                    {stat.title}
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="max-w-xs">{stat.tooltip}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </CardTitle>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Inbox Placement by Mailbox Provider</CardTitle>
+                    <CardDescription>Performance across major email providers for the last 7 days.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                {stat.progress !== undefined ? (
-                    <>
-                        <div className="text-2xl font-bold">{stat.value}</div>
-                        <Progress value={stat.progress} className="mt-2 h-2" />
-                    </>
-                ) : (
-                    <Badge className={stat.status === 'Passing' ? 'bg-green-100 text-green-800' : ''}>{stat.status}</Badge>
-                )}
-                <div className="text-xs text-muted-foreground mt-2">{stat.domain}</div>
+                    <ReportsChart chartType="bar" />
                 </CardContent>
             </Card>
-            ))}
         </div>
-      </TooltipProvider>
-
-      <Card>
-        <CardHeader>
-            <CardTitle>Inbox Placement by Mailbox Provider</CardTitle>
-            <CardDescription>Performance across major email providers for the last 7 days.</CardDescription>
-        </CardHeader>
-        <CardContent>
-            <ReportsChart chartType="bar" />
-        </CardContent>
-      </Card>
+        <div className="lg:col-span-1">
+            <DnsSetupHelper />
+        </div>
+      </div>
     </div>
   );
 }
