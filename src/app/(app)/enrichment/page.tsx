@@ -25,7 +25,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, ChevronRight, FileDown, HelpCircle, Rocket, ShieldCheck, Target, XCircle } from 'lucide-react';
+import { CheckCircle, ChevronRight, FileDown, HelpCircle, Rocket, ShieldCheck, Target, XCircle, ChevronsUpDown } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useEffect, useState } from 'react';
 import { WarningBanner } from '@/components/warning-banner';
@@ -33,6 +33,9 @@ import { useIntegrationStatus } from '@/hooks/use-integration-status';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { SaveEnrichmentProfileDialog } from '@/components/save-enrichment-profile-dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+
 
 const initialIntegrationStates = {
     apollo: true,
@@ -62,6 +65,9 @@ export default function EnrichmentPage() {
     const [sampleResults, setSampleResults] = useState(initialSampleResults);
     const { statuses: integrationStatuses } = useIntegrationStatus(initialIntegrationStates);
     const [confidenceThreshold, setConfidenceThreshold] = useState(75);
+    const [isSaveProfileDialogOpen, setIsSaveProfileDialogOpen] = useState(false);
+    const [activeProfile, setActiveProfile] = useState('custom');
+
 
     const enabledDiscoveryProviders = Object.entries(integrationStatuses)
         .filter(([key, isConnected]) => ['apollo', 'clearbit', 'hunter'].includes(key) && isConnected)
@@ -77,6 +83,7 @@ export default function EnrichmentPage() {
     }, []);
 
   return (
+    <>
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -87,9 +94,28 @@ export default function EnrichmentPage() {
             Define rules and test your data enrichment profiles.
           </p>
         </div>
-        <Button>
-          <FileDown className="mr-2 h-4 w-4" /> Save as Enrichment Profile v1
-        </Button>
+        <div className="flex items-center gap-2">
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-48 justify-between">
+                        {activeProfile === 'custom' ? 'Custom Profile' : `Profile: ${activeProfile}`}
+                        <ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48">
+                    <DropdownMenuRadioGroup value={activeProfile} onValueChange={setActiveProfile}>
+                        <DropdownMenuRadioItem value="hf">Hedge Funds</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="ir">Investor Relations</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="pe">Private Equity</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuRadioItem value="custom">Custom Profile</DropdownMenuRadioItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+            <Button onClick={() => setIsSaveProfileDialogOpen(true)}>
+                <FileDown className="mr-2 h-4 w-4" /> Save Profile
+            </Button>
+        </div>
       </div>
 
        {!areVerificationProvidersEnabled && (
@@ -253,7 +279,10 @@ export default function EnrichmentPage() {
         </div>
       </div>
     </div>
+    <SaveEnrichmentProfileDialog
+        open={isSaveProfileDialogOpen}
+        onOpenChange={setIsSaveProfileDialogOpen}
+    />
+    </>
   );
 }
-
-    
