@@ -70,7 +70,7 @@ export default function SettingsPage() {
                 description: "Organization profile saved.",
             });
         }
-    }
+    };
 
 
   return (
@@ -239,7 +239,7 @@ export default function SettingsPage() {
                   <CardDescription>
                     Manage compliance and data governance settings.
                   </CardDescription>
-                </CardHeader>
+                </Header>
                 <CardContent>
                     <p>Compliance settings will be configured here.</p>
                 </CardContent>
