@@ -92,10 +92,10 @@ export default function LeadsPage() {
     setIsExplainSheetOpen(true);
   };
 
-  const handleSuppress = (leadName: string) => {
+  const handleSuppress = (leadName: string, reason: string) => {
     setLeadsData(prev => 
       prev.map(lead => 
-        lead.name === leadName ? { ...lead, status: 'suppressed', nextAction: 'DNC', suppressionReason: 'Manual DNC' } : lead
+        lead.name === leadName ? { ...lead, status: 'suppressed', nextAction: 'DNC', suppressionReason: reason } : lead
       )
     );
   };
@@ -221,7 +221,7 @@ export default function LeadsPage() {
                               <DropdownMenuItem>Archive</DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem onClick={() => handleOpenConvertDialog(lead)}>Convert to Meeting</DropdownMenuItem>
-                               <DropdownMenuItem onClick={() => handleSuppress(lead.name)} className="text-destructive">
+                               <DropdownMenuItem onClick={() => handleSuppress(lead.name, 'Manual DNC')} className="text-destructive">
                                 Suppress
                               </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -248,6 +248,7 @@ export default function LeadsPage() {
           open={isExplainSheetOpen}
           onOpenChange={setIsExplainSheetOpen}
           lead={explainedLead}
+          onSuppress={handleSuppress}
         />
       )}
     </>

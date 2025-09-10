@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Bot, GitCommit, BrainCircuit } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface LeadExplanationSheetProps {
   open: boolean;
@@ -27,14 +28,26 @@ interface LeadExplanationSheetProps {
       llmRationale?: string;
     };
   };
+  onSuppress: (leadName: string, reason: string) => void;
 }
 
 export default function LeadExplanationSheet({
   open,
   onOpenChange,
   lead,
+  onSuppress,
 }: LeadExplanationSheetProps) {
   const { explanation, intent } = lead;
+  const { toast } = useToast();
+
+  const handleConfirmSuppress = () => {
+    onSuppress(lead.name, 'Negative Intent (manual)');
+    onOpenChange(false);
+    toast({
+        title: "Lead Suppressed",
+        description: `${lead.name} has been added to the DNC list.`,
+    });
+  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -95,7 +108,7 @@ export default function LeadExplanationSheet({
             <Button variant="secondary">Reclassify</Button>
             <div className="flex gap-2">
                 <Button variant="outline">Keep in Queue</Button>
-                <Button variant="destructive">Confirm & Suppress</Button>
+                <Button variant="destructive" onClick={handleConfirmSuppress}>Confirm & Suppress</Button>
             </div>
           </div>
         </SheetFooter>
