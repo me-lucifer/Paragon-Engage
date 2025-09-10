@@ -14,7 +14,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
-import { PlusCircle, Inbox, RefreshCw, AlertCircle, HelpCircle } from 'lucide-react';
+import { PlusCircle, Inbox, RefreshCw, AlertCircle, HelpCircle, Loader2 } from 'lucide-react';
 import InboxSettingsDialog from '@/components/inbox-settings-dialog';
 import AddInboxWizard from '@/components/add-inbox-wizard';
 import { useToast } from '@/hooks/use-toast';
@@ -107,6 +107,7 @@ export default function InboxManagerPage() {
   const [selectedInbox, setSelectedInbox] = useState<Inbox | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isAddWizardOpen, setIsAddWizardOpen] = useState(false);
+  const [refreshingInbox, setRefreshingInbox] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleOpenSettings = (inbox: Inbox) => {
@@ -136,6 +137,37 @@ export default function InboxManagerPage() {
         title: "Inbox Added",
         description: `${newInbox.email} is now being warmed up.`
     });
+  }
+
+  const handleRefresh = (email: string) => {
+    setRefreshingInbox(email);
+    setTimeout(() => {
+        setInboxes(prev => prev.map(inbox => {
+            if (inbox.email === email) {
+                // Simulate new data
+                const newHealthFactors = {
+                    auth: Math.random() > 0.1 ? 30 : 0,
+                    bounce: Math.floor(Math.random() * 26),
+                    spam: Math.floor(Math.random() * 26),
+                    warmup: Math.floor(Math.random() * 11),
+                    errors: Math.floor(Math.random() * 11),
+                };
+                const newHealth = calculateHealth(newHealthFactors);
+                const newStatus = getStatusFromHealth(newHealth);
+                const newDailyUsed = newStatus === 'Error' ? 0 : newStatus === 'Warming' ? Math.floor(Math.random() * Math.min(50, inbox.dailySendCap)) : Math.floor(Math.random() * inbox.dailySendCap);
+                
+                return {
+                    ...inbox,
+                    healthFactors: newHealthFactors,
+                    health: newHealth,
+                    status: newStatus,
+                    dailyCap: `${newDailyUsed}/${inbox.dailySendCap}`,
+                }
+            }
+            return inbox;
+        }));
+        setRefreshingInbox(null);
+    }, 1500);
   }
 
 
@@ -250,8 +282,13 @@ export default function InboxManagerPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-end gap-2 border-t pt-4">
-                <Button variant="ghost" size="sm">
-                  <RefreshCw className="mr-2 h-4 w-4" /> Refresh
+                <Button variant="ghost" size="sm" onClick={() => handleRefresh(inbox.email)} disabled={refreshingInbox === inbox.email}>
+                  {refreshingInbox === inbox.email ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                  )}
+                   Refresh
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => handleOpenSettings(inbox)}>
                   Settings
