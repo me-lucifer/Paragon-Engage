@@ -27,7 +27,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { Building, Eye, Shield, Users, Database, UploadCloud, Key, RotateCw, Trash2, EyeOff, Link as LinkIcon, Mail, Inbox, FileText } from 'lucide-react';
+import { Building, Eye, Shield, Users, Database, UploadCloud, Key, RotateCw, Trash2, EyeOff, Link as LinkIcon, Mail, Inbox, FileText, HelpCircle } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
@@ -41,6 +41,7 @@ import { Slider } from '@/components/ui/slider';
 import { useIntegrationStatus } from '@/hooks/use-integration-status';
 import { WarningBanner } from '@/components/warning-banner';
 import Link from 'next/link';
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 const dncList = [
     { source: "List Upload", reason: "Global DNC", added: "2024-06-01" },
@@ -412,9 +413,23 @@ export default function SettingsPage() {
                         </div>
 
                         <div className="flex items-center justify-between p-4 border rounded-lg">
-                            <div>
-                                <Label htmlFor="negative-intent" className="font-medium">Negative-Intent Auto-Suppress</Label>
-                                 <p className="text-sm text-muted-foreground">Automatically add contacts with strong negative intent to the DNC list.</p>
+                             <div className="flex items-center gap-2">
+                                <div>
+                                    <Label htmlFor="negative-intent" className="font-medium">Negative-Intent Auto-Suppress</Label>
+                                    <p className="text-sm text-muted-foreground">Automatically add contacts with strong negative intent to the DNC list.</p>
+                                </div>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top" align="start">
+                                            <p className="max-w-xs">
+                                                Uses reply classifier (keywords + model) to detect strong ‘no interest/stop’ replies and auto-add to DNC. You can override in Lead Triage.
+                                            </p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                             </div>
                             <Switch id="negative-intent" />
                         </div>
@@ -519,7 +534,7 @@ export default function SettingsPage() {
                                             id={`${id}-key`} 
                                             type={revealed[id] ? 'text' : 'password'} 
                                             defaultValue={revealed[id] ? 'sk_live_****demo****' : '••••••••••••••••••••'}
-                                            readOnly
+                                            onChange={() => {}}
                                         />
                                         <Button variant="outline" size="icon" onClick={() => toggleReveal(id)}>
                                             {revealed[id] ? <EyeOff /> : <Eye />}
