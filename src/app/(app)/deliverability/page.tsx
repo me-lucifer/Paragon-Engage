@@ -8,6 +8,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -18,12 +19,15 @@ import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/comp
 import { WarningBanner } from '@/components/warning-banner';
 import { DnsSetupHelper } from '@/components/dns-setup-helper';
 import { DmarcPolicyPlanner } from '@/components/dmarc-policy-planner';
+import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { SeedInboxTestDialog } from '@/components/seed-inbox-test-dialog';
 
 const deliverabilityStats = [
-  { title: 'Inbox Placement Rate', value: '98.2%', icon: <Inbox className="h-6 w-6 text-primary" />, progress: 98.2, domain: 'paragon.com', tooltip: '% of delivered emails that landed in Inbox, not Spam, over last 7 days.' },
-  { title: 'Spam Placement Rate', value: '1.1%', icon: <AlertTriangle className="h-6 w-6 text-yellow-500" />, progress: 1.1, domain: 'paragon.com', tooltip: '% of delivered emails that landed in Spam over last 7 days. Keep <5%.' },
-  { title: 'Block/Bounce Rate', value: '0.7%', icon: <AlertTriangle className="h-6 w-6 text-red-500" />, progress: 0.7, domain: 'paragon.com', tooltip: '% of attempted sends rejected as soft/hard bounces. Keep <3%.' },
-  { title: 'Authentication', value: 'Passing', icon: <ShieldCheck className="h-6 w-6 text-green-500" />, status: 'Passing', domain: 'paragon.com', tooltip: 'SPF + DKIM must pass; DMARC set to p=none/quarantine/reject.' },
+  { id: 'inbox', title: 'Inbox Placement Rate', value: '98.2%', icon: <Inbox className="h-6 w-6 text-primary" />, progress: 98.2, domain: 'paragon.com', tooltip: '% of delivered emails that landed in Inbox, not Spam, over last 7 days.' },
+  { id: 'spam', title: 'Spam Placement Rate', value: '1.1%', icon: <AlertTriangle className="h-6 w-6 text-yellow-500" />, progress: 1.1, domain: 'paragon.com', tooltip: '% of delivered emails that landed in Spam over last 7 days. Keep <5%.' },
+  { id: 'bounce', title: 'Block/Bounce Rate', value: '0.7%', icon: <AlertTriangle className="h-6 w-6 text-red-500" />, progress: 0.7, domain: 'paragon.com', tooltip: '% of attempted sends rejected as soft/hard bounces. Keep <3%.' },
+  { id: 'auth', title: 'Authentication', value: 'Passing', icon: <ShieldCheck className="h-6 w-6 text-green-500" />, status: 'Passing', domain: 'paragon.com', tooltip: 'SPF + DKIM must pass; DMARC set to p=none/quarantine/reject.' },
 ];
 
 const initialIntegrationStates = {
@@ -34,11 +38,19 @@ const initialIntegrationStates = {
 
 export default function DeliverabilityPage() {
     const { statuses: integrationStatuses } = useIntegrationStatus(initialIntegrationStates);
+    const [lastTestTimestamp, setLastTestTimestamp] = useState<string | null>(null);
+    const [isTestDialogOpen, setIsTestDialogOpen] = useState(false);
+    
     const isMailgunConnected = integrationStatuses.mailgun;
     const isSendgridConnected = integrationStatuses.sendgrid;
     const authProviderConnected = isMailgunConnected || isSendgridConnected;
 
+    const handleTestComplete = () => {
+        setLastTestTimestamp(new Date().toLocaleString());
+    };
+
   return (
+    <>
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
@@ -86,7 +98,17 @@ export default function DeliverabilityPage() {
                             <Badge className={stat.status === 'Passing' ? 'bg-green-100 text-green-800' : ''}>{stat.status}</Badge>
                         )}
                         <div className="text-xs text-muted-foreground mt-2">{stat.domain}</div>
+                        {stat.id === 'auth' && lastTestTimestamp && (
+                            <p className="text-xs text-muted-foreground mt-1">Last test: {lastTestTimestamp}</p>
+                        )}
                         </CardContent>
+                        {stat.id === 'auth' && (
+                            <CardFooter>
+                                <Button variant="secondary" className="w-full" onClick={() => setIsTestDialogOpen(true)}>
+                                    Send Seed Test
+                                </Button>
+                            </CardFooter>
+                        )}
                     </Card>
                     ))}
                 </div>
@@ -108,5 +130,11 @@ export default function DeliverabilityPage() {
         </div>
       </div>
     </div>
+     <SeedInboxTestDialog
+        open={isTestDialogOpen}
+        onOpenChange={setIsTestDialogOpen}
+        onTestComplete={handleTestComplete}
+      />
+    </>
   );
 }
