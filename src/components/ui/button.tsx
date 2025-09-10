@@ -46,31 +46,39 @@ export interface ButtonProps
   outline?: boolean
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, onClick, outline, ...props }, ref) => {
+
+const ButtonWithToast = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ onClick, ...props }, ref) => {
     const { toast } = useToast();
     
-    const Comp = asChild ? Slot : "button"
-
     const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       if (onClick) {
         onClick(event);
-      } else if (!asChild && props.type !== 'submit') {
-        const isLink = asChild && 'href' in props;
+      } else if (!props.asChild && props.type !== 'submit') {
+        const isLink = props.asChild && 'href' in props;
         if (!isLink) {
-             toast({
-                title: "Placeholder Control",
-                description: "This control is a placeholder in the prototype.",
-             });
+          toast({
+            title: "Placeholder Control",
+            description: "This control is a placeholder in the prototype.",
+          });
         }
       }
     };
+
+    return <button ref={ref} onClick={handleClick} {...props} />;
+  }
+);
+ButtonWithToast.displayName = "ButtonWithToast";
+
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, outline, ...props }, ref) => {
+    const Comp = asChild ? Slot : ButtonWithToast;
 
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }), outline && 'bg-background border-destructive text-destructive hover:bg-destructive/10', '[&_svg]:size-4')}
         ref={ref}
-        onClick={handleClick}
         {...props}
       />
     )
