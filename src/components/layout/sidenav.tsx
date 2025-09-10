@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import {
   Collapsible,
   CollapsibleContent,
@@ -34,6 +34,8 @@ import {
   Settings,
   GitBranch,
   ChevronDown,
+  Building,
+  Shield,
 } from 'lucide-react';
 import React, { useMemo, useState, useEffect } from 'react';
 import { useRole } from '@/hooks/use-role';
@@ -79,8 +81,18 @@ export const allNavGroups = [
     items: [
       { href: '/dnc-suppression', icon: Ban, label: 'DNC / Suppression', roles: ['admin'] },
       { href: '/audit-log', icon: History, label: 'Audit Log', roles: ['admin'] },
-      { href: '/settings', icon: Settings, label: 'Settings', roles: ['admin'] },
-      { href: '/settings?tab=integrations', icon: Database, label: 'Integrations', roles: ['admin'] },
+      { 
+        href: '/settings', 
+        icon: Settings, 
+        label: 'Settings', 
+        roles: ['admin'],
+        subItems: [
+            { href: '/settings?tab=organization', icon: Building, label: 'Organization', roles: ['admin'] },
+            { href: '/settings?tab=roles', icon: Users, label: 'Roles & Permissions', roles: ['admin'] },
+            { href: '/settings?tab=compliance', icon: Shield, label: 'Compliance', roles: ['admin'] },
+            { href: '/settings?tab=integrations', icon: Database, label: 'Integrations', roles: ['admin'] },
+        ]
+      },
     ]
   },
   {
@@ -95,17 +107,19 @@ export const allNavGroups = [
 
 export function SideNav() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { role } = useRole();
   const { state: sidebarState, isMobile } = useSidebar();
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
+  const currentPath = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+  
   useEffect(() => {
     try {
       const storedState = localStorage.getItem('sidebarSections');
       if (storedState) {
         setOpenSections(JSON.parse(storedState));
       } else {
-        // Default all to open if nothing in storage
         const defaultState = allNavGroups.reduce((acc, group) => {
           acc[group.title] = true;
           return acc;
@@ -114,7 +128,6 @@ export function SideNav() {
       }
     } catch (error) {
         console.error("Failed to access localStorage", error);
-        // Fallback to default open
         const defaultState = allNavGroups.reduce((acc, group) => {
             acc[group.title] = true;
             return acc;
@@ -135,10 +148,14 @@ export function SideNav() {
   
   const navGroups = useMemo(() => {
     return allNavGroups
-      .filter(group => group.roles.includes(role))
       .map(group => ({
         ...group,
-        items: group.items.filter(item => item.roles.includes(role)),
+        items: group.items
+          .filter(item => item.roles.includes(role))
+          .map(item => ({
+            ...item,
+            subItems: item.subItems?.filter(subItem => subItem.roles.includes(role))
+          }))
       }))
       .filter(group => group.items.length > 0);
   }, [role]);
@@ -176,7 +193,7 @@ export function SideNav() {
         {navGroups.map((group, groupIndex) => (
           <Collapsible 
             key={group.title} 
-            open={openSections[group.title] !== false} // Default to open if not set
+            open={openSections[group.title] !== false}
             onOpenChange={() => toggleSection(group.title)}
             className={cn(groupIndex > 0 && "mt-4")}
         >
@@ -192,7 +209,7 @@ export function SideNav() {
                         <SidebarMenuButton
                         className={cn(
                             "w-full justify-start gap-2 rounded-md p-3 h-auto hover:bg-sidebar-accent",
-                             pathname === item.href && "sidebar-menu-button-active"
+                             (pathname === item.href && !item.subItems) && "sidebar-menu-button-active"
                         )}
                         tooltip={{ children: item.label }}
                         >
@@ -200,6 +217,28 @@ export function SideNav() {
                         <span>{item.label}</span>
                         </SidebarMenuButton>
                     </Link>
+                    {item.subItems && (
+                        <div className="pl-6 pt-1">
+                            <SidebarMenu>
+                            {item.subItems.map(subItem => (
+                                <SidebarMenuItem key={subItem.href}>
+                                <Link href={subItem.href}>
+                                    <SidebarMenuButton
+                                    className={cn(
+                                        "w-full justify-start gap-2 rounded-md p-2 h-auto text-sm hover:bg-sidebar-accent",
+                                        currentPath === subItem.href && "sidebar-menu-button-active"
+                                    )}
+                                    tooltip={{ children: subItem.label }}
+                                    >
+                                    <subItem.icon className="h-4 w-4" />
+                                    <span>{subItem.label}</span>
+                                    </SidebarMenuButton>
+                                </Link>
+                                </SidebarMenuItem>
+                            ))}
+                            </SidebarMenu>
+                        </div>
+                    )}
                     </SidebarMenuItem>
                 ))}
                 </SidebarMenu>

@@ -101,4 +101,8 @@ body {
         content: '';
         @apply absolute left-0 top-0 h-full w-[3px] bg-sidebar-primary;
     }
+    [role="tab"][data-state="active"] {
+        color: hsl(var(--primary));
+        border-bottom: 2px solid hsl(var(--primary));
+    }
 }

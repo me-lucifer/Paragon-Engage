@@ -2,14 +2,14 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,7 +27,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { Building, Eye, Shield, Users, Database, Mail, FileText, Globe, UploadCloud, Info, HelpCircle, Link as LinkIcon, Trash2, Key, RotateCw, EyeOff } from 'lucide-react';
+import { Building, Eye, Shield, Users, Database, UploadCloud, Key, RotateCw, Trash2, EyeOff, Link as LinkIcon } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
@@ -38,8 +38,8 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIntegrationStatus } from '@/hooks/use-integration-status';
+import { WarningBanner } from '@/components/warning-banner';
 
 const dncList = [
     { source: "List Upload", reason: "Global DNC", added: "2024-06-01" },
@@ -54,17 +54,33 @@ const initialIntegrationStates = {
 
 export default function SettingsPage() {
     const { toast } = useToast();
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
     const [orgName, setOrgName] = useState("Paragon Engage Demo");
     const [primaryDomain, setPrimaryDomain] = useState("paragon-demo.io");
     const [supportEmail, setSupportEmail] = useState("support@paragon-demo.io");
     const [footerIdentity, setFooterIdentity] = useState("You’re receiving this business outreach from {{org_name}} ({{legal_name}}). To stop further emails, use the unsubscribe link below.");
     const [orgNameError, setOrgNameError] = useState("");
     const [supportEmailError, setSupportEmailError] = useState("");
-    const [activeTab, setActiveTab] = useState("organization");
+    
     const [isUnsubscribePreviewOpen, setIsUnsubscribePreviewOpen] = useState(false);
     const [unsubscribeKeywords, setUnsubscribeKeywords] = useState(["unsubscribe", "remove me", "opt out"]);
     const [newKeyword, setNewKeyword] = useState("");
     const { statuses: integrationStatuses, testConnection, isTesting, revealed, toggleReveal } = useIntegrationStatus(initialIntegrationStates);
+    
+    const enabledDiscoveryProviders = Object.entries(integrationStatuses)
+        .filter(([key, isConnected]) => ['apollo', 'clearbit', 'hunter'].includes(key) && isConnected)
+        .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1));
+
+    const areVerificationProvidersEnabled = enabledDiscoveryProviders.length > 0;
+
+    const activeTab = searchParams.get('tab') || 'organization';
+    
+    const handleTabChange = (value: string) => {
+        router.push(`${pathname}?tab=${value}`);
+    };
 
     const handleAddKeyword = () => {
         if (newKeyword && !unsubscribeKeywords.includes(newKeyword)) {
@@ -76,7 +92,6 @@ export default function SettingsPage() {
     const handleRemoveKeyword = (keywordToRemove: string) => {
         setUnsubscribeKeywords(unsubscribeKeywords.filter(keyword => keyword !== keywordToRemove));
     };
-
 
     const validateEmail = (email: string) => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -118,7 +133,7 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col md:flex-row gap-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="flex flex-col md:flex-row gap-6">
         <TabsList className="flex-col h-auto justify-start p-2 gap-1 bg-transparent border-r-0 md:border-r w-full md:w-48">
           <TabsTrigger value="organization" className="w-full justify-start gap-2">
             <Building className="h-4 w-4" /> Organization
@@ -247,7 +262,7 @@ export default function SettingsPage() {
 
                     <div className="flex justify-end gap-2">
                         <Button variant="outline">Cancel</Button>
-                        <Button onClick={handleSaveChanges}>Save Changes</Button>
+                        <Button onClick={handleSaveChanges} variant="accent">Save Changes</Button>
                     </div>
                 </div>
             </TabsContent>
@@ -283,7 +298,7 @@ export default function SettingsPage() {
                              <Label>Footer Lines (read-only)</Label>
                              <div className="p-4 border rounded-lg bg-muted/50">
                                 <p className="text-sm text-muted-foreground">{footerIdentity}</p>
-                                <Button variant="link" size="sm" className="p-0 h-auto mt-2" onClick={() => setActiveTab("organization")}>
+                                <Button variant="link" size="sm" className="p-0 h-auto mt-2" onClick={() => handleTabChange("organization")}>
                                     <LinkIcon className="mr-2 h-3 w-3" /> Edit in Organization
                                 </Button>
                              </div>
@@ -406,56 +421,66 @@ export default function SettingsPage() {
                 </Card>
 
                  <div className="flex justify-end">
-                    <Button>Save Compliance</Button>
+                    <Button variant="accent">Save Compliance</Button>
                 </div>
               </div>
             </TabsContent>
 
             <TabsContent value="integrations">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Integrations</CardTitle>
-                  <CardDescription>
-                    Connect your tools and manage API keys.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    {Object.entries(integrationStatuses).map(([id, isConnected]) => (
-                        <div key={id} className="space-y-4 p-4 border rounded-lg">
-                            <div className="flex items-start sm:items-center gap-4 flex-col sm:flex-row">
-                                <Key className="h-6 w-6 text-primary flex-shrink-0" />
-                                <div className="flex-1">
-                                    <Label htmlFor={`${id}-key`} className="font-medium capitalize">{id}</Label>
-                                    <p className="text-xs text-muted-foreground">Used for data enrichment and verification.</p>
+               <div className="space-y-6">
+                {!areVerificationProvidersEnabled && (
+                    <WarningBanner
+                    title="Low Email Confidence"
+                    message="No email verification provider (e.g., Hunter, Clearbit) is active. This may result in lower email confidence."
+                    actionLink="/data-sources"
+                    actionText="Enable a Provider"
+                    />
+                )}
+                <Card>
+                    <CardHeader>
+                    <CardTitle>Integrations</CardTitle>
+                    <CardDescription>
+                        Connect your tools and manage API keys.
+                    </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        {Object.entries(initialIntegrationStates).map(([id, isConnectedInitial]) => (
+                            <div key={id} className="space-y-4 p-4 border rounded-lg">
+                                <div className="flex items-start sm:items-center gap-4 flex-col sm:flex-row">
+                                    <Key className="h-6 w-6 text-primary flex-shrink-0" />
+                                    <div className="flex-1">
+                                        <Label htmlFor={`${id}-key`} className="font-medium capitalize">{id}</Label>
+                                        <p className="text-xs text-muted-foreground">Used for data enrichment and verification.</p>
+                                    </div>
+                                    <Badge variant={integrationStatuses[id] ? 'default' : 'secondary'} className={integrationStatuses[id] ? 'bg-green-100 text-green-800' : ''}>
+                                        {integrationStatuses[id] ? 'Connected' : 'Not Connected'}
+                                    </Badge>
                                 </div>
-                                <Badge variant={isConnected ? 'default' : 'secondary'} className={isConnected ? 'bg-green-100 text-green-800' : ''}>
-                                    {isConnected ? 'Connected' : 'Not Connected'}
-                                </Badge>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor={`${id}-key`} className="text-xs font-medium text-muted-foreground">API Key</Label>
-                                <div className="flex items-center gap-2">
-                                     <Input 
-                                        id={`${id}-key`} 
-                                        type={revealed[id] ? 'text' : 'password'} 
-                                        value={revealed[id] ? 'sk_live_****demo****' : '••••••••••••••••••••'}
-                                        readOnly={!revealed[id]}
-                                    />
-                                    <Button variant="outline" size="icon" onClick={() => toggleReveal(id)}>
-                                        {revealed[id] ? <EyeOff /> : <Eye />}
-                                        <span className="sr-only">{revealed[id] ? 'Hide' : 'Reveal'} key</span>
-                                    </Button>
-                                    <Button variant="outline" size="icon"><RotateCw /><span className="sr-only">Rotate key</span></Button>
-                                    <Button variant="destructive" size="icon" outline><Trash2 /><span className="sr-only">Delete key</span></Button>
-                                    <Button variant="secondary" onClick={() => testConnection(id)} disabled={isTesting[id]}>
-                                        {isTesting[id] ? 'Testing...' : 'Test'}
-                                    </Button>
+                                <div className="space-y-2">
+                                    <Label htmlFor={`${id}-key`} className="text-xs font-medium text-muted-foreground">API Key</Label>
+                                    <div className="flex items-center gap-2">
+                                        <Input 
+                                            id={`${id}-key`} 
+                                            type={revealed[id] ? 'text' : 'password'} 
+                                            value={revealed[id] ? 'sk_live_****demo****' : '••••••••••••••••••••'}
+                                            readOnly={!revealed[id]}
+                                        />
+                                        <Button variant="outline" size="icon" onClick={() => toggleReveal(id)}>
+                                            {revealed[id] ? <EyeOff /> : <Eye />}
+                                            <span className="sr-only">{revealed[id] ? 'Hide' : 'Reveal'} key</span>
+                                        </Button>
+                                        <Button variant="outline" size="icon"><RotateCw /><span className="sr-only">Rotate key</span></Button>
+                                        <Button variant="destructive" size="icon" outline><Trash2 /><span className="sr-only">Delete key</span></Button>
+                                        <Button variant="secondary" onClick={() => testConnection(id)} disabled={isTesting[id]}>
+                                            {isTesting[id] ? 'Testing...' : 'Test'}
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </CardContent>
-              </Card>
+                        ))}
+                    </CardContent>
+                </Card>
+               </div>
             </TabsContent>
         </div>
       </Tabs>
@@ -489,7 +514,7 @@ export default function SettingsPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => {
                 setIsUnsubscribePreviewOpen(false);
-                setActiveTab("compliance");
+                handleTabChange("compliance");
             }}>
               Go to Compliance
             </Button>
