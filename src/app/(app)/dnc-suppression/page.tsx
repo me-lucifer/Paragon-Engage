@@ -72,7 +72,7 @@ export default function DNCSuppressionPage() {
     const [testResult, setTestResult] = useState<SuppressionResult>(null);
     const [isImportOpen, setIsImportOpen] = useState(false);
     const [importResult, setImportResult] = useState<ImportResult>(null);
-    const [date, setDate] = React.useState<DateRange | undefined>()
+    const [date, setDate] = useState<DateRange | undefined>()
 
     const handleTestSuppression = () => {
         if (!testEmail) {
