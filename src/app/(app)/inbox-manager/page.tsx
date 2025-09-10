@@ -19,6 +19,7 @@ import InboxSettingsDialog from '@/components/inbox-settings-dialog';
 import AddInboxWizard from '@/components/add-inbox-wizard';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { InboxHealthSheet } from '@/components/inbox-health-sheet';
 
 const initialInboxes = [
   {
@@ -30,7 +31,7 @@ const initialInboxes = [
     signature: 'Best,\nThe Paragon Team',
     warmup: {
         enabled: true,
-        schedule: 'balanced',
+        schedule: 'balanced' as "conservative" | "balanced" | "aggressive",
     },
     dailySendCap: 500,
   },
@@ -43,7 +44,7 @@ const initialInboxes = [
     signature: 'Best,\nThe Paragon Team',
      warmup: {
         enabled: true,
-        schedule: 'balanced',
+        schedule: 'balanced' as "conservative" | "balanced" | "aggressive",
     },
     dailySendCap: 500,
   },
@@ -56,7 +57,7 @@ const initialInboxes = [
     signature: 'Best,\nThe Paragon Team',
      warmup: {
         enabled: true,
-        schedule: 'aggressive',
+        schedule: 'aggressive' as "conservative" | "balanced" | "aggressive",
     },
     dailySendCap: 100,
   },
@@ -69,7 +70,7 @@ const initialInboxes = [
     signature: 'Best,\nThe Paragon Team',
      warmup: {
         enabled: false,
-        schedule: 'conservative',
+        schedule: 'conservative' as "conservative" | "balanced" | "aggressive",
     },
     dailySendCap: 500,
   },
@@ -85,11 +86,21 @@ const getStatusFromHealth = (health: number) => {
     return 'Error';
 }
 
-export type Inbox = Omit<(typeof initialInboxes)[0], 'healthFactors'> & {
+export type Inbox = {
+  email: string;
+  domain: string;
+  provider: string;
+  healthFactors: { auth: number; bounce: number; spam: number; warmup: number; errors: number; };
+  fromName: string;
+  signature: string;
+  warmup: {
+      enabled: boolean;
+      schedule: "conservative" | "balanced" | "aggressive";
+  };
+  dailySendCap: number;
   status: string;
   health: number;
   dailyCap: string;
-  healthFactors: (typeof initialInboxes)[0]['healthFactors'];
 };
 
 
@@ -106,6 +117,7 @@ export default function InboxManagerPage() {
   }));
   const [selectedInbox, setSelectedInbox] = useState<Inbox | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isHealthSheetOpen, setIsHealthSheetOpen] = useState(false);
   const [isAddWizardOpen, setIsAddWizardOpen] = useState(false);
   const [refreshingInbox, setRefreshingInbox] = useState<string | null>(null);
   const { toast } = useToast();
@@ -114,12 +126,19 @@ export default function InboxManagerPage() {
     setSelectedInbox(inbox);
     setIsSettingsOpen(true);
   };
+  
+  const handleOpenHealthSheet = (inbox: Inbox) => {
+    setSelectedInbox(inbox);
+    setIsHealthSheetOpen(true);
+  };
 
-  const handleSaveSettings = (updatedInbox: Inbox) => {
+  const handleSaveInbox = (updatedInbox: Inbox) => {
     setInboxes(prev =>
       prev.map(ib => (ib.email === updatedInbox.email ? updatedInbox : ib))
     );
+    // This can be called from either dialog
     setIsSettingsOpen(false);
+    setIsHealthSheetOpen(false);
   };
 
   const handleAddInbox = (newInboxData: Omit<Inbox, 'dailyCap' | 'status' | 'health'>) => {
@@ -257,6 +276,11 @@ export default function InboxManagerPage() {
                     value={inbox.health}
                     className="h-2"
                   />
+                  {inbox.health < 90 && (
+                    <Button variant="link" size="sm" className="p-0 h-auto text-xs mt-1" onClick={() => handleOpenHealthSheet(inbox)}>
+                        Why is my health low?
+                    </Button>
+                  )}
                 </div>
                 <div>
                   <div className="mb-1 flex items-center justify-between">
@@ -304,7 +328,15 @@ export default function InboxManagerPage() {
           open={isSettingsOpen}
           onOpenChange={setIsSettingsOpen}
           inbox={selectedInbox}
-          onSave={handleSaveSettings}
+          onSave={handleSaveInbox}
+        />
+      )}
+      {selectedInbox && (
+        <InboxHealthSheet
+            open={isHealthSheetOpen}
+            onOpenChange={setIsHealthSheetOpen}
+            inbox={selectedInbox}
+            onSave={handleSaveInbox}
         />
       )}
        <AddInboxWizard
