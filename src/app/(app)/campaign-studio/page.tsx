@@ -17,6 +17,7 @@ import SequenceEditorSheet from '@/components/sequence-editor-sheet';
 import { useState } from 'react';
 import { useDeliverability } from '@/hooks/use-deliverability';
 import { WarningBanner } from '@/components/warning-banner';
+import { CampaignPreflightDialog, InboxIssue } from '@/components/campaign-preflight-dialog';
 
 const campaignsData = [
   {
@@ -30,6 +31,7 @@ const campaignsData = [
     positiveIntent: '2.1%',
     owner: 'A. Bhandari',
     sequenceName: 'HF-AM Intro (A/B Test)',
+    inboxPool: ['sales@paragon.com', 'outreach@paragon.com'],
   },
   {
     id: 'boards-ir-warm-intro',
@@ -42,6 +44,7 @@ const campaignsData = [
     positiveIntent: '6.5%',
     owner: 'J. Doe',
     sequenceName: 'Boards/IR Intro (A/B Test)',
+    inboxPool: ['sales@paragon.com', 'contact@paragon.net'],
   },
   {
     id: 'pe-platforms-discovery',
@@ -54,6 +57,7 @@ const campaignsData = [
     positiveIntent: 'N/A',
     owner: 'A. Bhandari',
     sequenceName: 'PE Intro (A/B Test)',
+    inboxPool: ['backup@paragon.org'],
   },
   {
     id: 'it-msp-engagement',
@@ -66,6 +70,7 @@ const campaignsData = [
     positiveIntent: '2.5%',
     owner: 'J. Doe',
     sequenceName: 'IT MSP Intro v1',
+    inboxPool: ['outreach@paragon.com'],
   },
   {
     id: 'dental-clinic-welcome',
@@ -78,7 +83,15 @@ const campaignsData = [
     positiveIntent: '5%',
     owner: 'System',
     sequenceName: 'Dental Welcome v1',
+    inboxPool: ['contact@paragon.net'],
   },
+];
+
+const allInboxes = [
+  { email: 'sales@paragon.com', health: 98, authPassing: true },
+  { email: 'outreach@paragon.com', health: 95, authPassing: true },
+  { email: 'contact@paragon.net', health: 75, authPassing: true },
+  { email: 'backup@paragon.org', health: 50, authPassing: false },
 ];
 
 type Campaign = (typeof campaignsData)[0];
@@ -86,6 +99,8 @@ type Campaign = (typeof campaignsData)[0];
 export default function CampaignStudioPage() {
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isPreflightOpen, setIsPreflightOpen] = useState(false);
+  const [preflightIssues, setPreflightIssues] = useState<InboxIssue[]>([]);
   const { isHealthPoor } = useDeliverability();
 
   const handleEditSequence = (campaign: Campaign) => {
@@ -97,6 +112,34 @@ export default function CampaignStudioPage() {
     setIsSheetOpen(open);
     if (!open) {
       setSelectedCampaign(null);
+    }
+  };
+  
+  const handleStartCampaign = (campaign: Campaign) => {
+    const issues: InboxIssue[] = [];
+    campaign.inboxPool.forEach(inboxEmail => {
+        const inbox = allInboxes.find(i => i.email === inboxEmail);
+        if (inbox) {
+            const currentIssues: string[] = [];
+            if (inbox.health < 70) {
+                currentIssues.push(`Health is ${inbox.health}% (below 70%)`);
+            }
+            if (!inbox.authPassing) {
+                currentIssues.push("Authentication not passing");
+            }
+            if (currentIssues.length > 0) {
+                issues.push({ email: inbox.email, issues: currentIssues });
+            }
+        }
+    });
+
+    if (issues.length > 0) {
+        setSelectedCampaign(campaign);
+        setPreflightIssues(issues);
+        setIsPreflightOpen(true);
+    } else {
+        // No issues, proceed to start the campaign
+        console.log("Starting campaign:", campaign.name);
     }
   };
 
@@ -177,7 +220,7 @@ export default function CampaignStudioPage() {
                             Pause
                           </Button>
                         ) : (
-                           <Button variant="outline" size="sm" disabled={isHealthPoor}>
+                           <Button variant="outline" size="sm" onClick={() => handleStartCampaign(campaign)}>
                             <Play className="mr-2 h-4 w-4" />
                             Start
                           </Button>
@@ -199,6 +242,14 @@ export default function CampaignStudioPage() {
           open={isSheetOpen}
           onOpenChange={handleSheetOpenChange}
           campaign={selectedCampaign}
+        />
+      )}
+       {selectedCampaign && (
+        <CampaignPreflightDialog
+          open={isPreflightOpen}
+          onOpenChange={setIsPreflightOpen}
+          campaignName={selectedCampaign.name}
+          issues={preflightIssues}
         />
       )}
     </>
