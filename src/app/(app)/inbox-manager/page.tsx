@@ -14,12 +14,13 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
-import { PlusCircle, Inbox, RefreshCw, AlertCircle, HelpCircle, Loader2 } from 'lucide-react';
+import { PlusCircle, Inbox, RefreshCw, AlertCircle, HelpCircle, Loader2, Pencil, Save } from 'lucide-react';
 import InboxSettingsDialog from '@/components/inbox-settings-dialog';
 import AddInboxWizard from '@/components/add-inbox-wizard';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { InboxHealthSheet } from '@/components/inbox-health-sheet';
+import { Slider } from '@/components/ui/slider';
 
 const initialInboxes = [
   {
@@ -76,6 +77,12 @@ const initialInboxes = [
   },
 ];
 
+const WARMUP_CAPS = {
+  conservative: 50,
+  balanced: 100,
+  aggressive: 200,
+};
+
 const calculateHealth = (factors: (typeof initialInboxes)[0]['healthFactors']) => {
     return Object.values(factors).reduce((acc, curr) => acc + curr, 0);
 }
@@ -100,7 +107,7 @@ export type Inbox = {
   dailySendCap: number;
   status: string;
   health: number;
-  dailyCap: string;
+  dailyCapUsed: number;
 };
 
 
@@ -112,7 +119,7 @@ export default function InboxManagerPage() {
           ...ib,
           health,
           status,
-          dailyCap: `${status === 'Error' ? 0 : status === 'Warming' ? Math.min(50, ib.dailySendCap) : Math.floor(Math.random() * 20 + 480)}/${ib.dailySendCap}`
+          dailyCapUsed: status === 'Error' ? 0 : status === 'Warming' ? Math.min(50, ib.dailySendCap) : Math.floor(Math.random() * 20 + 480)
       }
   }));
   const [selectedInbox, setSelectedInbox] = useState<Inbox | null>(null);
@@ -120,6 +127,8 @@ export default function InboxManagerPage() {
   const [isHealthSheetOpen, setIsHealthSheetOpen] = useState(false);
   const [isAddWizardOpen, setIsAddWizardOpen] = useState(false);
   const [refreshingInbox, setRefreshingInbox] = useState<string | null>(null);
+  const [editingCap, setEditingCap] = useState<string | null>(null);
+  const [tempCap, setTempCap] = useState(0);
   const { toast } = useToast();
 
   const handleOpenSettings = (inbox: Inbox) => {
@@ -141,14 +150,14 @@ export default function InboxManagerPage() {
     setIsHealthSheetOpen(false);
   };
 
-  const handleAddInbox = (newInboxData: Omit<Inbox, 'dailyCap' | 'status' | 'health'>) => {
+  const handleAddInbox = (newInboxData: Omit<Inbox, 'dailyCapUsed' | 'status' | 'health'>) => {
     const health = calculateHealth(newInboxData.healthFactors);
     const status = getStatusFromHealth(health);
     const newInbox: Inbox = {
         ...newInboxData,
         health,
         status,
-        dailyCap: `0/${newInboxData.dailySendCap}`,
+        dailyCapUsed: 0,
     };
     setInboxes(prev => [...prev, newInbox]);
     setIsAddWizardOpen(false);
@@ -180,13 +189,32 @@ export default function InboxManagerPage() {
                     healthFactors: newHealthFactors,
                     health: newHealth,
                     status: newStatus,
-                    dailyCap: `${newDailyUsed}/${inbox.dailySendCap}`,
+                    dailyCapUsed: newDailyUsed,
                 }
             }
             return inbox;
         }));
         setRefreshingInbox(null);
     }, 1500);
+  }
+
+  const handleStartEditingCap = (inbox: Inbox) => {
+      setEditingCap(inbox.email);
+      setTempCap(inbox.dailySendCap);
+  }
+
+  const handleSaveCap = (email: string) => {
+      setInboxes(prev => prev.map(inbox => {
+          if (inbox.email === email) {
+              return { ...inbox, dailySendCap: tempCap };
+          }
+          return inbox;
+      }));
+      setEditingCap(null);
+      toast({
+          title: "Daily Cap Updated",
+          description: `Daily send cap for ${email} set to ${tempCap}.`,
+      });
   }
 
 
@@ -209,7 +237,9 @@ export default function InboxManagerPage() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          {inboxes.map((inbox) => (
+          {inboxes.map((inbox) => {
+            const warmupCap = inbox.warmup.enabled ? WARMUP_CAPS[inbox.warmup.schedule] : 1000;
+            return (
             <Card key={inbox.email}>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -286,26 +316,48 @@ export default function InboxManagerPage() {
                   )}
                 </div>
                 <div>
-                  <div className="mb-1 flex items-center justify-between">
-                    <Label
-                      htmlFor={`cap-${inbox.email}`}
-                      className="text-sm font-medium"
-                    >
-                      Daily Send Cap
-                    </Label>
-                    <span className="text-sm text-muted-foreground">
-                      {inbox.dailyCap}
-                    </span>
-                  </div>
-                  <Progress
-                    id={`cap-${inbox.email}`}
-                    value={
-                      (parseInt(inbox.dailyCap.split('/')[0]) /
-                        parseInt(inbox.dailyCap.split('/')[1])) *
-                      100
-                    }
-                    className="h-2"
-                  />
+                   <div className="mb-2 flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                            <Label
+                                htmlFor={`cap-${inbox.email}`}
+                                className="text-sm font-medium"
+                            >
+                                Daily Send Cap
+                            </Label>
+                            {editingCap !== inbox.email && (
+                                <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => handleStartEditingCap(inbox)}>
+                                    <Pencil className="h-3 w-3 text-muted-foreground" />
+                                </Button>
+                            )}
+                        </div>
+                        <span className="text-sm text-muted-foreground">
+                            {editingCap === inbox.email ? tempCap : inbox.dailyCapUsed}/{inbox.dailySendCap}
+                        </span>
+                    </div>
+
+                    {editingCap === inbox.email ? (
+                        <div className="space-y-2">
+                             <Slider
+                                value={[tempCap]}
+                                onValueChange={(value) => setTempCap(value[0])}
+                                max={warmupCap}
+                                min={20}
+                                step={10}
+                            />
+                            <div className="flex justify-between items-center">
+                               <p className="text-xs text-muted-foreground">Cannot exceed warm-up cap of {warmupCap}.</p>
+                               <Button size="sm" onClick={() => handleSaveCap(inbox.email)}>
+                                   <Save className="mr-2 h-3 w-3" /> Save
+                               </Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <Progress
+                            id={`cap-${inbox.email}`}
+                            value={(inbox.dailyCapUsed / inbox.dailySendCap) * 100}
+                            className="h-2"
+                        />
+                    )}
                 </div>
               </CardContent>
               <CardFooter className="flex justify-end gap-2 border-t pt-4">
@@ -322,7 +374,7 @@ export default function InboxManagerPage() {
                 </Button>
               </CardFooter>
             </Card>
-          ))}
+          )})}
         </div>
       </div>
       </TooltipProvider>

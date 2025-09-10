@@ -79,15 +79,17 @@ export default function InboxSettingsDialog({
   }
 
   const handleWarmupScheduleChange = (value: "conservative" | "balanced" | "aggressive") => {
-    setCurrentSettings(prev => ({
-        ...prev,
-        warmup: { ...prev.warmup, schedule: value },
-        // Reset daily send cap if it exceeds the new warm-up cap
-        dailySendCap: Math.min(prev.dailySendCap, WARMUP_CAPS[value]),
-    }));
+    setCurrentSettings(prev => {
+        const newWarmupCap = prev.warmup.enabled ? WARMUP_CAPS[value] : 1000;
+        return {
+            ...prev,
+            warmup: { ...prev.warmup, schedule: value },
+            dailySendCap: Math.min(prev.dailySendCap, newWarmupCap),
+        }
+    });
   }
 
-  const warmupCap = WARMUP_CAPS[currentSettings.warmup.schedule];
+  const warmupCap = currentSettings.warmup.enabled ? WARMUP_CAPS[currentSettings.warmup.schedule] : 1000;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -156,7 +158,7 @@ export default function InboxSettingsDialog({
                     </div>
                      <div className="space-y-2">
                         <Label>Today's Warm-up Cap</Label>
-                        <Input value={currentSettings.warmup.enabled ? warmupCap : 'N/A'} readOnly disabled />
+                        <Input value={currentSettings.warmup.enabled ? WARMUP_CAPS[currentSettings.warmup.schedule] : 'N/A'} readOnly disabled />
                     </div>
                 </div>
             </div>
@@ -180,7 +182,7 @@ export default function InboxSettingsDialog({
                         </div>
                         <span className="text-sm text-muted-foreground font-medium">{currentSettings.dailySendCap} emails</span>
                     </div>
-                    <Slider id="daily-cap" value={[currentSettings.dailySendCap]} onValueChange={value => setCurrentSettings(s => ({...s, dailySendCap: value[0]}))} max={currentSettings.warmup.enabled ? warmupCap : 1000} min={20} step={10} />
+                    <Slider id="daily-cap" value={[currentSettings.dailySendCap]} onValueChange={value => setCurrentSettings(s => ({...s, dailySendCap: value[0]}))} max={warmupCap} min={20} step={10} />
                 </div>
 
                 <div className="flex items-center justify-between p-4 border rounded-lg">
