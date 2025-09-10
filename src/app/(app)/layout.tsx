@@ -25,11 +25,11 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
 
   const currentNavItem = allNavGroups
     .flatMap(group => group.items)
-    .find(item => item.href === pathname);
+    .find(item => item.href.split('?')[0] === pathname.split('?')[0]);
 
   const hasPermission = currentNavItem
     ? defaultPermissions[currentNavItem.label as keyof typeof defaultPermissions]?.[role]?.includes('View')
-    : true; // Allow access to non-menu pages like /dashboard
+    : true; // Allow access to non-menu pages like /dashboard or pages not in nav
 
   return (
     <SidebarProvider>

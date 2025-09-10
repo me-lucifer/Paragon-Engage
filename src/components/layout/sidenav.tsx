@@ -80,6 +80,7 @@ export const allNavGroups = [
       { href: '/dnc-suppression', icon: Ban, label: 'DNC / Suppression', roles: ['admin'] },
       { href: '/audit-log', icon: History, label: 'Audit Log', roles: ['admin'] },
       { href: '/settings', icon: Settings, label: 'Settings', roles: ['admin'] },
+      { href: '/settings?tab=integrations', icon: Database, label: 'Integrations', roles: ['admin'] },
     ]
   },
   {
