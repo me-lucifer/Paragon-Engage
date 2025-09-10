@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from "react"
@@ -42,10 +43,11 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
+  outline?: boolean
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, onClick, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, onClick, outline, ...props }, ref) => {
     const { toast } = useToast();
     
     const Comp = asChild ? Slot : "button"
@@ -66,7 +68,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size, className }), outline && 'bg-background border-destructive text-destructive hover:bg-destructive/10')}
         ref={ref}
         onClick={handleClick}
         {...props}

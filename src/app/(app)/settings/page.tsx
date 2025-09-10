@@ -27,7 +27,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { Building, Eye, Shield, Users, Database, Mail, FileText, Globe, UploadCloud, Info, HelpCircle, Link as LinkIcon, Trash2 } from 'lucide-react';
+import { Building, Eye, Shield, Users, Database, Mail, FileText, Globe, UploadCloud, Info, HelpCircle, Link as LinkIcon, Trash2, Key, RotateCw, EyeOff } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
@@ -64,7 +64,7 @@ export default function SettingsPage() {
     const [isUnsubscribePreviewOpen, setIsUnsubscribePreviewOpen] = useState(false);
     const [unsubscribeKeywords, setUnsubscribeKeywords] = useState(["unsubscribe", "remove me", "opt out"]);
     const [newKeyword, setNewKeyword] = useState("");
-    const { statuses: integrationStatuses, testConnection, isTesting } = useIntegrationStatus(initialIntegrationStates);
+    const { statuses: integrationStatuses, testConnection, isTesting, revealed, toggleReveal } = useIntegrationStatus(initialIntegrationStates);
 
     const handleAddKeyword = () => {
         if (newKeyword && !unsubscribeKeywords.includes(newKeyword)) {
@@ -411,7 +411,7 @@ export default function SettingsPage() {
               </div>
             </TabsContent>
 
-             <TabsContent value="integrations">
+            <TabsContent value="integrations">
               <Card>
                 <CardHeader>
                   <CardTitle>Integrations</CardTitle>
@@ -422,37 +422,36 @@ export default function SettingsPage() {
                 <CardContent className="space-y-6">
                     {Object.entries(integrationStatuses).map(([id, isConnected]) => (
                         <div key={id} className="space-y-4 p-4 border rounded-lg">
-                            <div className="flex items-center gap-4">
-                                <Globe className="h-6 w-6 text-primary" />
-                                <Label htmlFor={`${id}-key`} className="flex-1 font-medium capitalize">{id}</Label>
+                            <div className="flex items-start sm:items-center gap-4 flex-col sm:flex-row">
+                                <Key className="h-6 w-6 text-primary flex-shrink-0" />
+                                <div className="flex-1">
+                                    <Label htmlFor={`${id}-key`} className="font-medium capitalize">{id}</Label>
+                                    <p className="text-xs text-muted-foreground">Used for data enrichment and verification.</p>
+                                </div>
                                 <Badge variant={isConnected ? 'default' : 'secondary'} className={isConnected ? 'bg-green-100 text-green-800' : ''}>
                                     {isConnected ? 'Connected' : 'Not Connected'}
                                 </Badge>
-                                {!isConnected && (
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger>
-                                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>Learn how we use this provider.</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                )}
                             </div>
-                            {isConnected ? (
+                            <div className="space-y-2">
+                                <Label htmlFor={`${id}-key`} className="text-xs font-medium text-muted-foreground">API Key</Label>
                                 <div className="flex items-center gap-2">
-                                    <Input id={`${id}-key`} type="password" defaultValue="fadshgkuuasdhfgaskdfj" />
-                                    <Button variant="outline" onClick={() => testConnection(id)} disabled={isTesting[id]}>
+                                     <Input 
+                                        id={`${id}-key`} 
+                                        type={revealed[id] ? 'text' : 'password'} 
+                                        value={revealed[id] ? 'sk_live_****demo****' : '••••••••••••••••••••'}
+                                        readOnly={!revealed[id]}
+                                    />
+                                    <Button variant="outline" size="icon" onClick={() => toggleReveal(id)}>
+                                        {revealed[id] ? <EyeOff /> : <Eye />}
+                                        <span className="sr-only">{revealed[id] ? 'Hide' : 'Reveal'} key</span>
+                                    </Button>
+                                    <Button variant="outline" size="icon"><RotateCw /><span className="sr-only">Rotate key</span></Button>
+                                    <Button variant="destructive" size="icon" outline><Trash2 /><span className="sr-only">Delete key</span></Button>
+                                    <Button variant="secondary" onClick={() => testConnection(id)} disabled={isTesting[id]}>
                                         {isTesting[id] ? 'Testing...' : 'Test'}
                                     </Button>
                                 </div>
-                            ) : (
-                                <div className="text-sm text-muted-foreground p-2 bg-muted/50 rounded-md">
-                                    Not configured yet.
-                                </div>
-                            )}
+                            </div>
                         </div>
                     ))}
                 </CardContent>

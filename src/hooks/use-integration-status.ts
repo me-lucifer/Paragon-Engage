@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useCallback } from 'react';
@@ -10,6 +11,7 @@ type IsTesting = Record<string, boolean>;
 export function useIntegrationStatus(initialStatuses: Statuses) {
   const [statuses, setStatuses] = useState<Statuses>(initialStatuses);
   const [isTesting, setIsTesting] = useState<IsTesting>({});
+  const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
 
   const connect = useCallback((id: string) => {
@@ -18,6 +20,10 @@ export function useIntegrationStatus(initialStatuses: Statuses) {
 
   const disconnect = useCallback((id: string) => {
     setStatuses(prev => ({ ...prev, [id]: false }));
+  }, []);
+
+  const toggleReveal = useCallback((id: string) => {
+    setRevealed(prev => ({ ...prev, [id]: !prev[id] }));
   }, []);
 
   const testConnection = useCallback(
@@ -46,5 +52,5 @@ export function useIntegrationStatus(initialStatuses: Statuses) {
     [toast]
   );
   
-  return { statuses, connect, disconnect, testConnection, isTesting };
+  return { statuses, connect, disconnect, testConnection, isTesting, revealed, toggleReveal };
 }
