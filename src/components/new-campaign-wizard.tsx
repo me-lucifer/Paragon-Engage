@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -22,10 +22,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { ArrowRight, Inbox, AlertTriangle, CalendarDays, Info, Users } from 'lucide-react';
+import { ArrowRight, Inbox, AlertTriangle, CalendarDays, Info, Users, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Badge } from './ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { Alert, AlertTitle } from './ui/alert';
 
 interface NewCampaignWizardProps {
   open: boolean;
@@ -33,13 +34,42 @@ interface NewCampaignWizardProps {
   inboxes: { email: string; status: string; dailySendCap: number, health: number }[];
 }
 
+const segmentAudiences = {
+    accounting: 60210,
+    'it-msp': 45800,
+    dental: 78150,
+};
+
+const fitProfileFactors = {
+    conservative: 0.15,
+    balanced: 0.4,
+    aggressive: 0.75,
+    none: 1.0,
+};
+
 export function NewCampaignWizard({ open, onOpenChange, inboxes }: NewCampaignWizardProps) {
   const [step, setStep] = useState(1);
   const [touches, setTouches] = useState(250);
+  const [selectedSegment, setSelectedSegment] = useState<keyof typeof segmentAudiences | ''>('');
+  const [selectedProfile, setSelectedProfile] = useState<keyof typeof fitProfileFactors>('balanced');
+  const [estimatedAudience, setEstimatedAudience] = useState(0);
+
+  useEffect(() => {
+    if (selectedSegment) {
+        const baseAudience = segmentAudiences[selectedSegment];
+        const factor = fitProfileFactors[selectedProfile];
+        setEstimatedAudience(Math.floor(baseAudience * factor));
+    } else {
+        setEstimatedAudience(0);
+    }
+  }, [selectedSegment, selectedProfile]);
 
   const reset = () => {
     setStep(1);
     setTouches(250);
+    setSelectedSegment('');
+    setSelectedProfile('balanced');
+    setEstimatedAudience(0);
   };
   
   const handleOpenChange = (isOpen: boolean) => {
@@ -93,37 +123,76 @@ export function NewCampaignWizard({ open, onOpenChange, inboxes }: NewCampaignWi
 
         <div className="py-4 space-y-6">
             {step === 1 && (
-                <div className="space-y-4">
-                     <div className="space-y-2">
-                        <Label htmlFor="campaign-name">Campaign Name</Label>
-                        <Input id="campaign-name" placeholder="e.g., Q4 Accounting Outreach" />
-                     </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="segment">Segment</Label>
-                        <Select>
-                            <SelectTrigger id="segment">
-                                <SelectValue placeholder="Select a segment" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="accounting">Accounting (CPAs)</SelectItem>
-                                <SelectItem value="it-msp">IT MSPs</SelectItem>
-                                <SelectItem value="dental">Dental Clinics</SelectItem>
-                            </SelectContent>
-                        </Select>
-                     </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="sequence">Sequence</Label>
-                        <Select>
-                            <SelectTrigger id="sequence">
-                                <SelectValue placeholder="Select a sequence" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="pe-intro">PE Intro (A/B Test)</SelectItem>
-                                <SelectItem value="hf-am-intro">HF-AM Intro (A/B Test)</SelectItem>
-                                <SelectItem value="it-msp-intro">IT MSP Intro v1</SelectItem>
-                            </SelectContent>
-                        </Select>
-                     </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="campaign-name">Campaign Name</Label>
+                            <Input id="campaign-name" placeholder="e.g., Q4 Accounting Outreach" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="segment">Segment</Label>
+                            <Select onValueChange={(value) => setSelectedSegment(value as any)}>
+                                <SelectTrigger id="segment">
+                                    <SelectValue placeholder="Select a segment" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="accounting">Accounting (CPAs)</SelectItem>
+                                    <SelectItem value="it-msp">IT MSPs</SelectItem>
+                                    <SelectItem value="dental">Dental Clinics</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="sequence">Sequence</Label>
+                            <Select>
+                                <SelectTrigger id="sequence">
+                                    <SelectValue placeholder="Select a sequence" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="pe-intro">PE Intro (A/B Test)</SelectItem>
+                                    <SelectItem value="hf-am-intro">HF-AM Intro (A/B Test)</SelectItem>
+                                    <SelectItem value="it-msp-intro">IT MSP Intro v1</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+                    <div className="space-y-4">
+                         <div className="space-y-2">
+                            <Label htmlFor="fit-profile">Use Fit Profile</Label>
+                            <Select value={selectedProfile} onValueChange={(value) => setSelectedProfile(value as any)}>
+                                <SelectTrigger id="fit-profile">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="conservative">Conservative</SelectItem>
+                                    <SelectItem value="balanced">Balanced</SelectItem>
+                                    <SelectItem value="aggressive">Aggressive</SelectItem>
+                                    <SelectItem value="none">None</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <Card className="bg-muted/50">
+                            <CardHeader className="p-4">
+                                <CardTitle className="text-base flex items-center gap-2">
+                                    <Users className="h-5 w-5" /> Estimated Audience
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-4 pt-0">
+                                {selectedSegment ? (
+                                    <p className="text-3xl font-bold text-primary">{estimatedAudience.toLocaleString()}</p>
+                                ): (
+                                    <p className="text-sm text-muted-foreground">Please select a segment first.</p>
+                                )}
+                            </CardContent>
+                        </Card>
+                         {estimatedAudience === 0 && selectedSegment && (
+                            <Alert variant="destructive">
+                                <AlertCircle className="h-4 w-4" />
+                                <AlertTitle>No audience available</AlertTitle>
+                                <div className="text-xs">Try selecting a different fit profile or widening your segment filters.</div>
+                            </Alert>
+                        )}
+                    </div>
                 </div>
             )}
             {step === 2 && (
@@ -241,7 +310,7 @@ export function NewCampaignWizard({ open, onOpenChange, inboxes }: NewCampaignWi
                 <Button type="button" variant="outline">Cancel</Button>
             </DialogClose>
             {step < 3 ? (
-                <Button type="button" onClick={handleNextStep}>
+                <Button type="button" onClick={handleNextStep} disabled={step === 1 && (!selectedSegment || estimatedAudience === 0)}>
                     {step === 1 ? 'Next: Plan Capacity' : 'Next: Confirm'}
                 </Button>
             ) : (
