@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -32,9 +33,9 @@ import { Separator } from '@/components/ui/separator';
 
 export default function SettingsPage() {
     const { toast } = useToast();
-    const [orgName, setOrgName] = useState("Paragon Intel");
-    const [supportEmail, setSupportEmail] = useState("support@paragonintel.com");
-    const [footerIdentity, setFooterIdentity] = useState("This will appear in email footers.");
+    const [orgName, setOrgName] = useState("Paragon Engage Demo");
+    const [supportEmail, setSupportEmail] = useState("support@paragon-demo.io");
+    const [footerIdentity, setFooterIdentity] = useState("You’re receiving this business outreach from {{org_name}} ({{legal_name}}). To stop further emails, use the unsubscribe link below.");
     const [orgNameError, setOrgNameError] = useState("");
     const [supportEmailError, setSupportEmailError] = useState("");
     const [activeTab, setActiveTab] = useState("organization");
@@ -120,7 +121,7 @@ export default function SettingsPage() {
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor="timezone">Default Timezone*</Label>
-                                <Select defaultValue="est">
+                                <Select defaultValue="ist">
                                     <SelectTrigger id="timezone">
                                         <SelectValue placeholder="Select a timezone" />
                                     </SelectTrigger>
@@ -177,7 +178,7 @@ export default function SettingsPage() {
                         <CardContent className="grid gap-6 sm:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="sender-name">Default Sender Display Name</Label>
-                                <Input id="sender-name" placeholder="Paragon Intel" />
+                                <Input id="sender-name" defaultValue="Paragon Outreach" />
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor="support-email">Support Email</Label>
