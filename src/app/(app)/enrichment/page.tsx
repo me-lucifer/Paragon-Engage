@@ -28,6 +28,7 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle, ChevronRight, FileDown, HelpCircle, Rocket, ShieldCheck, Target } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useEffect, useState } from 'react';
+import { WarningBanner } from '@/components/warning-banner';
 
 const enrichmentRules = {
   emailDiscovery: ['Hunter', 'Apollo', 'Clearbit'],
@@ -47,6 +48,9 @@ const initialSampleResults = [
   { name: 'Dr. A. Williams', email: 'dr.williams@bright...com', confidence: 92, source: 'Apollo', lastSeen: '' },
   { name: 'Lukas Weber', email: 'lukas@eurobalance...de', confidence: 78, source: 'Hunter', lastSeen: '' },
 ];
+
+// In a real app, this would come from a shared state or context
+const areVerificationProvidersEnabled = false;
 
 export default function EnrichmentPage() {
     const [sampleResults, setSampleResults] = useState(initialSampleResults);
@@ -73,6 +77,15 @@ export default function EnrichmentPage() {
           <FileDown className="mr-2 h-4 w-4" /> Save as Enrichment Profile v1
         </Button>
       </div>
+
+       {!areVerificationProvidersEnabled && (
+        <WarningBanner
+          title="Low Email Confidence"
+          message="No email verification provider (e.g., Hunter, Clearbit) is active. This may result in lower email confidence."
+          actionLink="/settings?tab=integrations"
+          actionText="Enable a Provider"
+        />
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>

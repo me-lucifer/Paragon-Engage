@@ -49,6 +49,7 @@ const dncList = [
 const initialIntegrationStates = {
     apollo: true,
     clearbit: true,
+    hunter: false,
 };
 
 export default function SettingsPage() {
@@ -419,36 +420,41 @@ export default function SettingsPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    <div className="space-y-4 p-4 border rounded-lg">
-                        <div className="flex items-center gap-4">
-                            <Globe className="h-6 w-6 text-primary" />
-                            <Label htmlFor="apollo-key" className="flex-1 font-medium">Apollo.io</Label>
-                             <Badge variant={integrationStatuses.apollo ? 'default' : 'secondary'} className={integrationStatuses.apollo ? 'bg-green-100 text-green-800' : ''}>
-                                {integrationStatuses.apollo ? 'Connected' : 'Not Connected'}
-                            </Badge>
+                    {Object.entries(integrationStatuses).map(([id, isConnected]) => (
+                        <div key={id} className="space-y-4 p-4 border rounded-lg">
+                            <div className="flex items-center gap-4">
+                                <Globe className="h-6 w-6 text-primary" />
+                                <Label htmlFor={`${id}-key`} className="flex-1 font-medium capitalize">{id}</Label>
+                                <Badge variant={isConnected ? 'default' : 'secondary'} className={isConnected ? 'bg-green-100 text-green-800' : ''}>
+                                    {isConnected ? 'Connected' : 'Not Connected'}
+                                </Badge>
+                                {!isConnected && (
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger>
+                                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Learn how we use this provider.</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                )}
+                            </div>
+                            {isConnected ? (
+                                <div className="flex items-center gap-2">
+                                    <Input id={`${id}-key`} type="password" defaultValue="fadshgkuuasdhfgaskdfj" />
+                                    <Button variant="outline" onClick={() => testConnection(id)} disabled={isTesting[id]}>
+                                        {isTesting[id] ? 'Testing...' : 'Test'}
+                                    </Button>
+                                </div>
+                            ) : (
+                                <div className="text-sm text-muted-foreground p-2 bg-muted/50 rounded-md">
+                                    Not configured yet.
+                                </div>
+                            )}
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Input id="apollo-key" type="password" defaultValue="fadshgkuuasdhfgaskdfj" />
-                            <Button variant="outline" onClick={() => testConnection('apollo')} disabled={isTesting.apollo}>
-                                {isTesting.apollo ? 'Testing...' : 'Test'}
-                            </Button>
-                        </div>
-                    </div>
-                     <div className="space-y-4 p-4 border rounded-lg">
-                        <div className="flex items-center gap-4">
-                            <Globe className="h-6 w-6 text-primary" />
-                            <Label htmlFor="clearbit-key" className="flex-1 font-medium">Clearbit</Label>
-                            <Badge variant={integrationStatuses.clearbit ? 'default' : 'secondary'} className={integrationStatuses.clearbit ? 'bg-green-100 text-green-800' : ''}>
-                                {integrationStatuses.clearbit ? 'Connected' : 'Not Connected'}
-                            </Badge>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Input id="clearbit-key" type="password" defaultValue="qweriuopqweurioasdfh" />
-                            <Button variant="outline" onClick={() => testConnection('clearbit')} disabled={isTesting.clearbit}>
-                                {isTesting.clearbit ? 'Testing...' : 'Test'}
-                            </Button>
-                        </div>
-                    </div>
+                    ))}
                 </CardContent>
               </Card>
             </TabsContent>
