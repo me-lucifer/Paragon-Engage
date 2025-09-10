@@ -29,6 +29,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { useRole } from '@/hooks/use-role';
 
 
 const fitProfiles = {
@@ -87,6 +88,7 @@ export default function FitScoringPage() {
   const [isCloneDialogOpen, setIsCloneDialogOpen] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
   const [lastScored, setLastScored] = useState<string | null>(null);
+  const { role } = useRole();
   
   useEffect(() => {
     setLastScored(new Date().toLocaleString());
@@ -231,9 +233,17 @@ export default function FitScoringPage() {
                                 {lastScored && <span className="block text-xs mt-1">Last scored: {lastScored}</span>}
                             </CardDescription>
                         </div>
-                        <Button variant="secondary" onClick={handleTestOnSample}>
-                            <PlayCircle className="mr-2" /> Test on Sample
-                        </Button>
+                        <div className="flex items-center gap-2">
+                            {role === 'admin' && (
+                                <Button variant="outline">
+                                    <FileText className="mr-2 h-4 w-4" />
+                                    Export CSV
+                                </Button>
+                            )}
+                            <Button variant="secondary" onClick={handleTestOnSample}>
+                                <PlayCircle className="mr-2" /> Test on Sample
+                            </Button>
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <Table>
