@@ -74,6 +74,7 @@ export default function AddInboxWizard({ open, onOpenChange, onAddInbox }: AddIn
               schedule: 'conservative',
           },
           dailySendCap: 20,
+          healthFactors: { auth: 30, bounce: 20, spam: 15, warmup: 0, errors: 5 }, // 70
       };
 
       onAddInbox(newInbox);
