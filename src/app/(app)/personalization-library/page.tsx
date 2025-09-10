@@ -47,6 +47,13 @@ const personalizationData = {
     { token: '{{ticker}}', description: 'Company\'s stock ticker' },
     { token: '{{calendar_link}}', description: 'Your scheduling link' },
     { token: '{{referral_link}}', description: 'Your unique referral link' },
+    { token: '{{org_name}}', description: 'Your organization\'s name' },
+    { token: '{{primary_domain}}', description: 'Your primary domain' },
+    { token: '{{sender_name}}', description: 'Default sender name' },
+    { token: '{{support_email}}', description: 'Your support email' },
+    { token: '{{legal_name}}', description: 'Your legal business name' },
+    { token: '{{legal_address}}', description: 'Your legal address' },
+    { token: '{{footer_identity}}', description: 'Your email footer text' },
   ],
   segments: [
     {
@@ -271,7 +278,7 @@ const personalizationData = {
           id: 'compliance-footer',
           name: 'Compliance footer',
           variants: [
-            { id: 'v1', subject: '', content: `You received this because your address is publicly listed for business outreach. Unsubscribe via the link below and we will not contact you again.` },
+            { id: 'v1', subject: '', content: `{{footer_identity}}\n\nYou received this because your address is publicly listed for business outreach. Unsubscribe via the link below and we will not contact you again.` },
           ],
         },
       ],
@@ -386,3 +393,5 @@ export default function PersonalizationLibraryPage() {
     </div>
   );
 }
+
+    
