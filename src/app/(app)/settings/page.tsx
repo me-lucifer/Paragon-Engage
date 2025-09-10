@@ -27,7 +27,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { Building, Eye, Shield, Users, Database, UploadCloud, Key, RotateCw, Trash2, EyeOff, Link as LinkIcon } from 'lucide-react';
+import { Building, Eye, Shield, Users, Database, UploadCloud, Key, RotateCw, Trash2, EyeOff, Link as LinkIcon, Mail } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
@@ -50,6 +50,8 @@ const initialIntegrationStates = {
     apollo: true,
     clearbit: true,
     hunter: false,
+    mailgun: true,
+    sendgrid: false,
 };
 
 export default function SettingsPage() {
@@ -457,17 +459,21 @@ export default function SettingsPage() {
                     <CardHeader>
                     <CardTitle>Integrations</CardTitle>
                     <CardDescription>
-                        Connect your tools and manage API keys.
+                        Manage your tools and API keys.
                     </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        {Object.entries(initialIntegrationStates).map(([id, isConnectedInitial]) => (
+                        {Object.entries({
+                            apollo: 'Used for data enrichment and verification.',
+                            clearbit: 'Used for data enrichment and verification.',
+                            hunter: 'Used for data enrichment and verification.',
+                        }).map(([id, description]) => (
                             <div key={id} className="space-y-4 p-4 border rounded-lg">
                                 <div className="flex items-start sm:items-center gap-4 flex-col sm:flex-row">
                                     <Key className="h-6 w-6 text-primary flex-shrink-0" />
                                     <div className="flex-1">
                                         <Label htmlFor={`${id}-key`} className="font-medium capitalize">{id}</Label>
-                                        <p className="text-xs text-muted-foreground">Used for data enrichment and verification.</p>
+                                        <p className="text-xs text-muted-foreground">{description}</p>
                                     </div>
                                     <Badge variant={integrationStatuses[id] ? 'default' : 'secondary'} className={integrationStatuses[id] ? 'bg-green-100 text-green-800' : ''}>
                                         {integrationStatuses[id] ? 'Connected' : 'Not Connected'}
@@ -495,6 +501,69 @@ export default function SettingsPage() {
                                 </div>
                             </div>
                         ))}
+                         <div key="mailgun" className="space-y-4 p-4 border rounded-lg">
+                            <div className="flex items-start sm:items-center gap-4 flex-col sm:flex-row">
+                                <Mail className="h-6 w-6 text-primary flex-shrink-0" />
+                                <div className="flex-1">
+                                    <Label htmlFor="mailgun-key" className="font-medium capitalize">Mailgun</Label>
+                                    <p className="text-xs text-muted-foreground">Used for sending emails and deliverability tracking.</p>
+                                </div>
+                                <Badge variant={integrationStatuses.mailgun ? 'default' : 'secondary'} className={integrationStatuses.mailgun ? 'bg-green-100 text-green-800' : ''}>
+                                    {integrationStatuses.mailgun ? 'Connected' : 'Not Connected'}
+                                </Badge>
+                            </div>
+                             <div className="flex items-center space-x-2">
+                                <Switch id="mailgun-sending" checked={integrationStatuses.mailgun} onCheckedChange={(checked) => testConnection('mailgun')} />
+                                <Label htmlFor="mailgun-sending">Enable for Sending/Infra</Label>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="mailgun-key" className="text-xs font-medium text-muted-foreground">API Key</Label>
+                                    <Input id="mailgun-key" type="password" value="••••••••••••••••••••" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="mailgun-domain" className="text-xs font-medium text-muted-foreground">Sending Domain</Label>
+                                    <Input id="mailgun-domain" value="mg.paragon-demo.io" />
+                                </div>
+                                <div className="space-y-2 sm:col-span-2">
+                                    <Label htmlFor="mailgun-webhook" className="text-xs font-medium text-muted-foreground">Webhook Signing Key</Label>
+                                    <Input id="mailgun-webhook" type="password" value="••••••••••••••••••••" />
+                                </div>
+                            </div>
+                             <Button variant="secondary" onClick={() => testConnection('mailgun')} disabled={isTesting.mailgun}>
+                                {isTesting.mailgun ? 'Testing...' : 'Test Connection'}
+                            </Button>
+                        </div>
+
+                        <div key="sendgrid" className="space-y-4 p-4 border rounded-lg">
+                            <div className="flex items-start sm:items-center gap-4 flex-col sm:flex-row">
+                                <Mail className="h-6 w-6 text-primary flex-shrink-0" />
+                                <div className="flex-1">
+                                    <Label htmlFor="sendgrid-key" className="font-medium capitalize">SendGrid</Label>
+                                    <p className="text-xs text-muted-foreground">Used for sending emails and deliverability tracking.</p>
+                                </div>
+                                <Badge variant={integrationStatuses.sendgrid ? 'default' : 'secondary'} className={integrationStatuses.sendgrid ? 'bg-green-100 text-green-800' : ''}>
+                                    {integrationStatuses.sendgrid ? 'Connected' : 'Not Connected'}
+                                </Badge>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <Switch id="sendgrid-sending" checked={integrationStatuses.sendgrid} onCheckedChange={(checked) => testConnection('sendgrid')} />
+                                <Label htmlFor="sendgrid-sending">Enable for Sending/Infra</Label>
+                            </div>
+                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="sendgrid-key" className="text-xs font-medium text-muted-foreground">API Key</Label>
+                                    <Input id="sendgrid-key" type="password" value="••••••••••••••••••••" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="sendgrid-domain" className="text-xs font-medium text-muted-foreground">From Domain</Label>
+                                    <Input id="sendgrid-domain" value="send.paragon-demo.io" />
+                                </div>
+                            </div>
+                            <Button variant="secondary" onClick={() => testConnection('sendgrid')} disabled={isTesting.sendgrid}>
+                                {isTesting.sendgrid ? 'Testing...' : 'Test Connection'}
+                            </Button>
+                        </div>
                     </CardContent>
                 </Card>
                </div>
