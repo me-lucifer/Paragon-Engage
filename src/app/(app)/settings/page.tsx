@@ -719,8 +719,16 @@ export default function SettingsPage() {
                                     <Label htmlFor="sendgrid-domain" className="text-xs font-medium text-muted-foreground">From Domain</Label>
                                     <Input id="sendgrid-domain" defaultValue="send.paragon-demo.io" />
                                 </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="sendgrid-daily-cap" className="text-xs font-medium text-muted-foreground">Account Daily Cap</Label>
+                                    <Input id="sendgrid-daily-cap" defaultValue="10000" />
+                                </div>
+                                 <div className="space-y-2">
+                                    <Label htmlFor="sendgrid-qps" className="text-xs font-medium text-muted-foreground">Max msgs/sec</Label>
+                                    <Input id="sendgrid-qps" defaultValue="10" />
+                                </div>
                             </div>
-                            <p className="text-xs text-muted-foreground">Sends include correlation headers (campaign, sequence, contact) for precise event mapping.</p>
+                            <p className="text-xs text-muted-foreground">Sends include correlation headers (campaign, sequence, contact) for precise event mapping. Campaign scheduler enforces provider-level QPS and daily caps.</p>
                             <Button variant="secondary" onClick={() => testConnection('sendgrid')} disabled={isTesting.sendgrid}>
                                 {isTesting.sendgrid ? 'Testing...' : 'Test Connection'}
                             </Button>
