@@ -14,6 +14,7 @@ import { HelpCircle, Info, Copy, CheckCircle, AlertCircle, Loader2 } from 'lucid
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from './ui/tooltip';
 import { useIntegrationStatus } from '@/hooks/use-integration-status';
 import { useToast } from '@/hooks/use-toast';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 
 const initialIntegrationStates = {
     mailgun: true,
@@ -145,7 +146,7 @@ export function DnsSetupHelper() {
                     {/* DKIM */}
                     <div className="space-y-2">
                        <div className="flex items-center justify-between">
-                            <Label className="font-semibold">2. DKIM (TXT)</Label>
+                            <Label className="font-semibold">2. DKIM</Label>
                             <div className="flex items-center gap-2">
                                {isVerifying ? getStatusIcon('pending') : getStatusIcon(verificationStatus.dkim)}
                             </div>
@@ -153,20 +154,41 @@ export function DnsSetupHelper() {
                         <div className="p-3 border rounded-md space-y-2 bg-muted/30">
                             {integrationStatuses.mailgun && (
                                 <>
-                                    <p className="text-xs text-muted-foreground">Name: s1._domainkey.{subdomain}</p>
+                                    <p className="text-xs text-muted-foreground font-semibold">Mailgun (TXT Records)</p>
                                     <div className="flex items-center justify-between">
-                                        <p className="text-xs font-mono bg-muted p-1 rounded-sm truncate">v=DKIM1; k=rsa; p=MIIBIjANBgkqh...</p>
-                                        <Button size="sm" variant="ghost" onClick={() => handleCopyToClipboard('v=DKIM1; k=rsa; p=MIIBIjANBgkqh...IDAQAB')}><Copy className="h-3 w-3" /></Button>
+                                        <p className="text-xs text-muted-foreground">Name: s1._domainkey.{subdomain}</p>
+                                        <Button size="sm" variant="ghost" onClick={() => handleCopyToClipboard(`v=DKIM1; k=rsa; p=MIIBIjANBgkqh...IDAQAB`)}><Copy className="h-3 w-3" /></Button>
                                     </div>
+                                    <p className="text-xs font-mono bg-muted p-1 rounded-sm truncate">v=DKIM1; k=rsa; p=MIIBIjANBgkqh...IDAQAB</p>
+                                    <p className="text-xs text-muted-foreground pt-2">Note: Mailgun may use selectors `mg`, `s1`, or `s2`. Copy the value provided in your Mailgun settings.</p>
                                 </>
                             )}
                              {integrationStatuses.sendgrid && (
                                  <>
-                                    <p className="text-xs text-muted-foreground mt-2">Name: s2._domainkey.{subdomain}</p>
-                                    <div className="flex items-center justify-between">
-                                        <p className="text-xs font-mono bg-muted p-1 rounded-sm truncate">v=DKIM1; k=rsa; p=MIIBIjANBgkqh...</p>
-                                        <Button size="sm" variant="ghost" onClick={() => handleCopyToClipboard('v=DKIM1; k=rsa; p=MIIBIjANBgkqh...IDAQAB')}><Copy className="h-3 w-3" /></Button>
-                                    </div>
+                                    <p className="text-xs text-muted-foreground font-semibold">SendGrid (CNAME Records)</p>
+                                    <Accordion type="single" collapsible>
+                                        <AccordionItem value="sendgrid-cname" className="border-b-0">
+                                            <AccordionTrigger className="text-xs py-1 text-muted-foreground hover:no-underline">
+                                                SendGrid uses CNAMEs for DKIM. Click to expand.
+                                            </AccordionTrigger>
+                                            <AccordionContent className="space-y-2 pt-2">
+                                                <div className="space-y-1">
+                                                    <p className="text-xs text-muted-foreground">Name: s1._domainkey.{subdomain}</p>
+                                                    <div className="flex items-center justify-between">
+                                                        <p className="text-xs font-mono bg-muted p-1 rounded-sm">CNAME s1.domainkey.u12345.sendgrid.net</p>
+                                                        <Button size="sm" variant="ghost" onClick={() => handleCopyToClipboard(`s1.domainkey.u12345.sendgrid.net`)}><Copy className="h-3 w-3" /></Button>
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <p className="text-xs text-muted-foreground">Name: s2._domainkey.{subdomain}</p>
+                                                    <div className="flex items-center justify-between">
+                                                        <p className="text-xs font-mono bg-muted p-1 rounded-sm">CNAME s2.domainkey.u12345.sendgrid.net</p>
+                                                        <Button size="sm" variant="ghost" onClick={() => handleCopyToClipboard(`s2.domainkey.u12345.sendgrid.net`)}><Copy className="h-3 w-3" /></Button>
+                                                    </div>
+                                                </div>
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    </Accordion>
                                  </>
                             )}
                         </div>
