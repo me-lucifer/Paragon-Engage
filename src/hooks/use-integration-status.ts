@@ -52,5 +52,5 @@ export function useIntegrationStatus(initialStatuses: Statuses) {
     [toast]
   );
   
-  return { statuses, connect, disconnect, testConnection, isTesting, revealed, toggleReveal };
+  return { statuses, setStatuses, connect, disconnect, testConnection, isTesting, revealed, toggleReveal };
 }

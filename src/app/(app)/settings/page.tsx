@@ -27,7 +27,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { Building, Eye, Shield, Users, Database, UploadCloud, Key, RotateCw, Trash2, EyeOff, Link as LinkIcon, Mail } from 'lucide-react';
+import { Building, Eye, Shield, Users, Database, UploadCloud, Key, RotateCw, Trash2, EyeOff, Link as LinkIcon, Mail, Inbox } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
@@ -52,6 +52,8 @@ const initialIntegrationStates = {
     hunter: false,
     mailgun: true,
     sendgrid: false,
+    'google-workspace': true,
+    'microsoft-365': false,
 };
 
 export default function SettingsPage() {
@@ -70,7 +72,7 @@ export default function SettingsPage() {
     const [isUnsubscribePreviewOpen, setIsUnsubscribePreviewOpen] = useState(false);
     const [unsubscribeKeywords, setUnsubscribeKeywords] = useState(["unsubscribe", "remove me", "opt out"]);
     const [newKeyword, setNewKeyword] = useState("");
-    const { statuses: integrationStatuses, testConnection, isTesting, revealed, toggleReveal } = useIntegrationStatus(initialIntegrationStates);
+    const { statuses: integrationStatuses, testConnection, isTesting, revealed, toggleReveal, setStatuses: setIntegrationStatuses } = useIntegrationStatus(initialIntegrationStates);
     
     const [retentionReplies, setRetentionReplies] = useState(90);
     const [retentionLogs, setRetentionLogs] = useState(180);
@@ -132,6 +134,14 @@ export default function SettingsPage() {
         toast({
             title: "Success",
             description: "Compliance saved.",
+        });
+    };
+    
+    const handleOAuthConnect = (id: string) => {
+        setIntegrationStatuses(prev => ({...prev, [id]: !prev[id]}));
+        toast({
+            title: `Integration ${integrationStatuses[id] ? 'Disconnected' : 'Connected'}`,
+            description: `Successfully ${integrationStatuses[id] ? 'disconnected' : 'connected'} ${id}.`
         });
     };
 
@@ -564,6 +574,32 @@ export default function SettingsPage() {
                                 {isTesting.sendgrid ? 'Testing...' : 'Test Connection'}
                             </Button>
                         </div>
+                         {Object.entries({
+                            'google-workspace': 'Connect your Google Workspace account to manage inboxes.',
+                            'microsoft-365': 'Connect your Microsoft 365 account to manage inboxes.',
+                        }).map(([id, description]) => (
+                             <div key={id} className="space-y-4 p-4 border rounded-lg">
+                                <div className="flex items-start sm:items-center gap-4 flex-col sm:flex-row">
+                                    <Inbox className="h-6 w-6 text-primary flex-shrink-0" />
+                                    <div className="flex-1">
+                                        <Label className="font-medium capitalize">{id.replace('-', ' ')}</Label>
+                                        <p className="text-xs text-muted-foreground">{description}</p>
+                                    </div>
+                                    <Badge variant={integrationStatuses[id] ? 'default' : 'secondary'} className={integrationStatuses[id] ? 'bg-green-100 text-green-800' : ''}>
+                                        {integrationStatuses[id] ? 'Connected' : 'Not Connected'}
+                                    </Badge>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                    Scopes: send/read headers, webhooks for bounces.
+                                </p>
+                                <Button 
+                                    variant={integrationStatuses[id] ? 'destructive' : 'default'} 
+                                    onClick={() => handleOAuthConnect(id)}
+                                >
+                                    {integrationStatuses[id] ? 'Disconnect' : `Connect ${id.replace('-', ' ')}`}
+                                </Button>
+                            </div>
+                        ))}
                     </CardContent>
                 </Card>
                </div>
