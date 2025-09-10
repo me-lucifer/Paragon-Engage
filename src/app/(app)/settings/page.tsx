@@ -70,6 +70,10 @@ export default function SettingsPage() {
     const [newKeyword, setNewKeyword] = useState("");
     const { statuses: integrationStatuses, testConnection, isTesting, revealed, toggleReveal } = useIntegrationStatus(initialIntegrationStates);
     
+    const [retentionReplies, setRetentionReplies] = useState(90);
+    const [retentionLogs, setRetentionLogs] = useState(180);
+    const [retentionAggregates, setRetentionAggregates] = useState(24);
+
     const enabledDiscoveryProviders = Object.entries(integrationStatuses)
         .filter(([key, isConnected]) => ['apollo', 'clearbit', 'hunter'].includes(key) && isConnected)
         .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1));
@@ -120,6 +124,13 @@ export default function SettingsPage() {
                 description: "Organization profile saved.",
             });
         }
+    };
+
+    const handleSaveCompliance = () => {
+        toast({
+            title: "Success",
+            description: "Compliance saved.",
+        });
     };
 
   return (
@@ -402,26 +413,32 @@ export default function SettingsPage() {
                         </div>
                          <div className="space-y-4 p-4 border rounded-lg">
                              <div className="space-y-2">
-                                <Label htmlFor="retention-replies" className="font-medium">Raw Replies Retention</Label>
-                                <Slider id="retention-replies" defaultValue={[90]} max={365} step={1} />
-                                <p className="text-xs text-muted-foreground text-right">90 days</p>
+                                <div className="flex justify-between">
+                                    <Label htmlFor="retention-replies" className="font-medium">Raw Replies Retention</Label>
+                                    <span className="text-sm text-muted-foreground font-medium">{retentionReplies} days</span>
+                                </div>
+                                <Slider id="retention-replies" value={[retentionReplies]} onValueChange={(value) => setRetentionReplies(value[0])} max={365} min={30} step={15} />
                              </div>
                              <div className="space-y-2">
-                                <Label htmlFor="retention-logs" className="font-medium">Logs Retention</Label>
-                                <Slider id="retention-logs" defaultValue={[180]} max={730} step={1} />
-                                <p className="text-xs text-muted-foreground text-right">180 days</p>
+                                <div className="flex justify-between">
+                                    <Label htmlFor="retention-logs" className="font-medium">Logs Retention</Label>
+                                    <span className="text-sm text-muted-foreground font-medium">{retentionLogs} days</span>
+                                </div>
+                                <Slider id="retention-logs" value={[retentionLogs]} onValueChange={(value) => setRetentionLogs(value[0])} max={365} min={30} step={30} />
                              </div>
                               <div className="space-y-2">
-                                <Label htmlFor="retention-aggregates" className="font-medium">Aggregates Retention</Label>
-                                <Slider id="retention-aggregates" defaultValue={[24]} max={60} step={1} />
-                                <p className="text-xs text-muted-foreground text-right">24 months</p>
+                                <div className="flex justify-between">
+                                    <Label htmlFor="retention-aggregates" className="font-medium">Aggregates Retention</Label>
+                                    <span className="text-sm text-muted-foreground font-medium">{retentionAggregates} months</span>
+                                </div>
+                                <Slider id="retention-aggregates" value={[retentionAggregates]} onValueChange={(value) => setRetentionAggregates(value[0])} max={48} min={6} step={3} />
                              </div>
                         </div>
                     </CardContent>
                 </Card>
 
                  <div className="flex justify-end">
-                    <Button variant="accent">Save Compliance</Button>
+                    <Button variant="accent" onClick={handleSaveCompliance}>Save Compliance</Button>
                 </div>
               </div>
             </TabsContent>
