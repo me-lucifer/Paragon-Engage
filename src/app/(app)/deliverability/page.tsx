@@ -17,6 +17,7 @@ import { useIntegrationStatus } from '@/hooks/use-integration-status';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { WarningBanner } from '@/components/warning-banner';
 import { DnsSetupHelper } from '@/components/dns-setup-helper';
+import { DmarcPolicyPlanner } from '@/components/dmarc-policy-planner';
 
 const deliverabilityStats = [
   { title: 'Inbox Placement Rate', value: '98.2%', icon: <Inbox className="h-6 w-6 text-primary" />, progress: 98.2, domain: 'paragon.com', tooltip: '% of delivered emails that landed in Inbox, not Spam, over last 7 days.' },
@@ -101,8 +102,9 @@ export default function DeliverabilityPage() {
                 </CardContent>
             </Card>
         </div>
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 space-y-6">
             <DnsSetupHelper />
+            <DmarcPolicyPlanner />
         </div>
       </div>
     </div>
