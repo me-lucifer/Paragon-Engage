@@ -8,6 +8,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,22 +26,48 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { Building, Eye, Shield, Users, Database, Mail, FileText, Globe } from 'lucide-react';
+import { Building, Eye, Shield, Users, Database, Mail, FileText, Globe, UploadCloud, Info, HelpCircle, Link as LinkIcon, Trash2 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { RolesMatrix } from '@/components/roles-matrix';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Slider } from '@/components/ui/slider';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
+const dncList = [
+    { source: "List Upload", reason: "Global DNC", added: "2024-06-01" },
+    { source: "Apollo.io", reason: "Do Not Contact", added: "2024-05-28" },
+];
 
 export default function SettingsPage() {
     const { toast } = useToast();
     const [orgName, setOrgName] = useState("Paragon Engage Demo");
+    const [primaryDomain, setPrimaryDomain] = useState("paragon-demo.io");
     const [supportEmail, setSupportEmail] = useState("support@paragon-demo.io");
     const [footerIdentity, setFooterIdentity] = useState("You’re receiving this business outreach from {{org_name}} ({{legal_name}}). To stop further emails, use the unsubscribe link below.");
     const [orgNameError, setOrgNameError] = useState("");
     const [supportEmailError, setSupportEmailError] = useState("");
     const [activeTab, setActiveTab] = useState("organization");
     const [isUnsubscribePreviewOpen, setIsUnsubscribePreviewOpen] = useState(false);
+    const [unsubscribeKeywords, setUnsubscribeKeywords] = useState(["unsubscribe", "remove me", "opt out"]);
+    const [newKeyword, setNewKeyword] = useState("");
+
+    const handleAddKeyword = () => {
+        if (newKeyword && !unsubscribeKeywords.includes(newKeyword)) {
+            setUnsubscribeKeywords([...unsubscribeKeywords, newKeyword]);
+            setNewKeyword("");
+        }
+    };
+
+    const handleRemoveKeyword = (keywordToRemove: string) => {
+        setUnsubscribeKeywords(unsubscribeKeywords.filter(keyword => keyword !== keywordToRemove));
+    };
+
 
     const validateEmail = (email: string) => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -118,7 +145,7 @@ export default function SettingsPage() {
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor="primary-domain">Primary Domain</Label>
-                                <Input id="primary-domain" placeholder="paragonintel.com" />
+                                <Input id="primary-domain" value={primaryDomain} onChange={e => setPrimaryDomain(e.target.value)} />
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor="timezone">Default Timezone*</Label>
@@ -231,17 +258,148 @@ export default function SettingsPage() {
             </TabsContent>
             
             <TabsContent value="compliance">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Compliance</CardTitle>
-                  <CardDescription>
-                    Manage compliance and data governance settings.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <p>Compliance settings will be configured here.</p>
-                </CardContent>
-              </Card>
+              <div className="space-y-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Unsubscribe & Footer</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex items-center justify-between p-4 border rounded-lg">
+                            <p className="text-sm text-muted-foreground">Preview what users see when they unsubscribe.</p>
+                            <Button variant="secondary" onClick={() => setIsUnsubscribePreviewOpen(true)}>
+                                <Eye className="mr-2 h-4 w-4" /> Unsubscribe Page Preview
+                            </Button>
+                        </div>
+                        <div className="space-y-2">
+                             <Label>Footer Lines (read-only)</Label>
+                             <div className="p-4 border rounded-lg bg-muted/50">
+                                <p className="text-sm text-muted-foreground">{footerIdentity}</p>
+                                <Button variant="link" size="sm" className="p-0 h-auto mt-2" onClick={() => setActiveTab("organization")}>
+                                    <LinkIcon className="mr-2 h-3 w-3" /> Edit in Organization
+                                </Button>
+                             </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>Suppression Policies</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                         <div className="space-y-4 p-4 border rounded-lg">
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="global-dnc" className="font-medium">Global DNC List</Label>
+                                <div className="flex gap-2">
+                                    <Button variant="outline" size="sm"><UploadCloud className="mr-2" /> Upload CSV</Button>
+                                    <Button variant="outline" size="sm">Export</Button>
+                                </div>
+                            </div>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Source</TableHead>
+                                        <TableHead>Reason</TableHead>
+                                        <TableHead>Added On</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {dncList.map((item, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell>{item.source}</TableCell>
+                                            <TableCell>{item.reason}</TableCell>
+                                            <TableCell>{item.added}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+                        
+                        <div className="flex items-center justify-between p-4 border rounded-lg">
+                            <div>
+                                <Label htmlFor="in-conversation" className="font-medium">In-Conversation Suppression</Label>
+                                <p className="text-sm text-muted-foreground">Skip contacts currently in active human threads.</p>
+                            </div>
+                            <Switch id="in-conversation" defaultChecked />
+                        </div>
+                        
+                        <div className="space-y-2 p-4 border rounded-lg">
+                            <Label className="font-medium">Unsubscribe Keywords</Label>
+                            <div className="flex flex-wrap gap-2">
+                                {unsubscribeKeywords.map(keyword => (
+                                    <Badge key={keyword} variant="secondary">
+                                        {keyword}
+                                        <button onClick={() => handleRemoveKeyword(keyword)} className="ml-2 rounded-full hover:bg-muted-foreground/20 p-0.5">
+                                            <Trash2 className="h-3 w-3" />
+                                        </button>
+                                    </Badge>
+                                ))}
+                            </div>
+                            <div className="flex gap-2 pt-2">
+                                <Input value={newKeyword} onChange={e => setNewKeyword(e.target.value)} placeholder="Add keyword" />
+                                <Button onClick={handleAddKeyword}>Add</Button>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-4 border rounded-lg">
+                            <div>
+                                <Label htmlFor="negative-intent" className="font-medium">Negative-Intent Auto-Suppress</Label>
+                                 <p className="text-sm text-muted-foreground">Automatically add contacts with strong negative intent to the DNC list.</p>
+                            </div>
+                            <Switch id="negative-intent" />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>Retention & Region</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="space-y-3 p-4 border rounded-lg">
+                            <Label className="font-medium">Region Mode</Label>
+                            <RadioGroup defaultValue="us-only">
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="us-only" id="us-only" />
+                                    <Label htmlFor="us-only">US-only</Label>
+                                </div>
+                                <p className="text-xs text-muted-foreground pl-6">Standard CAN-SPAM compliance rules apply.</p>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="eu-uk" id="eu-uk" />
+                                    <Label htmlFor="eu-uk">EU/UK</Label>
+                                </div>
+                                 <p className="text-xs text-muted-foreground pl-6">Stricter GDPR and PECR rules apply. Legitimate Interest basis required.</p>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="canada" id="canada" />
+                                    <Label htmlFor="canada">Canada</Label>
+                                </div>
+                                <p className="text-xs text-muted-foreground pl-6">CASL rules apply. Implied or express consent required.</p>
+                            </RadioGroup>
+                        </div>
+                         <div className="space-y-4 p-4 border rounded-lg">
+                             <div className="space-y-2">
+                                <Label htmlFor="retention-replies" className="font-medium">Raw Replies Retention</Label>
+                                <Slider id="retention-replies" defaultValue={[90]} max={365} step={1} />
+                                <p className="text-xs text-muted-foreground text-right">90 days</p>
+                             </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="retention-logs" className="font-medium">Logs Retention</Label>
+                                <Slider id="retention-logs" defaultValue={[180]} max={730} step={1} />
+                                <p className="text-xs text-muted-foreground text-right">180 days</p>
+                             </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="retention-aggregates" className="font-medium">Aggregates Retention</Label>
+                                <Slider id="retention-aggregates" defaultValue={[24]} max={60} step={1} />
+                                <p className="text-xs text-muted-foreground text-right">24 months</p>
+                             </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                 <div className="flex justify-end">
+                    <Button>Save Compliance</Button>
+                </div>
+              </div>
             </TabsContent>
 
              <TabsContent value="integrations">
