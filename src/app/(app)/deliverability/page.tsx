@@ -11,15 +11,16 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { MailCheck, ShieldCheck, AlertTriangle, Inbox, CheckCircle } from 'lucide-react';
+import { MailCheck, ShieldCheck, AlertTriangle, Inbox, CheckCircle, HelpCircle } from 'lucide-react';
 import ReportsChart from '@/components/reports-chart';
 import { useIntegrationStatus } from '@/hooks/use-integration-status';
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 const deliverabilityStats = [
-  { title: 'Inbox Placement Rate', value: '98.2%', icon: <Inbox className="h-6 w-6 text-primary" />, progress: 98.2, domain: 'paragon.com' },
-  { title: 'Spam Placement Rate', value: '1.1%', icon: <AlertTriangle className="h-6 w-6 text-yellow-500" />, progress: 1.1, domain: 'paragon.com' },
-  { title: 'Block/Bounce Rate', value: '0.7%', icon: <AlertTriangle className="h-6 w-6 text-red-500" />, progress: 0.7, domain: 'paragon.com' },
-  { title: 'Authentication (SPF, DKIM, DMARC)', value: 'Passing', icon: <ShieldCheck className="h-6 w-6 text-green-500" />, status: 'Passing', domain: 'paragon.com' },
+  { title: 'Inbox Placement Rate', value: '98.2%', icon: <Inbox className="h-6 w-6 text-primary" />, progress: 98.2, domain: 'paragon.com', tooltip: '% of delivered emails that landed in Inbox, not Spam, over last 7 days.' },
+  { title: 'Spam Placement Rate', value: '1.1%', icon: <AlertTriangle className="h-6 w-6 text-yellow-500" />, progress: 1.1, domain: 'paragon.com', tooltip: '% of delivered emails that landed in Spam over last 7 days. Keep <5%.' },
+  { title: 'Block/Bounce Rate', value: '0.7%', icon: <AlertTriangle className="h-6 w-6 text-red-500" />, progress: 0.7, domain: 'paragon.com', tooltip: '% of attempted sends rejected as soft/hard bounces. Keep <3%.' },
+  { title: 'Authentication', value: 'Passing', icon: <ShieldCheck className="h-6 w-6 text-green-500" />, status: 'Passing', domain: 'paragon.com', tooltip: 'SPF + DKIM must pass; DMARC set to p=none/quarantine/reject.' },
 ];
 
 const initialIntegrationStates = {
@@ -45,44 +46,56 @@ export default function DeliverabilityPage() {
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {deliverabilityStats.map((stat) => (
-          <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-              {stat.icon}
-              <CardTitle className="text-base font-medium">{stat.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {stat.progress !== undefined ? (
-                <>
-                    <div className="text-2xl font-bold">{stat.value}</div>
-                    <Progress value={stat.progress} className="mt-2 h-2" />
-                </>
-              ) : (
-                <Badge className={stat.status === 'Passing' ? 'bg-green-100 text-green-800' : ''}>{stat.status}</Badge>
-              )}
-               <div className="text-xs text-muted-foreground mt-2">{stat.domain}</div>
-            </CardContent>
-          </Card>
-        ))}
-        {authProviderConnected && (
-            <Card>
+      <TooltipProvider>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {deliverabilityStats.map((stat) => (
+            <Card key={stat.title}>
                 <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-                    <ShieldCheck className="h-6 w-6 text-green-500" />
-                    <CardTitle className="text-base font-medium">Auth via Provider</CardTitle>
+                {stat.icon}
+                 <CardTitle className="text-base font-medium flex items-center gap-1">
+                    {stat.title}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="max-w-xs">{stat.tooltip}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <Badge className="bg-green-100 text-green-800">
-                        <CheckCircle className="mr-1 h-3 w-3" />
-                        Webhook Configured
-                    </Badge>
-                    <div className="text-xs text-muted-foreground mt-2">
-                        {isMailgunConnected ? 'Mailgun' : 'SendGrid'}
-                    </div>
+                {stat.progress !== undefined ? (
+                    <>
+                        <div className="text-2xl font-bold">{stat.value}</div>
+                        <Progress value={stat.progress} className="mt-2 h-2" />
+                    </>
+                ) : (
+                    <Badge className={stat.status === 'Passing' ? 'bg-green-100 text-green-800' : ''}>{stat.status}</Badge>
+                )}
+                <div className="text-xs text-muted-foreground mt-2">{stat.domain}</div>
                 </CardContent>
             </Card>
-        )}
-      </div>
+            ))}
+            {authProviderConnected && (
+                <Card>
+                    <CardHeader className="flex flex-row items-center gap-4 space-y-0">
+                        <ShieldCheck className="h-6 w-6 text-green-500" />
+                        <CardTitle className="text-base font-medium">Auth via Provider</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <Badge className="bg-green-100 text-green-800">
+                            <CheckCircle className="mr-1 h-3 w-3" />
+                            Webhook Configured
+                        </Badge>
+                        <div className="text-xs text-muted-foreground mt-2">
+                            {isMailgunConnected ? 'Mailgun' : 'SendGrid'}
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
+        </div>
+      </TooltipProvider>
 
       <Card>
         <CardHeader>

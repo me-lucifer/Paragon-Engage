@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 // Mock data representing deliverability stats
 const mockDeliverabilityStats = {
   bounceRate: 0.03, // 3%
-  dmarcStatus: 'fail', // or 'pass'
+  spamPlacementRate: 0.06, // 6%
+  authenticationStatus: 'Passing', // or 'Failing'
 };
 
 /**
@@ -17,10 +18,13 @@ export function useDeliverability() {
   useEffect(() => {
     // Simulate checking the conditions
     const bounceRateThreshold = 0.03;
-    const isBounceRateHigh = mockDeliverabilityStats.bounceRate >= bounceRateThreshold;
-    const isDmarcFailing = mockDeliverabilityStats.dmarcStatus === 'fail';
+    const spamRateThreshold = 0.05;
 
-    if (isBounceRateHigh || isDmarcFailing) {
+    const isBounceRateHigh = mockDeliverabilityStats.bounceRate >= bounceRateThreshold;
+    const isSpamRateHigh = mockDeliverabilityStats.spamPlacementRate > spamRateThreshold;
+    const isAuthFailing = mockDeliverabilityStats.authenticationStatus !== 'Passing';
+    
+    if (isBounceRateHigh || isSpamRateHigh || isAuthFailing) {
       setIsHealthPoor(true);
     } else {
       setIsHealthPoor(false);
