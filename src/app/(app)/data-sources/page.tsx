@@ -196,7 +196,7 @@ export default function DataSourcesPage() {
             </div>
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="outline" type="button" onClick={reset}>Cancel</Button>
+                <Button variant="outline" type="button" onClick={resetDialog}>Cancel</Button>
               </DialogClose>
               <Button type="submit">Save Source</Button>
             </DialogFooter>
