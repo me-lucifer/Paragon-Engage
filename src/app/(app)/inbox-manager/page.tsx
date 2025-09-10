@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -115,11 +115,12 @@ export default function InboxManagerPage() {
   const [inboxes, setInboxes] = useState<Inbox[]>(initialInboxes.map(ib => {
       const health = calculateHealth(ib.healthFactors);
       const status = getStatusFromHealth(health);
+      const dailyCapUsed = status === 'Error' ? 0 : status === 'Warming' ? Math.floor(health / 2) : Math.floor((health / 100) * ib.dailySendCap * 0.95);
       return {
           ...ib,
           health,
           status,
-          dailyCapUsed: status === 'Error' ? 0 : status === 'Warming' ? Math.min(50, ib.dailySendCap) : Math.floor(Math.random() * 20 + 480)
+          dailyCapUsed
       }
   }));
   const [selectedInbox, setSelectedInbox] = useState<Inbox | null>(null);
@@ -182,7 +183,7 @@ export default function InboxManagerPage() {
                 };
                 const newHealth = calculateHealth(newHealthFactors);
                 const newStatus = getStatusFromHealth(newHealth);
-                const newDailyUsed = newStatus === 'Error' ? 0 : newStatus === 'Warming' ? Math.floor(Math.random() * Math.min(50, inbox.dailySendCap)) : Math.floor(Math.random() * inbox.dailySendCap);
+                const newDailyUsed = newStatus === 'Error' ? 0 : newStatus === 'Warming' ? Math.floor(newHealth / 2) : Math.floor((newHealth / 100) * inbox.dailySendCap * 0.95);
                 
                 return {
                     ...inbox,
