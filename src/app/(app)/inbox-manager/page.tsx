@@ -398,6 +398,7 @@ export default function InboxManagerPage() {
         open={isAddWizardOpen}
         onOpenChange={setIsAddWizardOpen}
         onAddInbox={handleAddInbox}
+        inboxes={inboxes}
       />
     </>
   );

@@ -30,7 +30,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 interface NewCampaignWizardProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  inboxes: { email: string; status: string; dailySendCap: number }[];
+  inboxes: { email: string; status: string; dailySendCap: number, health: number }[];
 }
 
 export function NewCampaignWizard({ open, onOpenChange, inboxes }: NewCampaignWizardProps) {
@@ -61,11 +61,18 @@ export function NewCampaignWizard({ open, onOpenChange, inboxes }: NewCampaignWi
   const bottlenecks = useMemo(() => inboxes.filter(ib => ib.status === 'Warming'), [inboxes]);
   
   const plan = useMemo(() => {
-    const totalCap = warmedInboxes.reduce((sum, ib) => sum + ib.dailySendCap, 0);
-    if (totalCap === 0) return [];
-    return warmedInboxes.map(ib => ({
+    const weightedInboxes = warmedInboxes.map(ib => ({
+      ...ib,
+      weight: ib.health * ib.dailySendCap,
+    }));
+
+    const totalWeight = weightedInboxes.reduce((sum, ib) => sum + ib.weight, 0);
+
+    if (totalWeight === 0) return [];
+    
+    return weightedInboxes.map(ib => ({
       email: ib.email,
-      sends: Math.floor((ib.dailySendCap / totalCap) * touches),
+      sends: Math.floor((ib.weight / totalWeight) * touches),
     }));
   }, [warmedInboxes, touches]);
 

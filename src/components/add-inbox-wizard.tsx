@@ -30,12 +30,13 @@ import { Separator } from './ui/separator';
 interface AddInboxWizardProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddInbox: (newInbox: Omit<Inbox, 'dailyCap' | 'status' | 'health'>) => void;
+  onAddInbox: (newInbox: Omit<Inbox, 'dailyCapUsed' | 'status' | 'health'>) => void;
+  inboxes: Omit<Inbox, 'dailyCapUsed' | 'status' | 'health' | 'healthFactors'>[]
 }
 
 type Provider = 'google' | 'microsoft' | 'smtp';
 
-export default function AddInboxWizard({ open, onOpenChange, onAddInbox }: AddInboxWizardProps) {
+export default function AddInboxWizard({ open, onOpenChange, onAddInbox, inboxes }: AddInboxWizardProps) {
   const [step, setStep] = useState(1);
   const [provider, setProvider] = useState<Provider | null>(null);
 
@@ -63,7 +64,7 @@ export default function AddInboxWizard({ open, onOpenChange, onAddInbox }: AddIn
       const domain = email.split('@')[1];
       const providerName = provider === 'google' ? 'Google Workspace' : provider === 'microsoft' ? 'Microsoft 365' : 'IMAP/SMTP';
       
-      const newInbox: Omit<Inbox, 'dailyCap' | 'status' | 'health'> = {
+      const newInbox: Omit<Inbox, 'dailyCapUsed' | 'status' | 'health'> = {
           email,
           domain,
           provider: providerName,
@@ -204,12 +205,11 @@ export default function AddInboxWizard({ open, onOpenChange, onAddInbox }: AddIn
             <DialogClose asChild>
                 <Button type="button" variant="outline">Cancel</Button>
             </DialogClose>
-            {step < 3 && (
+            {step < 3 ? (
                 <Button type="button" onClick={handleNextStep} disabled={!provider || step === 2}>
                     Next
                 </Button>
-            )}
-            {step === 3 && (
+            ) : (
                 <Button type="submit">
                     Finish
                 </Button>
