@@ -411,20 +411,22 @@ export default function SettingsPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    <div className="space-y-4">
+                    <div className="space-y-4 p-4 border rounded-lg">
                         <div className="flex items-center gap-4">
                             <Globe className="h-6 w-6 text-primary" />
                             <Label htmlFor="apollo-key" className="flex-1 font-medium">Apollo.io</Label>
+                             <Badge variant="default" className="bg-green-100 text-green-800">Connected</Badge>
                         </div>
                         <div className="flex items-center gap-2">
                             <Input id="apollo-key" type="password" defaultValue="fadshgkuuasdhfgaskdfj" />
                             <Button variant="outline">Test</Button>
                         </div>
                     </div>
-                     <div className="space-y-4">
+                     <div className="space-y-4 p-4 border rounded-lg">
                         <div className="flex items-center gap-4">
                             <Globe className="h-6 w-6 text-primary" />
                             <Label htmlFor="clearbit-key" className="flex-1 font-medium">Clearbit</Label>
+                             <Badge variant="default" className="bg-green-100 text-green-800">Connected</Badge>
                         </div>
                         <div className="flex items-center gap-2">
                             <Input id="clearbit-key" type="password" defaultValue="qweriuopqweurioasdfh" />
