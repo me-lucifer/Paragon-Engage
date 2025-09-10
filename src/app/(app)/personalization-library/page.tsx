@@ -31,6 +31,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import { Separator } from '@/components/ui/separator';
 
 const personalizationData = {
   tokens: [
@@ -286,6 +287,8 @@ const personalizationData = {
   ],
 };
 
+const footer_identity = "You’re receiving this business outreach from {{org_name}} ({{legal_name}}). To stop further emails, use the unsubscribe link below.";
+
 
 export default function PersonalizationLibraryPage() {
   const [activeSegment, setActiveSegment] = useState(personalizationData.segments[0].id);
@@ -373,9 +376,14 @@ export default function PersonalizationLibraryPage() {
                         {template.variants.map(variant => (
                             <TabsContent key={variant.id} value={variant.id}>
                                 {variant.subject && <CardDescription className="px-6 pb-4 font-semibold">Subject: {variant.subject}</CardDescription> }
-                                <CardContent>
+                                <CardContent className="space-y-4">
                                     <div className="prose prose-sm max-w-none rounded-md border bg-muted p-4 text-sm whitespace-pre-wrap font-mono">
                                         {variant.content}
+                                    </div>
+                                    <Separator />
+                                     <div className="text-xs text-muted-foreground p-4 border rounded-md">
+                                        <p>{footer_identity.replace('{{org_name}}', 'Paragon Engage Demo').replace('{{legal_name}}', 'Paragon Intelligence, Inc.')}</p>
+                                        <p className="mt-2">To stop further emails, <a href="#" className="underline">unsubscribe here</a>.</p>
                                     </div>
                                 </CardContent>
                             </TabsContent>

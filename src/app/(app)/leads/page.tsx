@@ -145,7 +145,10 @@ export default function LeadsPage() {
                       <TableRow key={lead.name}>
                       <TableCell className="font-medium">{lead.name}</TableCell>
                       <TableCell>{lead.company}</TableCell>
-                      <TableCell className="text-muted-foreground">{lead.thread}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        <div>{lead.thread}</div>
+                        <div className="text-xs text-gray-400 mt-1">Sent by: {lead.owner}</div>
+                      </TableCell>
                       <TableCell>
                           <Badge 
                               variant={lead.intent === 'Positive' ? 'default' : lead.intent === 'Negative' ? 'destructive' : 'secondary'}

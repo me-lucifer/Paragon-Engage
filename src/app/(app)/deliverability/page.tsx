@@ -13,10 +13,10 @@ import { MailCheck, ShieldCheck, AlertTriangle, Inbox } from 'lucide-react';
 import ReportsChart from '@/components/reports-chart';
 
 const deliverabilityStats = [
-  { title: 'Inbox Placement Rate', value: '98.2%', icon: <Inbox className="h-6 w-6 text-primary" />, progress: 98.2 },
-  { title: 'Spam Placement Rate', value: '1.1%', icon: <AlertTriangle className="h-6 w-6 text-yellow-500" />, progress: 1.1 },
-  { title: 'Block/Bounce Rate', value: '0.7%', icon: <AlertTriangle className="h-6 w-6 text-red-500" />, progress: 0.7 },
-  { title: 'Authentication (SPF, DKIM, DMARC)', value: 'Passing', icon: <ShieldCheck className="h-6 w-6 text-green-500" />, status: 'Passing' },
+  { title: 'Inbox Placement Rate', value: '98.2%', icon: <Inbox className="h-6 w-6 text-primary" />, progress: 98.2, domain: 'paragon.com' },
+  { title: 'Spam Placement Rate', value: '1.1%', icon: <AlertTriangle className="h-6 w-6 text-yellow-500" />, progress: 1.1, domain: 'paragon.com' },
+  { title: 'Block/Bounce Rate', value: '0.7%', icon: <AlertTriangle className="h-6 w-6 text-red-500" />, progress: 0.7, domain: 'paragon.com' },
+  { title: 'Authentication (SPF, DKIM, DMARC)', value: 'Passing', icon: <ShieldCheck className="h-6 w-6 text-green-500" />, status: 'Passing', domain: 'paragon.com' },
 ];
 
 export default function DeliverabilityPage() {
@@ -47,6 +47,7 @@ export default function DeliverabilityPage() {
               ) : (
                 <Badge className={stat.status === 'Passing' ? 'bg-green-100 text-green-800' : ''}>{stat.status}</Badge>
               )}
+               <div className="text-xs text-muted-foreground mt-2">{stat.domain}</div>
             </CardContent>
           </Card>
         ))}
