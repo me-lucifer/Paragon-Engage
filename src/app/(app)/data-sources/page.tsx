@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -23,9 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { PlusCircle, Plug, Rss, Briefcase, Globe, Mail, Bot, Inbox, Info, HelpCircle } from 'lucide-react';
+import { PlusCircle, Plug, Rss, Briefcase, Globe, Mail, Bot, Inbox, Info, HelpCircle, FileText } from 'lucide-react';
 import { useIntegrationStatus } from '@/hooks/use-integration-status';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useToast } from '@/hooks/use-toast';
 
 const initialDataSources = [
   { id: 'apollo', name: 'Apollo.io', icon: <Plug className="h-6 w-6 text-primary" />, defaultStatus: 'Connected', lastSync: '2h ago', records: '1.2M', tooltip: 'Ingests company and contact data for enrichment and list building.' },
@@ -39,6 +41,19 @@ const initialDataSources = [
   { id: 'google-workspace', name: 'Google Workspace / O365', icon: <Inbox className="h-6 w-6 text-blue-500" />, defaultStatus: 'Connected', lastSync: 'Real-time', records: '1.5M', tooltip: 'Connects to your mailboxes for sending and reply detection.', note: 'Used to suppress ‘already in conversation’ and enrich known contacts.' },
 ];
 
+type CustomSource = {
+    id: string;
+    name: string;
+    icon: React.ReactNode;
+    status: string;
+    lastSync: string;
+    records: string;
+    tooltip: string;
+    parser?: 'json' | 'xml' | 'html';
+};
+
+type ParserType = 'json' | 'xml' | 'html';
+
 export default function DataSourcesPage() {
   const { statuses, connect, disconnect } = useIntegrationStatus(
     initialDataSources.reduce((acc, source) => {
@@ -47,10 +62,19 @@ export default function DataSourcesPage() {
     }, {} as Record<string, boolean>)
   );
 
+  const [customSources, setCustomSources] = useState<CustomSource[]>([]);
+  const [isCustomSourceDialogOpen, setIsCustomSourceDialogOpen] = useState(false);
+  const [customSourceName, setCustomSourceName] = useState('');
+  const [customSourceParser, setCustomSourceParser] = useState<ParserType | ''>('');
+  const [customSourceSchedule, setCustomSourceSchedule] = useState('');
+  const [parserPath, setParserPath] = useState('');
+  const { toast } = useToast();
+
+
   const dataSources = initialDataSources.map(source => ({
       ...source,
       status: statuses[source.id] ? (source.defaultStatus === 'Active' ? 'Active' : 'Connected') : 'Not Connected'
-  }));
+  })).concat(customSources);
 
   const handleToggleConnect = (id: string) => {
     if (statuses[id]) {
@@ -58,6 +82,31 @@ export default function DataSourcesPage() {
     } else {
       connect(id);
     }
+  };
+
+  const resetDialog = () => {
+    setCustomSourceName('');
+    setCustomSourceParser('');
+    setCustomSourceSchedule('');
+    setParserPath('');
+  }
+
+  const handleAddCustomSource = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newSource: CustomSource = {
+        id: `custom-${customSourceName.toLowerCase().replace(/\s/g, '-')}`,
+        name: customSourceName,
+        icon: <Bot className="h-6 w-6 text-primary" />,
+        status: 'Active',
+        lastSync: `Scheduled: ${customSourceSchedule}`,
+        records: 'N/A',
+        tooltip: `Custom source with ${customSourceParser} parser.`,
+        parser: customSourceParser as ParserType,
+    };
+    setCustomSources(prev => [...prev, newSource]);
+    toast({ title: "Custom Source Added", description: `${customSourceName} has been configured.` });
+    setIsCustomSourceDialogOpen(false);
+    resetDialog();
   };
 
 
@@ -73,13 +122,14 @@ export default function DataSourcesPage() {
             Connect and manage your data sources for enrichment and outreach.
           </p>
         </div>
-        <Dialog>
+        <Dialog open={isCustomSourceDialogOpen} onOpenChange={setIsCustomSourceDialogOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button onClick={() => setIsCustomSourceDialogOpen(true)}>
               <PlusCircle className="mr-2 h-4 w-4" /> Add Custom Source
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[480px]">
+            <form onSubmit={handleAddCustomSource}>
             <DialogHeader>
               <DialogTitle>Add Custom Source</DialogTitle>
               <DialogDescription>
@@ -87,62 +137,77 @@ export default function DataSourcesPage() {
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Name
-                </Label>
-                <Input id="name" placeholder="e.g., Industry News API" className="col-span-3" />
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" placeholder="e.g., Industry News API" value={customSourceName} onChange={e => setCustomSourceName(e.target.value)} required />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="url" className="text-right">
-                  URL Pattern
-                </Label>
-                <Input id="url" placeholder="https://api.example.com/posts/*" className="col-span-3" />
+              <div className="space-y-2">
+                <Label htmlFor="url">URL</Label>
+                <Input id="url" placeholder="https://api.example.com/posts" />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="parser" className="text-right">
-                  Parser
-                </Label>
-                <Select>
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Select a parser" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="json">JSON</SelectItem>
-                    <SelectItem value="xml">XML</SelectItem>
-                    <SelectItem value="html">HTML Crawler</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-2 gap-4">
+                 <div className="space-y-2">
+                    <Label htmlFor="parser">Parser</Label>
+                    <Select value={customSourceParser} onValueChange={(value) => setCustomSourceParser(value as ParserType)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a parser" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="json">JSON</SelectItem>
+                        <SelectItem value="xml">XML</SelectItem>
+                        <SelectItem value="html">HTML Crawler</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="schedule">Schedule</Label>
+                    <Select value={customSourceSchedule} onValueChange={setCustomSourceSchedule}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select refresh schedule" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Hourly">Hourly</SelectItem>
+                        <SelectItem value="Daily">Daily</SelectItem>
+                        <SelectItem value="Weekly">Weekly</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="schedule" className="text-right">
-                  Schedule
-                </Label>
-                <Select>
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Select refresh schedule" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="hourly">Hourly</SelectItem>
-                    <SelectItem value="daily">Daily</SelectItem>
-                    <SelectItem value="weekly">Weekly</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              
+                {customSourceParser === 'json' && (
+                    <div className="space-y-2">
+                        <Label htmlFor="json-path">JSONPath Expression</Label>
+                        <Input id="json-path" placeholder="e.g., $.items[*]" value={parserPath} onChange={e => setParserPath(e.target.value)} />
+                    </div>
+                )}
+                {customSourceParser === 'xml' && (
+                    <div className="space-y-2">
+                        <Label htmlFor="xpath">XPath Expression</Label>
+                        <Input id="xpath" placeholder="e.g., //item" value={parserPath} onChange={e => setParserPath(e.target.value)} />
+                    </div>
+                )}
+                {customSourceParser === 'html' && (
+                    <div className="space-y-2">
+                        <Label htmlFor="css-selector">CSS Selector</Label>
+                        <Input id="css-selector" placeholder="e.g., .article-link" value={parserPath} onChange={e => setParserPath(e.target.value)} />
+                    </div>
+                )}
+             
             </div>
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
+                <Button variant="outline" type="button" onClick={reset}>Cancel</Button>
               </DialogClose>
               <Button type="submit">Save Source</Button>
             </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {dataSources.map((source) => (
-          <Card key={source.name} className="flex flex-col">
+          <Card key={source.id} className="flex flex-col">
             <CardHeader className="flex flex-row items-center gap-4">
               {source.icon}
               <div className="flex-1">
@@ -169,11 +234,11 @@ export default function DataSourcesPage() {
                 </div>
                 <div className="flex justify-between">
                     <span className="text-muted-foreground">Last Sync</span>
-                    <span>{source.status === 'Connected' || source.status === 'Active' ? source.lastSync : 'N/A'}</span>
+                    <span>{source.lastSync}</span>
                 </div>
                 <div className="flex justify-between">
                     <span className="text-muted-foreground">Records</span>
-                    <span>{source.status === 'Connected' || source.status === 'Active' ? source.records : 'N/A'}</span>
+                    <span>{source.records}</span>
                 </div>
                 {source.note && (
                     <div className="flex items-start gap-3 rounded-lg border bg-muted/50 p-3 text-xs mt-4">
@@ -184,10 +249,14 @@ export default function DataSourcesPage() {
                     </div>
                 )}
             </CardContent>
-            <CardFooter>
-              <Button onClick={() => handleToggleConnect(source.id)} className="w-full" variant={source.status === 'Connected' || source.status === 'Active' ? 'destructive' : 'default'}>
-                {source.status === 'Connected' || source.status === 'Active' ? 'Disconnect' : 'Connect'}
-              </Button>
+            <CardFooter className="flex gap-2">
+                {source.id.startsWith('custom-') ? (
+                     <Button className="w-full" variant="secondary"><FileText className="mr-2 h-4 w-4" /> Test Fetch</Button>
+                ) : (
+                     <Button onClick={() => handleToggleConnect(source.id)} className="w-full" variant={source.status === 'Connected' || source.status === 'Active' ? 'destructive' : 'default'}>
+                        {source.status === 'Connected' || source.status === 'Active' ? 'Disconnect' : 'Connect'}
+                    </Button>
+                )}
             </CardFooter>
           </Card>
         ))}
