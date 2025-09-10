@@ -120,6 +120,13 @@ export default function FitScoringPage() {
     setIsCloneDialogOpen(false);
   }
 
+  const handleTestOnSample = () => {
+    toast({
+      title: "Test Run",
+      description: "Recalculated scores for sample companies.",
+    });
+  };
+
 
   return (
     <>
@@ -204,7 +211,7 @@ export default function FitScoringPage() {
                                 {filteredCompanies.length} companies match the ≥{currentProfile.threshold} threshold.
                             </CardDescription>
                         </div>
-                        <Button variant="secondary">
+                        <Button variant="secondary" onClick={handleTestOnSample}>
                             <PlayCircle className="mr-2" /> Test on Sample
                         </Button>
                     </CardHeader>
@@ -264,4 +271,3 @@ export default function FitScoringPage() {
     </>
   );
 }
-
