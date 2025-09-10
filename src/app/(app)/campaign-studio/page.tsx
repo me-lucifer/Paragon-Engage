@@ -18,6 +18,7 @@ import { useState } from 'react';
 import { useDeliverability } from '@/hooks/use-deliverability';
 import { WarningBanner } from '@/components/warning-banner';
 import { CampaignPreflightDialog, InboxIssue } from '@/components/campaign-preflight-dialog';
+import { NewCampaignWizard } from '@/components/new-campaign-wizard';
 
 const campaignsData = [
   {
@@ -88,10 +89,10 @@ const campaignsData = [
 ];
 
 const allInboxes = [
-  { email: 'sales@paragon.com', health: 98, authPassing: true },
-  { email: 'outreach@paragon.com', health: 95, authPassing: true },
-  { email: 'contact@paragon.net', health: 75, authPassing: true },
-  { email: 'backup@paragon.org', health: 50, authPassing: false },
+  { email: 'sales@paragon.com', health: 98, authPassing: true, dailySendCap: 500, status: 'Connected' },
+  { email: 'outreach@paragon.com', health: 95, authPassing: true, dailySendCap: 500, status: 'Connected' },
+  { email: 'contact@paragon.net', health: 75, authPassing: true, dailySendCap: 100, status: 'Warming' },
+  { email: 'backup@paragon.org', health: 50, authPassing: false, dailySendCap: 50, status: 'Error' },
 ];
 
 type Campaign = (typeof campaignsData)[0];
@@ -102,6 +103,7 @@ export default function CampaignStudioPage() {
   const [isPreflightOpen, setIsPreflightOpen] = useState(false);
   const [preflightIssues, setPreflightIssues] = useState<InboxIssue[]>([]);
   const { isHealthPoor } = useDeliverability();
+  const [isNewCampaignWizardOpen, setIsNewCampaignWizardOpen] = useState(false);
 
   const handleEditSequence = (campaign: Campaign) => {
     setSelectedCampaign(campaign);
@@ -155,7 +157,7 @@ export default function CampaignStudioPage() {
               Design, launch, and manage your outreach campaigns.
             </p>
           </div>
-          <Button>
+          <Button onClick={() => setIsNewCampaignWizardOpen(true)}>
             <PlusCircle className="mr-2 h-4 w-4" /> New Campaign
           </Button>
         </div>
@@ -252,6 +254,11 @@ export default function CampaignStudioPage() {
           issues={preflightIssues}
         />
       )}
+      <NewCampaignWizard 
+        open={isNewCampaignWizardOpen}
+        onOpenChange={setIsNewCampaignWizardOpen}
+        inboxes={allInboxes}
+      />
     </>
   );
 }
