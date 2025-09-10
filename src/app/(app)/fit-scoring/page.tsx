@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -25,6 +26,7 @@ import { HelpCircle, FilePlus, Copy, PlayCircle, Star, Target, Building, Users, 
 import ExplainScoreDialog from '@/components/explain-score-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useToast } from '@/hooks/use-toast';
 
 const fitProfiles = {
   conservative: {
@@ -78,6 +80,7 @@ const allCompanies = [
 export default function FitScoringPage() {
   const [activeProfile, setActiveProfile] = useState<keyof typeof fitProfiles>('balanced');
   const [weights, setWeights] = useState(fitProfiles[activeProfile].weights);
+  const { toast } = useToast();
 
   const handleProfileChange = (profile: string) => {
     const newProfile = profile as keyof typeof fitProfiles;
@@ -91,6 +94,12 @@ export default function FitScoringPage() {
 
   const currentProfile = fitProfiles[activeProfile];
   const filteredCompanies = allCompanies.filter(c => c.score >= currentProfile.threshold);
+
+  const handleSaveProfile = () => {
+    toast({
+      title: "Profile saved.",
+    });
+  };
 
 
   return (
@@ -160,7 +169,7 @@ export default function FitScoringPage() {
                 <Button variant="outline">
                 <FilePlus className="mr-2" /> Clone Profile
                 </Button>
-                <Button>
+                <Button onClick={handleSaveProfile}>
                 <Copy className="mr-2" /> Save Profile
                 </Button>
             </CardContent>
