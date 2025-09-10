@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -38,11 +39,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useIntegrationStatus } from '@/hooks/use-integration-status';
 
 const dncList = [
     { source: "List Upload", reason: "Global DNC", added: "2024-06-01" },
     { source: "Apollo.io", reason: "Do Not Contact", added: "2024-05-28" },
 ];
+
+const initialIntegrationStates = {
+    apollo: true,
+    clearbit: true,
+};
 
 export default function SettingsPage() {
     const { toast } = useToast();
@@ -56,6 +63,7 @@ export default function SettingsPage() {
     const [isUnsubscribePreviewOpen, setIsUnsubscribePreviewOpen] = useState(false);
     const [unsubscribeKeywords, setUnsubscribeKeywords] = useState(["unsubscribe", "remove me", "opt out"]);
     const [newKeyword, setNewKeyword] = useState("");
+    const { statuses: integrationStatuses, testConnection, isTesting } = useIntegrationStatus(initialIntegrationStates);
 
     const handleAddKeyword = () => {
         if (newKeyword && !unsubscribeKeywords.includes(newKeyword)) {
@@ -415,22 +423,30 @@ export default function SettingsPage() {
                         <div className="flex items-center gap-4">
                             <Globe className="h-6 w-6 text-primary" />
                             <Label htmlFor="apollo-key" className="flex-1 font-medium">Apollo.io</Label>
-                             <Badge variant="default" className="bg-green-100 text-green-800">Connected</Badge>
+                             <Badge variant={integrationStatuses.apollo ? 'default' : 'secondary'} className={integrationStatuses.apollo ? 'bg-green-100 text-green-800' : ''}>
+                                {integrationStatuses.apollo ? 'Connected' : 'Not Connected'}
+                            </Badge>
                         </div>
                         <div className="flex items-center gap-2">
                             <Input id="apollo-key" type="password" defaultValue="fadshgkuuasdhfgaskdfj" />
-                            <Button variant="outline">Test</Button>
+                            <Button variant="outline" onClick={() => testConnection('apollo')} disabled={isTesting.apollo}>
+                                {isTesting.apollo ? 'Testing...' : 'Test'}
+                            </Button>
                         </div>
                     </div>
                      <div className="space-y-4 p-4 border rounded-lg">
                         <div className="flex items-center gap-4">
                             <Globe className="h-6 w-6 text-primary" />
                             <Label htmlFor="clearbit-key" className="flex-1 font-medium">Clearbit</Label>
-                             <Badge variant="default" className="bg-green-100 text-green-800">Connected</Badge>
+                            <Badge variant={integrationStatuses.clearbit ? 'default' : 'secondary'} className={integrationStatuses.clearbit ? 'bg-green-100 text-green-800' : ''}>
+                                {integrationStatuses.clearbit ? 'Connected' : 'Not Connected'}
+                            </Badge>
                         </div>
                         <div className="flex items-center gap-2">
                             <Input id="clearbit-key" type="password" defaultValue="qweriuopqweurioasdfh" />
-                            <Button variant="outline">Test</Button>
+                            <Button variant="outline" onClick={() => testConnection('clearbit')} disabled={isTesting.clearbit}>
+                                {isTesting.clearbit ? 'Testing...' : 'Test'}
+                            </Button>
                         </div>
                     </div>
                 </CardContent>
