@@ -25,17 +25,22 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { User, Bell, Shield, CreditCard, Users, Database, Globe, Building, Mail, FileText } from 'lucide-react';
+import { User, Bell, Shield, CreditCard, Users, Database, Globe, Building, Mail, FileText, Eye } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 
 export default function SettingsPage() {
     const { toast } = useToast();
     const [orgName, setOrgName] = useState("Paragon Intel");
     const [supportEmail, setSupportEmail] = useState("support@paragonintel.com");
+    const [footerIdentity, setFooterIdentity] = useState("This will appear in email footers.");
     const [orgNameError, setOrgNameError] = useState("");
     const [supportEmailError, setSupportEmailError] = useState("");
+    const [activeTab, setActiveTab] = useState("organization");
+    const [isUnsubscribePreviewOpen, setIsUnsubscribePreviewOpen] = useState(false);
 
 
     const validateEmail = (email: string) => {
@@ -79,7 +84,7 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="organization" className="flex flex-col md:flex-row gap-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col md:flex-row gap-6">
         <TabsList className="flex-col h-auto justify-start p-2 gap-1 bg-transparent border-r-0 md:border-r w-full md:w-48">
           <TabsTrigger value="organization" className="w-full justify-start gap-2">
             <Building className="h-4 w-4" /> Organization
@@ -99,8 +104,13 @@ export default function SettingsPage() {
             <TabsContent value="organization">
                 <div className="space-y-6">
                     <Card>
-                        <CardHeader>
-                            <CardTitle>Company Details</CardTitle>
+                        <CardHeader className="flex flex-row items-start justify-between">
+                            <div>
+                                <CardTitle>Company Details</CardTitle>
+                            </div>
+                            <Button variant="outline" size="sm" onClick={() => setIsUnsubscribePreviewOpen(true)}>
+                                <Eye className="mr-2 h-4 w-4" /> Unsubscribe Preview
+                            </Button>
                         </CardHeader>
                         <CardContent className="grid gap-6 sm:grid-cols-2">
                             <div className="space-y-2 col-span-2">
@@ -196,7 +206,7 @@ export default function SettingsPage() {
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor="footer-text">Footer Identity Text</Label>
-                                <Textarea id="footer-text" placeholder="This will appear in email footers." />
+                                <Textarea id="footer-text" value={footerIdentity} onChange={e => setFooterIdentity(e.target.value)} />
                             </div>
                         </CardContent>
                     </Card>
@@ -243,7 +253,7 @@ export default function SettingsPage() {
                   <CardDescription>
                     Connect your tools and manage API keys.
                   </CardDescription>
-                </CardHeader>
+                </Header>
                 <CardContent className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex items-center gap-4">
@@ -270,6 +280,46 @@ export default function SettingsPage() {
             </TabsContent>
         </div>
       </Tabs>
+      <Dialog open={isUnsubscribePreviewOpen} onOpenChange={setIsUnsubscribePreviewOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Unsubscribe Page Preview</DialogTitle>
+            <DialogDescription>
+              This is what users will see when they unsubscribe from your communications.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-6">
+            <div className="text-center p-8 border rounded-lg bg-muted/30">
+              <h2 className="text-xl font-semibold">Unsubscribe Successful</h2>
+              <p className="text-muted-foreground mt-2">
+                You have been unsubscribed as of {new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}.
+              </p>
+            </div>
+            <Separator />
+            <div className="text-xs text-muted-foreground space-y-2">
+                <p>
+                    {footerIdentity}
+                </p>
+                <p>
+                    If you have any questions or wish to resubscribe, please contact our support team at{' '}
+                    <a href={`mailto:${supportEmail}`} className="underline text-primary">{supportEmail}</a>.
+                </p>
+                 <p>&copy; {new Date().getFullYear()} {orgName}</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+                setIsUnsubscribePreviewOpen(false);
+                setActiveTab("compliance");
+            }}>
+              Go to Compliance
+            </Button>
+            <DialogClose asChild>
+              <Button>Close</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
