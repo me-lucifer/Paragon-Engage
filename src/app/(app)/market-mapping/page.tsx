@@ -37,11 +37,21 @@ import {
   SheetClose,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+  DialogTrigger,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Info, PlusCircle, ArrowRight, BrainCircuit, Check, FileText, HelpCircle } from 'lucide-react';
+import { Info, PlusCircle, ArrowRight, BrainCircuit, Check, FileText, HelpCircle, Pencil } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Tabs,
@@ -51,6 +61,7 @@ import {
 } from "@/components/ui/tabs";
 import { CompanyDetailsDrawer } from '@/components/company-details-drawer';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useToast } from '@/hooks/use-toast';
 
 
 const companies = [
@@ -99,10 +110,22 @@ const dataSources = [
     { id: 'linkedin', label: 'LinkedIn Sales Navigator' },
 ];
 
+const initialIndustries = [
+    { value: 'accounting', label: 'Accounting (CPAs)' },
+    { value: 'it-msp', label: 'IT MSPs' },
+    { value: 'dental', label: 'Dental Clinics' },
+];
+
 export type Company = typeof companies[0];
 
 export default function MarketMappingPage() {
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+  const [industries, setIndustries] = useState(initialIndustries);
+  const [isManageIndustriesOpen, setIsManageIndustriesOpen] = useState(false);
+  const [newIndustryName, setNewIndustryName] = useState('');
+  const [newIndustryNaics, setNewIndustryNaics] = useState('');
+  const [newIndustrySynonyms, setNewIndustrySynonyms] = useState('');
+  const { toast } = useToast();
 
   const handleRowClick = (company: Company) => {
     setSelectedCompany(company);
@@ -112,6 +135,24 @@ export default function MarketMappingPage() {
     if (!open) {
       setSelectedCompany(null);
     }
+  };
+  
+  const handleAddIndustry = (e: React.FormEvent) => {
+      e.preventDefault();
+      if (newIndustryName) {
+          const newIndustry = {
+              value: newIndustryName.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+              label: newIndustryName
+          };
+          setIndustries(prev => [...prev, newIndustry]);
+          setNewIndustryName('');
+          setNewIndustryNaics('');
+          setNewIndustrySynonyms('');
+          toast({
+              title: "Industry Added",
+              description: `${newIndustry.label} has been added to the taxonomy.`,
+          });
+      }
   };
 
   return (
@@ -136,10 +177,52 @@ export default function MarketMappingPage() {
             <SheetContent className="sm:max-w-2xl w-full">
               <Tabs defaultValue="step1" className="h-full flex flex-col">
                 <SheetHeader>
-                  <SheetTitle>Map New Industry</SheetTitle>
-                  <SheetDescription>
-                      Follow the steps to define and map a new industry segment.
-                  </SheetDescription>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <SheetTitle>Map New Industry</SheetTitle>
+                      <SheetDescription>
+                          Follow the steps to define and map a new industry segment.
+                      </SheetDescription>
+                    </div>
+                    <Dialog open={isManageIndustriesOpen} onOpenChange={setIsManageIndustriesOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" size="sm"><Pencil className="mr-2 h-4 w-4" /> Manage Industries</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Manage Industry Taxonomy</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4 py-4">
+                                <ul className="space-y-2 max-h-48 overflow-y-auto">
+                                    {industries.map(industry => (
+                                        <li key={industry.value} className="text-sm p-2 border rounded-md">{industry.label}</li>
+                                    ))}
+                                </ul>
+                                <Separator />
+                                <form onSubmit={handleAddIndustry} className="space-y-4">
+                                    <h4 className="font-medium">Add New Industry</h4>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="new-industry-name">Name</Label>
+                                        <Input id="new-industry-name" value={newIndustryName} onChange={e => setNewIndustryName(e.target.value)} required />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="new-industry-naics">NAICS (Optional)</Label>
+                                            <Input id="new-industry-naics" value={newIndustryNaics} onChange={e => setNewIndustryNaics(e.target.value)} />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="new-industry-synonyms">Synonyms</Label>
+                                            <Input id="new-industry-synonyms" value={newIndustrySynonyms} onChange={e => setNewIndustrySynonyms(e.target.value)} placeholder="comma-separated" />
+                                        </div>
+                                    </div>
+                                    <DialogFooter>
+                                        <Button type="submit">Save Industry</Button>
+                                    </DialogFooter>
+                                </form>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+                  </div>
                   <TabsList className="grid w-full grid-cols-3">
                       <TabsTrigger value="step1">Step 1: Industry</TabsTrigger>
                       <TabsTrigger value="step2">Step 2: Sources</TabsTrigger>
@@ -155,9 +238,9 @@ export default function MarketMappingPage() {
                           <SelectValue placeholder="e.g., Accounting, IT MSPs, Dental" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="accounting">Accounting (CPAs)</SelectItem>
-                          <SelectItem value="it-msp">IT MSPs</SelectItem>
-                          <SelectItem value="dental">Dental Clinics</SelectItem>
+                          {industries.map(industry => (
+                            <SelectItem key={industry.value} value={industry.value}>{industry.label}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
