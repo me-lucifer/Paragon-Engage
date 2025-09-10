@@ -10,7 +10,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Users, Building, Briefcase } from 'lucide-react';
+import { ArrowRight, Users, Building, Briefcase, Target } from 'lucide-react';
 import Link from 'next/link';
 
 const segmentsData = [
@@ -20,6 +20,7 @@ const segmentsData = [
     count: '60,210',
     icon: <Users className="h-8 w-8 text-primary" />,
     rules: [
+      { type: 'Fit Score (Balanced)', values: ['≥65'] },
       { type: 'Roles', values: ['CPA', 'Managing Partner', 'Accountant', 'Tax Advisor'] },
       { type: 'Firm Size', values: ['5-50'] },
       { type: 'Region', values: ['US', 'CA', 'EU'] },
@@ -31,6 +32,7 @@ const segmentsData = [
     count: '45,800',
     icon: <Building className="h-8 w-8 text-primary" />,
     rules: [
+      { type: 'Fit Score (Balanced)', values: ['≥65'] },
       { type: 'Roles', values: ['CIO', 'IT Director', 'Owner', 'Head of Technology'] },
       { type: 'Firm Size', values: ['5-50'] },
       { type: 'Region', values: ['US', 'CA', 'EU'] },
@@ -42,6 +44,7 @@ const segmentsData = [
     count: '78,150',
     icon: <Briefcase className="h-8 w-8 text-primary" />,
     rules: [
+       { type: 'Fit Score (Balanced)', values: ['≥65'] },
       { type: 'Roles', values: ['Dentist', 'Owner', 'Clinic Manager'] },
       { type: 'Firm Size', values: ['5-50'] },
       { type: 'Region', values: ['US', 'CA', 'EU'] },
@@ -74,14 +77,22 @@ export default function SegmentsPage() {
               </div>
             </CardHeader>
             <CardContent className="flex-1 space-y-4">
-              <h4 className="font-semibold text-sm">Rules</h4>
+               <div className="flex justify-between items-center">
+                    <h4 className="font-semibold text-sm">Rules</h4>
+                    <Link href="/fit-scoring">
+                        <Button variant="link" className="p-0 h-auto text-xs">
+                            <Target className="mr-1.5 h-3 w-3" />
+                            View in Fit Scoring
+                        </Button>
+                    </Link>
+                </div>
               <div className="space-y-2">
                 {segment.rules.map((rule) => (
                   <div key={rule.type}>
                     <p className="text-xs font-medium text-muted-foreground">{rule.type}</p>
                     <div className="flex flex-wrap gap-1 pt-1">
                       {rule.values.map(value => (
-                        <Badge key={value} variant="secondary">{value}</Badge>
+                        <Badge key={value} variant={rule.type.includes('Fit Score') ? 'default' : 'secondary'}>{value}</Badge>
                       ))}
                     </div>
                   </div>
