@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { MailCheck, ShieldCheck, AlertTriangle, Inbox, CheckCircle, HelpCircle } from 'lucide-react';
+import { MailCheck, ShieldCheck, AlertTriangle, Inbox, CheckCircle, HelpCircle, Info } from 'lucide-react';
 import ReportsChart from '@/components/reports-chart';
 import { useIntegrationStatus } from '@/hooks/use-integration-status';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
@@ -22,6 +22,7 @@ import { DmarcPolicyPlanner } from '@/components/dmarc-policy-planner';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { SeedInboxTestDialog } from '@/components/seed-inbox-test-dialog';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const deliverabilityStats = [
   { id: 'inbox', title: 'Inbox Placement Rate', value: '98.2%', icon: <Inbox className="h-6 w-6 text-primary" />, progress: 98.2, domain: 'paragon.com', tooltip: '% of delivered emails that landed in Inbox, not Spam, over last 7 days.' },
@@ -103,11 +104,27 @@ export default function DeliverabilityPage() {
                         )}
                         </CardContent>
                         {stat.id === 'auth' && (
+                            <>
                             <CardFooter>
                                 <Button variant="secondary" className="w-full" onClick={() => setIsTestDialogOpen(true)}>
                                     Send Seed Test
                                 </Button>
                             </CardFooter>
+                             <Accordion type="single" collapsible className="w-full px-6 pb-2">
+                                <AccordionItem value="item-1" className="border-b-0">
+                                    <AccordionTrigger className="text-xs py-2 text-muted-foreground hover:no-underline">
+                                        Hints
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        <ul className="space-y-2 text-xs text-muted-foreground list-disc pl-4">
+                                            <li>Make From: domain align with DKIM d= domain for DMARC pass.</li>
+                                            <li>Use a custom tracking domain such as t.{stat.domain}.</li>
+                                            <li>Keep SPF includes &lt; 10 to avoid DNS lookup limits.</li>
+                                        </ul>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            </Accordion>
+                            </>
                         )}
                     </Card>
                     ))}
