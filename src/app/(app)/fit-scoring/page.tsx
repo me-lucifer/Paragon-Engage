@@ -180,7 +180,7 @@ export default function FitScoringPage() {
                             </TooltipTrigger>
                             <TooltipContent>
                                 <p className="max-w-xs">
-                                    Fit Scoring Models use weighted criteria to rank companies against your Ideal Customer Profile (ICP). Adjust the weights to prioritize signals that matter most to you.
+                                  Each factor produces a 0–10 subscore. Sliders set importance. We sum and scale to 0–100. ‘Explain Score’ shows the parts.
                                 </p>
                             </TooltipContent>
                         </Tooltip>
