@@ -16,8 +16,10 @@ import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
 import { PlusCircle, Inbox, RefreshCw, AlertCircle } from 'lucide-react';
 import InboxSettingsDialog from '@/components/inbox-settings-dialog';
+import AddInboxWizard from '@/components/add-inbox-wizard';
+import { useToast } from '@/hooks/use-toast';
 
-const inboxes = [
+const initialInboxes = [
   {
     email: 'sales@paragon.com',
     domain: 'paragon.com',
@@ -80,11 +82,14 @@ const inboxes = [
   },
 ];
 
-export type Inbox = (typeof inboxes)[0];
+export type Inbox = (typeof initialInboxes)[0];
 
 export default function InboxManagerPage() {
+  const [inboxes, setInboxes] = useState<Inbox[]>(initialInboxes);
   const [selectedInbox, setSelectedInbox] = useState<Inbox | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isAddWizardOpen, setIsAddWizardOpen] = useState(false);
+  const { toast } = useToast();
 
   const handleOpenSettings = (inbox: Inbox) => {
     setSelectedInbox(inbox);
@@ -92,11 +97,27 @@ export default function InboxManagerPage() {
   };
 
   const handleSaveSettings = (updatedInbox: Inbox) => {
-    // In a real app, you would save this to a backend.
-    console.log("Saving inbox settings:", updatedInbox);
-    // For this prototype, we'll just close the dialog.
+    setInboxes(prev =>
+      prev.map(ib => (ib.email === updatedInbox.email ? updatedInbox : ib))
+    );
     setIsSettingsOpen(false);
   };
+
+  const handleAddInbox = (newInboxData: Omit<Inbox, 'dailyCap' | 'status' | 'health'>) => {
+    const newInbox: Inbox = {
+        ...newInboxData,
+        dailyCap: `0/${newInboxData.dailySendCap}`,
+        status: 'Warming',
+        health: 60,
+    };
+    setInboxes(prev => [...prev, newInbox]);
+    setIsAddWizardOpen(false);
+    toast({
+        title: "Inbox Added",
+        description: `${newInbox.email} is now being warmed up.`
+    });
+  }
+
 
   return (
     <>
@@ -110,7 +131,7 @@ export default function InboxManagerPage() {
               Connect and manage your sending inboxes.
             </p>
           </div>
-          <Button>
+          <Button onClick={() => setIsAddWizardOpen(true)}>
             <PlusCircle className="mr-2 h-4 w-4" /> Add Inbox
           </Button>
         </div>
@@ -210,6 +231,11 @@ export default function InboxManagerPage() {
           onSave={handleSaveSettings}
         />
       )}
+       <AddInboxWizard
+        open={isAddWizardOpen}
+        onOpenChange={setIsAddWizardOpen}
+        onAddInbox={handleAddInbox}
+      />
     </>
   );
 }
