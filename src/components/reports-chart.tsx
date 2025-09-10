@@ -23,10 +23,10 @@ import {
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 const barData = [
-  { source: 'Website', leads: 400 },
-  { source: 'Referral', leads: 300 },
-  { source: 'Social', leads: 200 },
-  { source: 'Ads', leads: 278 },
+  { source: 'Gmail', placement: 92 },
+  { source: 'Outlook 365', placement: 88 },
+  { source: 'Yahoo', placement: 86 },
+  { source: 'Other', placement: 90 },
 ];
 
 const lineData = [
@@ -46,7 +46,7 @@ const funnelData = [
 ];
 
 
-const barConfig = { leads: { label: 'Leads', color: 'hsl(var(--primary))' } };
+const barConfig = { placement: { label: 'Inbox Placement', color: 'hsl(var(--primary))' } };
 const lineConfig = { 
     segmentA: { label: 'Segment A', color: 'hsl(var(--primary))' },
     segmentB: { label: 'Segment B', color: 'hsl(var(--accent))' }
@@ -63,9 +63,9 @@ export default function ReportsChart({ chartType }: ReportsChartProps) {
         <BarChart accessibilityLayer data={barData}>
           <CartesianGrid vertical={false} />
           <XAxis dataKey="source" tickLine={false} tickMargin={10} axisLine={false} />
-          <YAxis />
-          <Tooltip cursor={false} content={<ChartTooltipContent />} />
-          <Bar dataKey="leads" fill="var(--color-leads)" radius={4} />
+          <YAxis unit="%" />
+          <Tooltip cursor={false} content={<ChartTooltipContent unit="%" />} />
+          <Bar dataKey="placement" fill="var(--color-placement)" radius={4} />
         </BarChart>
       </ChartContainer>
     );
@@ -91,7 +91,7 @@ export default function ReportsChart({ chartType }: ReportsChartProps) {
         <FunnelChart width={730} height={250}>
             <Tooltip content={CustomTooltip} />
             <Funnel dataKey="value" data={funnelData} isAnimationActive>
-                 <LabelList position="right" fill="#000" stroke="none" dataKey="name" />
+                 <LabelList position="right" fill="hsl(var(--foreground))" stroke="none" dataKey="name" />
             </Funnel>
         </FunnelChart>
       </ChartContainer>

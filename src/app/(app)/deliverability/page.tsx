@@ -99,8 +99,8 @@ export default function DeliverabilityPage() {
 
       <Card>
         <CardHeader>
-            <CardTitle>Inbox Placement by Provider</CardTitle>
-            <CardDescription>Performance across major email providers.</CardDescription>
+            <CardTitle>Inbox Placement by Mailbox Provider</CardTitle>
+            <CardDescription>Performance across major email providers for the last 7 days.</CardDescription>
         </CardHeader>
         <CardContent>
             <ReportsChart chartType="bar" />
