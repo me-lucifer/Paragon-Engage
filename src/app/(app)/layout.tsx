@@ -10,6 +10,7 @@ import { allNavGroups } from "@/components/layout/sidenav";
 import { defaultPermissions } from "@/components/roles-matrix";
 import { usePathname, useSearchParams } from "next/navigation";
 import { AccessDenied } from "@/components/access-denied";
+import { Suspense } from "react";
 
 function Footer() {
   return (
@@ -64,7 +65,9 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <RoleProvider>
-      <AppLayoutContent>{children}</AppLayoutContent>
+      <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+        <AppLayoutContent>{children}</AppLayoutContent>
+      </Suspense>
     </RoleProvider>
   );
 }
