@@ -15,7 +15,7 @@ import { Suspense } from "react";
 function Footer() {
   return (
     <footer className="p-4 text-center text-sm text-muted-foreground">
-      Paragon Engage – Prototype. Sample data for demonstration only.
+      Prototype by EncureIT Systems Pvt Ltd. Sample data for demonstration only.
     </footer>
   );
 }
